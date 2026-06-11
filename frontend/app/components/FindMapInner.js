@@ -328,10 +328,10 @@ const scoreColorsCache = (() => {
   const s = getComputedStyle(document.documentElement);
   return {
     null: s.getPropertyValue('--score-null').trim() || '#999999',
-    excellent: s.getPropertyValue('--score-excellent').trim() || '#2d8a4e',
-    good: s.getPropertyValue('--score-good').trim() || '#5b6abf',
-    average: s.getPropertyValue('--score-average').trim() || '#c49a3a',
-    poor: s.getPropertyValue('--score-poor').trim() || '#b55a5a',
+    excellent: s.getPropertyValue('--score-excellent').trim() || '#5a6b4e',
+    good: s.getPropertyValue('--score-good').trim() || '#5a6e82',
+    average: s.getPropertyValue('--score-average').trim() || '#b8943a',
+    poor: s.getPropertyValue('--score-poor').trim() || '#a85555',
   };
 })();
 

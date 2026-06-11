@@ -280,24 +280,24 @@
   --jp-danger: #a85555;
   --jp-info: #5a6e82;
 
-  /* Score Rating — 日式極簡低飽和版 (四色明顯可辨) */
-  --score-excellent: #2d8a4e;   /* 優異 80+ 翠綠 */
-  --score-good: #5b6abf;        /* 良好 60-79 靛藍 */
-  --score-average: #c49a3a;     /* 普通 40-59 金黃 */
-  --score-poor: #b55a5a;        /* 待加強 <40 暗紅 */
-  --score-null: #999999;        /* 無資料 */
+  /* Score Rating — 复用 design system semantic colors */
+  --score-excellent: var(--jp-success);   /* 優異 80+ */
+  --score-good: var(--jp-info);           /* 良好 60-79 */
+  --score-average: var(--jp-warning);     /* 普通 40-59 */
+  --score-poor: var(--jp-danger);         /* 待加強 <40 */
+  --score-null: var(--jp-text-tertiary);  /* 無資料 */
 
-  /* Score backgrounds — 對應各級別的淡色背景 */
-  --score-excellent-bg: #f4f7f5;
-  --score-excellent-border: #d5e3da;
-  --score-good-bg: #f2f3fa;
-  --score-good-border: #d8dae8;
-  --score-average-bg: #faf5eb;
-  --score-average-border: #ece4d0;
-  --score-poor-bg: #f9efef;
-  --score-poor-border: #e5d5d5;
-  --score-null-bg: #f5f4f0;
-  --score-null-border: #e8e4df;
+  /* Score backgrounds — 日式淡色版 */
+  --score-excellent-bg: var(--jp-accent-lighter);
+  --score-excellent-border: var(--jp-accent-border);
+  --score-good-bg: #f0f1f4;
+  --score-good-border: rgba(90, 110, 130, 0.2);
+  --score-average-bg: #faf6ee;
+  --score-average-border: rgba(184, 148, 58, 0.2);
+  --score-poor-bg: #f9f0f0;
+  --score-poor-border: rgba(168, 85, 85, 0.2);
+  --score-null-bg: var(--jp-bg-muted);
+  --score-null-border: var(--jp-border-light);
 
   /* Sun accent — 暖橘紅跳色 */
   --sun-accent: #d48a5a;
