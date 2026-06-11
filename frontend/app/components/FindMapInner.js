@@ -92,12 +92,12 @@ function Tag({ color = 'stone', children }) {
 }
 
 const DIMENSIONS = [
-  { key: 'food', label: '餐飲', icon: UtensilsCrossed, color: '#c47a3a' },
-  { key: 'edu', label: '教育', icon: GraduationCap, color: '#3b7ab5' },
+  { key: 'transit', label: '交通', icon: TrainFront, color: '#7b6ba5' },
+  { key: 'education', label: '教育', icon: GraduationCap, color: '#3b7ab5' },
   { key: 'medical', label: '醫療', icon: HeartPulse, color: '#b54a3a' },
-  { key: 'transport', label: '交通', icon: TrainFront, color: '#7b6ba5' },
   { key: 'shopping', label: '購物', icon: ShoppingCart, color: '#c45a7a' },
-  { key: 'recreation', label: '休閒', icon: Trees, color: '#5a8a5a' },
+  { key: 'leisure', label: '休閒', icon: Trees, color: '#5a8a5a' },
+  { key: 'dining', label: '餐飲', icon: UtensilsCrossed, color: '#c47a3a' },
 ];
 
 function parseFloorNum(val) {
