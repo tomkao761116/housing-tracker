@@ -1,0 +1,72 @@
+{
+  "timestamp": "2026-06-11T18:20:46.199507",
+  "total": 16,
+  "passed": 16,
+  "failed": 0,
+  "results": [
+    {
+      "status": "PASS",
+      "test": "DB 連線 + trades/poi 筆數"
+    },
+    {
+      "status": "PASS",
+      "test": "Highlights API (2025)"
+    },
+    {
+      "status": "PASS",
+      "test": "Highlights API (其他年份)"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/find 基本搜尋"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/find 城市篩選"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/trades 分頁正確性"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/find/options 篩選選項"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/trades 列表"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/scorecard 地址評分"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/location-pois POI 查詢"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/rankings/cities 縣市排名"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/stats/districts 行政區統計"
+    },
+    {
+      "status": "PASS",
+      "test": "首頁渲染"
+    },
+    {
+      "status": "PASS",
+      "test": "找房頁渲染"
+    },
+    {
+      "status": "PASS",
+      "test": "地點評估頁渲染"
+    },
+    {
+      "status": "PASS",
+      "test": "/api/health"
+    }
+  ]
+}
