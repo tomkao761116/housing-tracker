@@ -101,7 +101,7 @@ function scoreColor(baseColor, s) {
 function SectionHeader({ icon: Icon, title, subtitle }) {
   return (
     <div className="flex items-start gap-3 mb-4">
-      <div className="p-2 rounded-lg bg-[#f0eeeb] mt-0.5">
+      <div className="p-2 rounded-sm bg-[#f0eeeb] mt-0.5">
         <Icon className="w-5 h-5 text-[#5a6b4e]" />
       </div>
       <div>
@@ -407,7 +407,7 @@ export default function EvaluatePage() {
           HERO HEADER (精簡版)
           ═════════════════════════════════════════ */}
       <div className="flex items-center gap-3">
-        <div className="p-2 rounded-lg bg-[#f0eeeb]">
+        <div className="p-2 rounded-sm bg-[#f0eeeb]">
           <IconLocation className="w-6 h-6 text-[#5a6b4e]" />
         </div>
         <div>
@@ -419,9 +419,9 @@ export default function EvaluatePage() {
       {/* ════════════════════════════════════════
           INPUT SECTION (精簡版)
           ═════════════════════════════════════════ */}
-      <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-6 space-y-4">
+      <div className="card-jp p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-[#2a2a2a]">位置設定</h2>
+          <h2 className="text-sm font-semibold text-[#2a2a2a]">位置設定</h2>
           <button
             onClick={() => setShowCoords(!showCoords)}
             className="text-xs text-[#999] hover:text-[#777] transition-colors"
@@ -450,12 +450,12 @@ export default function EvaluatePage() {
             </div>
           )}
           {geoPreview && !geoLoading && (
-            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-lg bg-[#f0f7ed] border border-[#cddcb8] text-xs">
+            <div className="flex items-center gap-2 mt-2 px-3 py-2 rounded-sm bg-[#f0f7ed] border border-[#cddcb8] text-xs">
               <IconLocation className="w-3.5 h-3.5 text-[#5a6b4e] flex-shrink-0" />
               <span className="text-[#777] flex-1 truncate">{geoPreview.display}</span>
               <button
                 onClick={useGeoPreview}
-                className="px-2 py-0.5 rounded bg-[#f0f7ed]0 text-white hover:bg-emerald-600 transition-colors flex-shrink-0"
+                className="px-2 py-0.5 rounded bg-[#5a6b4e] text-white hover:bg-[#4a5d3e] transition-colors flex-shrink-0"
               >
                 使用此位置
               </button>
@@ -470,7 +470,7 @@ export default function EvaluatePage() {
               <span className="text-xs font-medium text-[#999] uppercase tracking-wider">經緯度座標</span>
               <button
                 onClick={handleGetLocation}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#f0eeeb] text-[#5a6b4e] hover:bg-[#f0f7ed]0/20 transition-colors text-xs font-medium"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-sm bg-[#f0eeeb] text-[#5a6b4e] hover:bg-[#e8e4df] transition-colors text-xs font-medium"
               >
                 <IconGPS className="w-3.5 h-3.5" />
                 GPS 定位
@@ -536,7 +536,7 @@ export default function EvaluatePage() {
           onClick={fetchAll}
           disabled={scoreLoading}
           type="button"
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#f0f7ed]0 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-sm bg-[#5a6b4e] text-white font-medium hover:bg-[#4a5d3e] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
           {scoreLoading ? (
             <>
@@ -574,7 +574,7 @@ export default function EvaluatePage() {
             {/* Overall score + Radar */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Score Ring */}
-              <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-6 flex flex-col items-center justify-center">
+              <div className="card-jp p-6 flex flex-col items-center justify-center">
                 <h3 className="text-base font-semibold text-[#2a2a2a] mb-4">綜合評分</h3>
                 <ScoreRing score={overallScore ?? 0} size={160} />
                 <div className="mt-4 text-center">
@@ -621,7 +621,7 @@ export default function EvaluatePage() {
               </div>
 
               {/* Radar Chart */}
-              <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-6">
+              <div className="card-jp p-6">
                 <h3 className="text-base font-semibold text-[#2a2a2a] mb-4 text-center">六維度雷達圖</h3>
                 <RadarChart
                   scores={DIMENSIONS.reduce((acc, dim) => {
@@ -637,7 +637,7 @@ export default function EvaluatePage() {
             </div>
 
             {/* Dimension Scores — Clickable Accordions */}
-            <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md overflow-hidden">
+            <div className="card-jp overflow-hidden">
               <div className="divide-y divide-stone-100">
                 {DIMENSIONS.map(dim => {
                   const dimData = dimScores[dim.key] || {};
@@ -666,7 +666,7 @@ export default function EvaluatePage() {
                         className="w-full flex items-center justify-between px-6 py-4 hover:bg-[#f5f4f0]/50 transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-lg" style={{ backgroundColor: dim.color + '15' }}>
+                          <div className="p-2 rounded-sm" style={{ backgroundColor: dim.color + '15' }}>
                             <dim.icon className="w-5 h-5" style={{ color: dim.color }} />
                           </div>
                           <div className="text-left">
@@ -696,7 +696,7 @@ export default function EvaluatePage() {
                               {items.slice(0, 50).map((item, i) => (
                                 <div
                                   key={i}
-                                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-stone-50/50 text-sm"
+                                  className="flex items-center justify-between px-3 py-2 rounded-sm bg-stone-50/50 text-sm"
                                 >
                                   <span className="text-stone-700 truncate mr-4">{item.name}</span>
                                   <span className="text-[#999] whitespace-nowrap font-mono text-xs">
@@ -721,7 +721,7 @@ export default function EvaluatePage() {
 
         {/* Empty state */}
         {!scoreResult && !scoreLoading && !scoreError && (
-          <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-12 text-center">
+          <div className="card-jp p-12 text-center">
             <IconLocation className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#999]">輸入位置後點擊「查詢生活圈評分」開始評估</p>
           </div>
@@ -739,7 +739,7 @@ export default function EvaluatePage() {
         />
 
         {/* Commute settings */}
-        <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-6 space-y-4">
+        <div className="card-jp p-6 space-y-4">
           {/* Destination with autocomplete */}
           <div className="relative" onClick={e => e.stopPropagation()}>
             <label className="text-xs font-medium text-[#999] uppercase tracking-wider mb-2 block">目的地</label>
@@ -753,7 +753,7 @@ export default function EvaluatePage() {
               onKeyDown={e => e.key === 'Enter' && fetchCommute()}
             />
             {showDestSuggestions && filteredDestinations.length > 0 && (
-              <div className="absolute z-10 w-full mt-1 bg-white border border-[#d0cdc8] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+              <div className="absolute z-10 w-full mt-1 bg-white border border-[#d0cdc8] rounded-sm shadow-lg max-h-48 overflow-y-auto">
                 {filteredDestinations.map((dest, i) => (
                   <button
                     key={i}
@@ -777,7 +777,7 @@ export default function EvaluatePage() {
             <button
               onClick={fetchCommute}
               disabled={commuteLoading}
-              className="flex items-center gap-2 px-6 py-3 rounded-lg bg-[#f0f7ed]0 text-white font-medium hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg"
+              className="flex items-center gap-2 px-6 py-3 rounded-sm bg-[#5a6b4e] text-white font-medium hover:bg-[#4a5d3e] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {commuteLoading ? (
                 <>
@@ -802,7 +802,7 @@ export default function EvaluatePage() {
 
         {/* Results — Bar chart visualization */}
         {commuteResult && (
-          <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-6">
+          <div className="card-jp p-6">
             <h3 className="text-base font-semibold text-[#2a2a2a] mb-4 flex items-center gap-2">
               <IconTrendUp className="w-5 h-5 text-[#5a6b4e]" />
               通勤時間（{commuteResult.data?.[0]?.destination || ''}）
@@ -861,7 +861,7 @@ export default function EvaluatePage() {
 
         {/* Empty state */}
         {!commuteResult && !commuteLoading && !commuteError && (
-          <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-12 text-center">
+          <div className="card-jp p-12 text-center">
             <IconClock className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#777] mb-4">輸入目的地後即可查詢各交通方式的通勤時間</p>
             {filteredDestinations.length > 0 && (
@@ -897,7 +897,7 @@ export default function EvaluatePage() {
 
         {/* Loading */}
         {tradesLoading && (
-          <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-12 text-center">
+          <div className="card-jp p-12 text-center">
             <svg className="animate-spin w-8 h-8 text-emerald-500 mx-auto mb-3" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -921,9 +921,9 @@ export default function EvaluatePage() {
                 <button
                   key={opt.key}
                   onClick={() => setTradesSort(opt.key)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+                  className={`px-3 py-1 rounded-sm text-xs font-medium transition-all ${
                     tradesSort === opt.key
-                      ? 'bg-[#f0f7ed]0 text-white shadow-sm'
+                      ? 'bg-[#5a6b4e] text-white'
                       : 'bg-[#f5f4f0] text-[#777] hover:bg-stone-200'
                   }`}
                 >
@@ -958,7 +958,7 @@ export default function EvaluatePage() {
                 const distStr = trade.distance ? `${Math.round(trade.distance)}m` : '';
 
                 return (
-                  <div key={i} className="bg-white rounded-lg border border-[#d0cdc8] hover:border-stone-300 hover:shadow-sm transition-all mb-2 cursor-pointer px-4 py-3">
+                  <div key={i} className="bg-white rounded-sm border border-[#d0cdc8] hover:border-stone-300 hover:shadow-sm transition-all mb-2 cursor-pointer px-4 py-3">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 mb-1 flex-wrap">
@@ -987,7 +987,7 @@ export default function EvaluatePage() {
 
         {/* No results */}
         {!tradesLoading && tradesResult && tradesResult.data && tradesResult.data.length === 0 && (
-          <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-12 text-center">
+          <div className="card-jp p-12 text-center">
             <IconEmpty className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#999]">該區域附近暫無成交紀錄</p>
           </div>
@@ -995,7 +995,7 @@ export default function EvaluatePage() {
 
         {/* Empty state - no data yet and not loading */}
         {!tradesLoading && !tradesResult && !tradesError && (
-          <div className="bg-white/80 backdrop-blur-md border border-[#d0cdc8] rounded-lg shadow-md p-12 text-center">
+          <div className="card-jp p-12 text-center">
             <IconHome className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#999]">先搜尋生活圈評分後，下方即可看到周邊成交</p>
           </div>
