@@ -187,129 +187,25 @@ function MobileMenu({ open, onClose, activePath }) {
   );
 }
 
-/* ─── Park Background SVG Component (S-curve diagonal path) ─── */
-function ParkBackground() {
+/* ─── Mountain Silhouette SVG (top-right corner, ink wash style) ─── */
+function MountainSilhouette() {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.12]" aria-hidden="true">
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{position:'absolute'}}>
-        <defs>
-          <pattern id="parkPattern" x="0" y="0" width="800" height="1000" patternUnits="userSpaceOnUse">
-            {/* Main S-curve path: top-right to bottom-left */}
-            <path d="M750 0 Q700 80 650 120 Q580 170 600 240 Q620 310 550 360 Q470 420 500 500 Q530 580 450 640 Q370 700 400 780 Q430 860 350 920 Q280 970 250 1000"
-                  stroke="#6b7c5e" fill="none" strokeWidth="2.5" strokeLinecap="round" />
-            {/* Branch paths */}
-            <path d="M600 240 Q560 260 500 250 Q460 245 440 270"
-                  stroke="#6b7c5e" fill="none" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M500 500 Q540 520 600 510 Q640 505 660 530"
-                  stroke="#6b7c5e" fill="none" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M400 780 Q360 800 300 790 Q260 785 240 810"
-                  stroke="#6b7c5e" fill="none" strokeWidth="1.5" strokeLinecap="round" />
-            {/* Trees along path */}
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="500" y1="100" x2="500" y2="160" strokeWidth="2"/>
-              <circle cx="500" cy="75" r="35" strokeWidth="1.5"/>
-              <path d="M475 55 Q485 40 495 55 Q505 35 515 55 Q525 40 530 60" strokeWidth="1"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="350" y1="300" x2="350" y2="360" strokeWidth="2"/>
-              <circle cx="350" cy="275" r="30" strokeWidth="1.5"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="600" y1="450" x2="600" y2="510" strokeWidth="2"/>
-              <circle cx="600" cy="425" r="32" strokeWidth="1.5"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="280" y1="600" x2="280" y2="660" strokeWidth="2"/>
-              <circle cx="280" cy="575" r="28" strokeWidth="1.5"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="480" y1="750" x2="480" y2="810" strokeWidth="2"/>
-              <circle cx="480" cy="725" r="30" strokeWidth="1.5"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="180" y1="880" x2="180" y2="940" strokeWidth="2"/>
-              <circle cx="180" cy="855" r="26" strokeWidth="1.5"/>
-            </g>
-            {/* Small bushes */}
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="420" y1="200" x2="420" y2="225" strokeWidth="1.5"/>
-              <circle cx="420" cy="190" r="15" strokeWidth="1"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="540" y1="400" x2="540" y2="425" strokeWidth="1.5"/>
-              <circle cx="540" cy="388" r="14" strokeWidth="1"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeLinecap="round">
-              <line x1="320" y1="550" x2="320" y2="575" strokeWidth="1.5"/>
-              <circle cx="320" cy="538" r="14" strokeWidth="1"/>
-            </g>
-            {/* Flowers */}
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <circle cx="460" cy="180" r="4"/><circle cx="468" cy="176" r="3"/><circle cx="456" cy="182" r="3"/>
-              <line x1="462" y1="182" x2="462" y2="195"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <circle cx="380" cy="480" r="4"/><circle cx="388" cy="476" r="3"/><circle cx="376" cy="482" r="3"/>
-              <line x1="382" y1="482" x2="382" y2="495"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <circle cx="240" cy="720" r="4"/><circle cx="248" cy="716" r="3"/><circle cx="236" cy="722" r="3"/>
-              <line x1="242" y1="722" x2="242" y2="735"/>
-            </g>
-            {/* Benches */}
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1.2">
-              <rect x="300" y="250" width="28" height="2.5" rx="1"/>
-              <rect x="302" y="252.5" width="24" height="2.5" rx="1"/>
-              <line x1="304" y1="255" x2="304" y2="266"/>
-              <line x1="322" y1="255" x2="322" y2="266"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1.2">
-              <rect x="450" y="650" width="28" height="2.5" rx="1"/>
-              <rect x="452" y="652.5" width="24" height="2.5" rx="1"/>
-              <line x1="454" y1="655" x2="454" y2="666"/>
-              <line x1="472" y1="655" x2="472" y2="666"/>
-            </g>
-            {/* Lamp posts */}
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1.2">
-              <line x1="550" y1="150" x2="550" y2="200"/>
-              <circle cx="550" cy="146" r="5"/>
-              <line x1="542" y1="150" x2="558" y2="150"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1.2">
-              <line x1="380" y1="550" x2="380" y2="600"/>
-              <circle cx="380" cy="546" r="5"/>
-            </g>
-            {/* Stone steps on path */}
-            <ellipse cx="680" cy="60" rx="7" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="620" cy="150" rx="6" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="570" cy="280" rx="7" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="520" cy="420" rx="6" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="470" cy="560" rx="7" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="420" cy="700" rx="6" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="370" cy="840" rx="7" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            <ellipse cx="310" cy="950" rx="6" ry="2.5" stroke="#6b7c5e" fill="none" strokeWidth="1"/>
-            {/* Grass tufts */}
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <path d="M100 300 Q102 290 105 300"/><path d="M105 302 Q107 292 110 302"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <path d="M700 500 Q702 490 705 500"/><path d="M705 502 Q707 492 710 502"/>
-            </g>
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <path d="M100 700 Q102 690 105 700"/><path d="M105 702 Q107 692 110 702"/>
-            </g>
-            {/* Birds */}
-            <g stroke="#6b7c5e" fill="none" strokeWidth="1">
-              <path d="M650 40 Q654 34 658 40 Q662 34 666 40"/>
-              <path d="M680 55 Q683 50 686 55 Q689 50 692 55"/>
-            </g>
-            {/* Clouds */}
-            <g stroke="#6b7c5e" fill="none" strokeWidth="0.8">
-              <path d="M600 20 Q604 12 612 16 Q620 8 628 16 Q636 12 640 20 Q644 26 636 28 L604 28 Q596 26 600 20Z"/>
-            </g>
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#parkPattern)" />
+    <div className="fixed top-0 right-0 pointer-events-none z-0 opacity-[0.06]" aria-hidden="true">
+      <svg width="600" height="500" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg" style={{position:'absolute', top: 0, right: 0}}>
+        {/* Far mountains - lightest */}
+        <path d="M600 0 L600 200 Q550 180 500 160 Q450 140 400 170 Q350 200 300 180 Q250 160 200 190 Q150 220 100 200 Q50 180 0 210 L0 0 Z"
+              fill="#5a6b4e" opacity="0.3"/>
+        {/* Mid mountains */}
+        <path d="M600 0 L600 280 Q540 240 480 260 Q420 280 360 240 Q300 200 240 250 Q180 300 120 260 Q60 220 0 270 L0 0 Z"
+              fill="#5a6b4e" opacity="0.2"/>
+        {/* Near mountains - darkest */}
+        <path d="M600 0 L600 350 Q530 300 460 330 Q390 360 320 310 Q250 260 180 320 Q110 380 0 330 L0 0 Z"
+              fill="#5a6b4e" opacity="0.15"/>
+        {/* Mist layers between mountains */}
+        <path d="M600 150 Q500 140 400 155 Q300 170 200 150 Q100 130 0 155 L0 160 Q100 135 200 155 Q300 175 400 160 Q500 145 600 155 Z"
+              fill="#5a6b4e" opacity="0.08"/>
+        <path d="M600 230 Q500 220 400 235 Q300 250 200 230 Q100 210 0 235 L0 240 Q100 215 200 235 Q300 255 400 240 Q500 225 600 235 Z"
+              fill="#5a6b4e" opacity="0.06"/>
       </svg>
     </div>
   );
@@ -322,8 +218,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW">
       <body className="min-h-screen bg-[#faf9f7] text-[#2a2a2a] antialiased relative">
-        {/* Park line art background */}
-        <ParkBackground />
+        {/* Mountain silhouette background */}
+        <MountainSilhouette />
 
         {/* ── Navigation Bar (Style 1: Minimal) ── */}
         <nav className="bg-white/90 backdrop-blur-xl border-b border-[#e8e4df] sticky top-0 z-50">

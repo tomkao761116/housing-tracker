@@ -479,21 +479,25 @@ export default function HomePage() {
   return (
     <div className="space-y-12 animate-fade-in">
       {/* ═══ Hero ═══ */}
-      <section className="text-center py-8 sm:py-12">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-zinc-500 mb-6">
-          資料來源：內政部地政司實價登錄
+      <section className="relative py-8 sm:py-12 lg:py-16">
+        <div className="max-w-2xl">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-zinc-500 mb-6 border-b border-[#d0cdc8] pb-1.5">
+            資料來源：內政部地政司實價登錄
+          </div>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a1a1a] leading-tight tracking-tight">
+            全台房屋成交紀錄
+          </h1>
+          <p className="mt-2 text-2xl sm:text-3xl font-light text-[#5a6b4e] leading-tight">
+            一查就懂
+          </p>
+          <p className="mt-4 text-base sm:text-lg text-stone-500 max-w-xl leading-relaxed">
+            輸入城市、區域或地址，立即查看該地區的成交行情與生活機能評估。
+          </p>
+          <HouseButton as={Link} href="/find" className="mt-8 inline-flex items-center gap-2.5 px-8 py-3 text-base border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
+            開始找房
+            <IconArrowRight className="w-5 h-5" />
+          </HouseButton>
         </div>
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a1a1a] leading-tight tracking-tight">
-          全台房屋成交紀錄，<br />
-          <span className="text-[#5a6b4e]">一查就懂</span>
-        </h1>
-        <p className="mt-4 text-base sm:text-lg text-stone-500 max-w-xl mx-auto leading-relaxed">
-          輸入城市、區域或地址，立即查看該地區的成交行情與生活機能評估。
-        </p>
-        <HouseButton as={Link} href="/find" className="mt-8 inline-flex items-center gap-2.5 px-8 py-3 text-base border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
-          <IconSearch className="w-5 h-5" />
-          開始找房
-        </HouseButton>
       </section>
 
       {/* House divider */}
