@@ -8,9 +8,9 @@ import { API } from '@/lib/api';
 const FindMap = dynamic(() => import('../components/FindMap'), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-[600px] bg-stone-100 rounded-xl border border-stone-200">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
-      <span className="ml-3 text-stone-500">地圖載入中...</span>
+    <div className="flex items-center justify-center h-[600px] bg-[#f5f4f0] rounded-lg border border-[#e8e4df]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5a6b4e]" />
+      <span className="ml-3 text-[#999]">地圖載入中...</span>
     </div>
   ),
 });
@@ -23,25 +23,25 @@ const Icon = ({ d, size = 16, className = '' }) => (
 );
 
 const Icons = {
-  money: () => <Icon d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={15} className="text-stone-400" />,
-  ruler: () => <Icon d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z" size={15} className="text-stone-400" />,
-  tag: () => <Icon d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-5-5z M8 14s-1.5-1-1.5-2.5a1.5 1.5 0 1 1 3 0c0 1.5-1.5 2.5-1.5 2.5" size={15} className="text-stone-400" />,
-  building: () => <Icon d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h1M9 13h1M9 17h1" size={15} className="text-stone-400" />,
-  bed: () => <Icon d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9" size={15} className="text-stone-400" />,
-  sofa: () => <Icon d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0zM4 18v2M20 18v2" size={15} className="text-stone-400" />,
-  bath: () => <Icon d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h3v2.5" size={15} className="text-stone-400" />,
-  construction: () => <Icon d="M2 20h20M4 20V8l8-6 8 6v12M9 20v-6h6v6M9 12h.01M15 12h.01" size={15} className="text-stone-400" />,
+  money: () => <Icon d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={15} className="text-[#999]" />,
+  ruler: () => <Icon d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z" size={15} className="text-[#999]" />,
+  tag: () => <Icon d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-5-5z M8 14s-1.5-1-1.5-2.5a1.5 1.5 0 1 1 3 0c0 1.5-1.5 2.5-1.5 2.5" size={15} className="text-[#999]" />,
+  building: () => <Icon d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4M9 9h1M9 13h1M9 17h1" size={15} className="text-[#999]" />,
+  bed: () => <Icon d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9" size={15} className="text-[#999]" />,
+  sofa: () => <Icon d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0zM4 18v2M20 18v2" size={15} className="text-[#999]" />,
+  bath: () => <Icon d="M4 12h16a1 1 0 0 1 1 1v3a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-3a1 1 0 0 1 1-1zM6 12V5a2 2 0 0 1 2-2h3v2.5" size={15} className="text-[#999]" />,
+  construction: () => <Icon d="M2 20h20M4 20V8l8-6 8 6v12M9 20v-6h6v6M9 12h.01M15 12h.01" size={15} className="text-[#999]" />,
   search: () => <Icon d="M21 21l-6-6M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" size={16} />,
   list: () => <Icon d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" size={16} />,
-  empty: () => <Icon d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" size={48} className="text-stone-300" />,
-  chart: () => <Icon d="M18 20V10M12 20V4M6 20v-6" size={16} className="text-stone-400" />,
-  location: () => <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z M12 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" size={14} className="text-stone-400" />,
-  transit: () => <Icon d="M3 7h2l2-3h6l2 3h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM9 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM15 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" size={14} className="text-stone-400" />,
-  education: () => <Icon d="M22 10v6M2 10l10-5 10 5-10 5z M6 12v5c3 3 9 3 12 0v-5" size={14} className="text-stone-400" />,
-  medical: () => <Icon d="M12 2v20M2 12h20" size={14} className="text-stone-400" />,
-  shopping: () => <Icon d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0" size={14} className="text-stone-400" />,
-  leisure: () => <Icon d="M12 22V8M5 12l7-3 7 3M7 16l5-2 5 2" size={14} className="text-stone-400" />,
-  dining: () => <Icon d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" size={14} className="text-stone-400" />,
+  empty: () => <Icon d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" size={48} className="text-[#d0cdc8]" />,
+  chart: () => <Icon d="M18 20V10M12 20V4M6 20v-6" size={16} className="text-[#999]" />,
+  location: () => <Icon d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z M12 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" size={14} className="text-[#999]" />,
+  transit: () => <Icon d="M3 7h2l2-3h6l2 3h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2zM9 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM15 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" size={14} className="text-[#999]" />,
+  education: () => <Icon d="M22 10v6M2 10l10-5 10 5-10 5z M6 12v5c3 3 9 3 12 0v-5" size={14} className="text-[#999]" />,
+  medical: () => <Icon d="M12 2v20M2 12h20" size={14} className="text-[#999]" />,
+  shopping: () => <Icon d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4zM3 6h18M16 10a4 4 0 0 1-8 0" size={14} className="text-[#999]" />,
+  leisure: () => <Icon d="M12 22V8M5 12l7-3 7 3M7 16l5-2 5 2" size={14} className="text-[#999]" />,
+  dining: () => <Icon d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3" size={14} className="text-[#999]" />,
 };
 
 const AMENITY_ICONS = {
@@ -228,53 +228,42 @@ export default function FindPage() {
     ? `${yearRange.min_gregorian}–${yearRange.max_gregorian}`
     : '—';
 
+  const inputClass = 'border border-[#e8e4df] rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#5a6b4e] focus:border-[#5a6b4e]';
+  const smallInputClass = 'px-2 py-1.5 border border-[#e8e4df] rounded-md text-xs outline-none focus:ring-1 focus:ring-[#5a6b4e] focus:border-[#5a6b4e] min-w-[130px]';
+  const tinySelectClass = 'px-2 py-1.5 border border-[#e8e4df] rounded-md text-xs outline-none focus:ring-1 focus:ring-[#5a6b4e] focus:border-[#5a6b4e]';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-stone-100">
-      {/* ═══════════════════ HERO SECTION ═══════════════════ */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 left-[10%] w-72 h-72 bg-white rounded-full blur-3xl" />
-          <div className="absolute bottom-[-20px] right-[15%] w-96 h-96 bg-yellow-300 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-[50%] w-64 h-64 bg-pink-300 rounded-full blur-3xl" />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
-          <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-3 tracking-tight flex items-center justify-center gap-3">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
-              全台房屋成交紀錄查詢
-            </h1>
-            <p className="text-emerald-100 text-base sm:text-lg max-w-2xl mx-auto">
-              即時掌握各區域房價趨勢，找到最適合你的理想居所
-            </p>
-            <p className="text-emerald-200/70 text-sm mt-2 max-w-xl mx-auto">
-              資料涵蓋 22 個縣市、近 280 萬筆實價登錄成交紀錄，支援多條件篩選與地圖視覺化，助你快速鎖定目標區域。
-            </p>
-          </div>
+    <div className="min-h-screen bg-[#faf9f7]">
+      {/* ═══════════════════ HEADER ═══════════════════ */}
+      <div className="border-b border-[#e8e4df] bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          <h1 className="text-xl font-medium text-[#2a2a2a] tracking-tight">全台房屋成交紀錄查詢</h1>
+          <p className="text-sm text-[#999] mt-1">即時掌握各區域房價趨勢，找到最適合你的理想居所</p>
         </div>
       </div>
 
-      {/* ═══════════════════ SEARCH BAR ═══════════════════ */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 -mt-6 relative z-10">
-        <div className="bg-white rounded-2xl shadow-lg border border-stone-200 p-4 sm:p-6">
-          {/* Primary row: City + District + Keyword + Search */}
+      {/* ═══════════════════ SEARCH CARD ═══════════════════ */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
+        <div className="bg-white rounded-lg shadow-sm border border-[#e8e4df] p-6">
+          {/* Primary row: City + District + Keyword + Search + Reset */}
           <div className="flex flex-wrap gap-3 items-end mb-4">
             <div className="flex-1 min-w-[150px]">
-              <label className="block text-xs font-medium text-stone-500 mb-1">城市</label>
+              <label className="block text-xs font-medium text-[#777] mb-1">城市</label>
               <select
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
-                className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                className={`w-full ${inputClass}`}
               >
                 <option value="">全部城市</option>
                 {cities.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
             <div className="flex-1 min-w-[150px]">
-              <label className="block text-xs font-medium text-stone-500 mb-1">行政區</label>
+              <label className="block text-xs font-medium text-[#777] mb-1">行政區</label>
               <select
                 value={district}
                 onChange={(e) => setDistrict(e.target.value)}
-                className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none disabled:opacity-50"
+                className={`w-full ${inputClass} disabled:opacity-50`}
                 disabled={!city}
               >
                 <option value="">全部行政區</option>
@@ -282,25 +271,25 @@ export default function FindPage() {
               </select>
             </div>
             <div className="flex-[2] min-w-[200px]">
-              <label className="block text-xs font-medium text-stone-500 mb-1">關鍵字搜尋（地址、建案名稱）</label>
+              <label className="block text-xs font-medium text-[#777] mb-1">關鍵字搜尋（地址、建案名稱）</label>
               <input
                 type="text"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
                 placeholder="例：中山路、信義計畫區..."
-                className="w-full px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                className={`w-full ${inputClass}`}
               />
             </div>
             <div className="flex items-end gap-2">
               <button
                 onClick={() => fetchTrades()}
-                className="px-6 py-2.5 btn-house text-sm whitespace-nowrap flex items-center gap-1.5"
+                className="px-5 py-2 bg-[#5a6b4e] text-white hover:bg-[#4a5d3e] rounded-md text-sm whitespace-nowrap flex items-center gap-1.5 transition-colors"
               >
                 <Icons.search /> 搜尋
               </button>
               <button
                 onClick={resetFilters}
-                className="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-lg text-sm transition-colors whitespace-nowrap"
+                className="px-4 py-2 border border-[#d0cdc8] text-[#777] hover:border-[#5a6b4e] hover:text-[#5a6b4e] rounded-md text-sm transition-colors whitespace-nowrap"
               >
                 重置
               </button>
@@ -308,12 +297,12 @@ export default function FindPage() {
           </div>
 
           {/* Advanced filters - compact inline layout */}
-          <div className="border-t border-stone-100 pt-3">
+          <div className="border-t border-[#e8e4df] pt-3">
             <div className="flex flex-wrap items-center gap-2 text-sm">
               
               {/* Price range */}
-              <span className="text-stone-500 whitespace-nowrap flex items-center gap-1"><Icons.money /> 總價</span>
-              <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400 min-w-[130px]">
+              <span className="text-[#777] whitespace-nowrap flex items-center gap-1"><Icons.money /> 總價</span>
+              <select value={priceFilter} onChange={e => setPriceFilter(e.target.value)} className={smallInputClass}>
                 <option value="">不限</option>
                 <option value="0-500">500 萬以下</option>
                 <option value="500-1000">500–1000 萬</option>
@@ -324,11 +313,11 @@ export default function FindPage() {
                 <option value="5000-">5000 萬以上</option>
               </select>
 
-              <span className="w-px h-5 bg-stone-200 mx-1 hidden sm:block" />
+              <span className="w-px h-5 bg-[#e8e4df] mx-1 hidden sm:block" />
 
-              {/* Area - single dropdown */}
-              <span className="text-stone-500 whitespace-nowrap flex items-center gap-1"><Icons.ruler /> 面積</span>
-              <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400 min-w-[130px]">
+              {/* Area */}
+              <span className="text-[#777] whitespace-nowrap flex items-center gap-1"><Icons.ruler /> 面積</span>
+              <select value={areaFilter} onChange={e => setAreaFilter(e.target.value)} className={smallInputClass}>
                 <option value="">不限</option>
                 <option value="-10">10 坪以下</option>
                 <option value="10-15">10–15 坪</option>
@@ -340,11 +329,11 @@ export default function FindPage() {
                 <option value="60-">60 坪以上</option>
               </select>
 
-              <span className="w-px h-5 bg-stone-200 mx-1 hidden sm:block" />
+              <span className="w-px h-5 bg-[#e8e4df] mx-1 hidden sm:block" />
 
               {/* Unit price */}
-              <span className="text-stone-500 whitespace-nowrap flex items-center gap-1"><Icons.tag /> 單價</span>
-              <select value={unitPriceFilter} onChange={e => setUnitPriceFilter(e.target.value)} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400 min-w-[130px]">
+              <span className="text-[#777] whitespace-nowrap flex items-center gap-1"><Icons.tag /> 單價</span>
+              <select value={unitPriceFilter} onChange={e => setUnitPriceFilter(e.target.value)} className={smallInputClass}>
                 <option value="">不限</option>
                 <option value="0-10">10 萬/坪以下</option>
                 <option value="10-20">10–20 萬/坪</option>
@@ -357,11 +346,11 @@ export default function FindPage() {
                 <option value="80-">80 萬/坪以上</option>
               </select>
 
-              <span className="w-px h-5 bg-stone-200 mx-1 hidden sm:block" />
+              <span className="w-px h-5 bg-[#e8e4df] mx-1 hidden sm:block" />
 
               {/* Floor */}
-              <span className="text-stone-500 whitespace-nowrap flex items-center gap-1"><Icons.building /> 樓層</span>
-              <select value={floorFilter} onChange={e => setFloorFilter(e.target.value)} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400 min-w-[130px]">
+              <span className="text-[#777] whitespace-nowrap flex items-center gap-1"><Icons.building /> 樓層</span>
+              <select value={floorFilter} onChange={e => setFloorFilter(e.target.value)} className={smallInputClass}>
                 <option value="">不限</option>
                 <option value="1-1">1F (一樓)</option>
                 <option value="2-2">2F (二樓)</option>
@@ -378,11 +367,11 @@ export default function FindPage() {
                 <option value="21-">21F 以上</option>
               </select>
 
-              <span className="w-px h-5 bg-stone-200 mx-1 hidden sm:block" />
+              <span className="w-px h-5 bg-[#e8e4df] mx-1 hidden sm:block" />
 
               {/* Rooms */}
-              <span className="text-stone-500 whitespace-nowrap"><Icons.bed /></span>
-              <select value={rooms} onChange={e => setRooms(Number(e.target.value))} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400">
+              <span className="text-[#777] whitespace-nowrap"><Icons.bed /></span>
+              <select value={rooms} onChange={e => setRooms(Number(e.target.value))} className={tinySelectClass}>
                 <option value={0}>全部</option>
                 <option value={1}>1 房</option>
                 <option value={2}>2 房</option>
@@ -392,8 +381,8 @@ export default function FindPage() {
               </select>
 
               {/* Living rooms */}
-              <span className="text-stone-500 whitespace-nowrap"><Icons.sofa /></span>
-              <select value={livingRooms} onChange={e => setLivingRooms(Number(e.target.value))} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400">
+              <span className="text-[#777] whitespace-nowrap"><Icons.sofa /></span>
+              <select value={livingRooms} onChange={e => setLivingRooms(Number(e.target.value))} className={tinySelectClass}>
                 <option value={0}>全部</option>
                 <option value={1}>1 廳</option>
                 <option value={2}>2 廳</option>
@@ -401,19 +390,19 @@ export default function FindPage() {
               </select>
 
               {/* Bathrooms */}
-              <span className="text-stone-500 whitespace-nowrap"><Icons.bath /></span>
-              <select value={bathrooms} onChange={e => setBathrooms(Number(e.target.value))} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400">
+              <span className="text-[#777] whitespace-nowrap"><Icons.bath /></span>
+              <select value={bathrooms} onChange={e => setBathrooms(Number(e.target.value))} className={tinySelectClass}>
                 <option value={0}>全部</option>
                 <option value={1}>1 衛</option>
                 <option value={2}>2 衛</option>
                 <option value={3}>3 衛+</option>
               </select>
 
-              <span className="w-px h-5 bg-stone-200 mx-1 hidden sm:block" />
+              <span className="w-px h-5 bg-[#e8e4df] mx-1 hidden sm:block" />
 
               {/* Building type */}
-              <span className="text-stone-500 whitespace-nowrap"><Icons.construction /></span>
-              <select value={buildingType} onChange={e => setBuildingType(e.target.value)} className="px-2 py-1.5 bg-stone-50 border border-stone-200 rounded-lg text-xs outline-none focus:border-emerald-400">
+              <span className="text-[#777] whitespace-nowrap"><Icons.construction /></span>
+              <select value={buildingType} onChange={e => setBuildingType(e.target.value)} className={tinySelectClass}>
                 <option value="">全部</option>
                 <option value="住宅大樓">住宅大樓</option>
                 <option value="華廈大樓">華廈大樓</option>
@@ -424,15 +413,15 @@ export default function FindPage() {
 
               {/* Elevator */}
               <label className="flex items-center gap-1.5 cursor-pointer ml-1">
-                <input type="checkbox" checked={hasElevator} onChange={e => setHasElevator(e.target.checked)} className="w-3.5 h-3.5 text-emerald-600 rounded focus:ring-emerald-500" />
-                <span className="text-stone-600 text-xs whitespace-nowrap">有電梯</span>
+                <input type="checkbox" checked={hasElevator} onChange={e => setHasElevator(e.target.checked)} className="w-3.5 h-3.5 text-[#5a6b4e] rounded focus:ring-[#5a6b4e]" />
+                <span className="text-[#777] text-xs whitespace-nowrap">有電梯</span>
               </label>
 
-              {/* Score filter toggle */}
+              {/* Score filter toggle — subtle link style */}
               <button
                 onClick={() => setScoreFiltersExpanded(!scoreFiltersExpanded)}
-                className={`ml-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 ${
-                  minScoreOverall ? 'bg-emerald-100 text-emerald-700 border border-emerald-300' : 'bg-stone-50 text-stone-600 border border-stone-200 hover:bg-stone-100'
+                className={`ml-1 px-2 py-1 text-xs underline decoration-dashed underline-offset-2 transition-colors flex items-center gap-1 ${
+                  minScoreOverall ? 'text-[#5a6b4e]' : 'text-[#999] hover:text-[#5a6b4e]'
                 }`}
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
@@ -442,11 +431,11 @@ export default function FindPage() {
 
             {/* Score filter expanded panel */}
             {scoreFiltersExpanded && (
-              <div className="border-t border-stone-100 pt-3 mt-1">
+              <div className="border-t border-[#e8e4df] pt-3 mt-1">
                 <div className="flex flex-wrap items-center gap-3 text-sm">
                   {/* Overall score slider */}
                   <div className="flex items-center gap-2">
-                    <span className="text-stone-500 text-xs whitespace-nowrap">綜合評分 ≥</span>
+                    <span className="text-[#777] text-xs whitespace-nowrap">綜合評分 ≥</span>
                     <input
                       type="range"
                       min="0"
@@ -454,22 +443,22 @@ export default function FindPage() {
                       step="5"
                       value={minScoreOverall || 0}
                       onChange={e => setMinScoreOverall(e.target.value === '0' ? '' : e.target.value)}
-                      className="w-32 accent-emerald-600"
+                      className="w-32 accent-[#5a6b4e]"
                     />
-                    <span className="text-sm font-semibold text-emerald-700 w-8">{minScoreOverall || '0'}</span>
+                    <span className="text-sm font-semibold text-[#5a6b4e] w-8">{minScoreOverall || '0'}</span>
                   </div>
 
-                  {/* Quick preset buttons */}
+                  {/* Quick preset pill buttons */}
                   <div className="flex items-center gap-1.5 ml-2">
-                    <span className="text-stone-400 text-xs">快速設定：</span>
+                    <span className="text-[#999] text-xs">快速設定：</span>
                     {[60, 70, 80].map(v => (
                       <button
                         key={v}
                         onClick={() => setMinScoreOverall(minScoreOverall === String(v) ? '' : String(v))}
-                        className={`px-2 py-0.5 rounded text-xs transition-colors ${
+                        className={`px-3 py-1 text-xs rounded-full border transition-colors ${
                           minScoreOverall === String(v)
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
+                            ? 'bg-[#5a6b4e] text-white border-[#5a6b4e]'
+                            : 'border-[#d0cdc8] text-[#777] hover:border-[#5a6b4e] hover:text-[#5a6b4e]'
                         }`}
                       >
                         ≥ {v}
@@ -478,7 +467,7 @@ export default function FindPage() {
                     {minScoreOverall && (
                       <button
                         onClick={() => setMinScoreOverall('')}
-                        className="px-2 py-0.5 rounded text-xs bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+                        className="px-3 py-1 text-xs rounded-full border border-[#d0cdc8] text-[#999] hover:border-[#5a6b4e] hover:text-[#5a6b4e] transition-colors"
                       >
                         清除
                       </button>
@@ -492,41 +481,44 @@ export default function FindPage() {
       </div>
 
       {/* ═══════════════════ RESULTS ═══════════════════ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
         {/* Toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-stone-500">共 <strong className="text-stone-800">{total.toLocaleString()}</strong> 筆成交紀錄</span>
+            <span className="text-sm text-[#777]">共 <strong className="text-[#2a2a2a]">{total.toLocaleString()}</strong> 筆成交紀錄</span>
           </div>
           <div className="flex items-center gap-2">
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-500"
+              className={`${inputClass} text-xs py-1.5`}
             >
               {SORT_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
             </select>
             <button
               onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-              className="px-3 py-1.5 bg-white border border-stone-200 rounded-lg text-sm hover:bg-stone-50 transition-colors"
+              className={`rounded-full px-3 py-1.5 text-xs border transition-colors ${
+                sortOrder === 'desc'
+                  ? 'bg-[#5a6b4e] text-white border-[#5a6b4e]'
+                  : 'border-[#e8e4df] text-[#777] hover:border-[#5a6b4e] hover:text-[#5a6b4e]'
+              }`}
               title={sortOrder === 'desc' ? '降冪' : '升冪'}
             >
               {sortOrder === 'desc' ? '↓ 降冪' : '↑ 升冪'}
             </button>
-
           </div>
         </div>
 
         {/* Content - Split view: List + Map side by side */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600" />
-            <span className="ml-3 text-stone-500">載入中...</span>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5a6b4e]" />
+            <span className="ml-3 text-[#999]">載入中...</span>
           </div>
         ) : trades.length === 0 ? (
-          <div className="text-center py-20 text-stone-400">
+          <div className="text-center py-20">
             <div className="flex justify-center mb-3"><Icons.empty /></div>
-            <p>找不到符合條件的成交紀錄</p>
+            <p className="text-[#999]">找不到符合條件的成交紀錄</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -535,7 +527,7 @@ export default function FindPage() {
               {boxActive && (
                 <button
                   onClick={() => { setBoxActive(false); fetchTrades(); }}
-                  className="mb-3 px-3 py-2 btn-house text-xs flex items-center gap-1.5 w-fit"
+                  className="mb-3 px-3 py-2 bg-[#5a6b4e] text-white rounded-md text-xs flex items-center gap-1.5 w-fit hover:bg-[#4a5d3e] transition-colors"
                 >
                   ↩ 復原篩選結果
                 </button>
@@ -557,19 +549,19 @@ export default function FindPage() {
             {/* Map Panel */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm text-stone-500 flex items-center gap-1.5"><Icons.location /> 成交地點分布</span>
+                <span className="text-sm text-[#777] flex items-center gap-1.5"><Icons.location /> 成交地點分布</span>
                 <div className="flex items-center gap-2">
                   {selectedId && (
                     <button
                       onClick={() => setSelectedId(null)}
-                      className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-600 transition-colors"
+                      className="rounded-full px-3 py-1.5 text-xs border border-[#e8e4df] text-[#777] hover:border-[#5a6b4e] hover:text-[#5a6b4e] transition-colors"
                     >
                       ✕ 清除選取
                     </button>
                   )}
                   <button
                     onClick={() => setMapColorMode(mapColorMode === 'score' ? 'price' : 'score')}
-                    className="px-3 py-1.5 bg-stone-100 hover:bg-stone-200 rounded-lg text-xs font-medium text-stone-600 transition-colors"
+                    className="rounded-full px-3 py-1.5 text-xs border border-[#e8e4df] text-[#777] hover:border-[#5a6b4e] hover:text-[#5a6b4e] transition-colors"
                   >
                     {mapColorMode === 'score' ? '依評分著色' : '依總價著色'}
                   </button>
@@ -629,27 +621,53 @@ export default function FindPage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-6">
-            <button
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-              className="px-3 py-2 bg-white border border-stone-200 rounded-lg text-sm disabled:opacity-50 hover:bg-stone-50"
-            >
-              ← 上一頁
-            </button>
-            <span className="px-4 py-2 text-sm text-stone-600">
-              第 {page} / {totalPages} 頁
-            </span>
-            <button
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages}
-              className="px-3 py-2 bg-white border border-stone-200 rounded-lg text-sm disabled:opacity-50 hover:bg-stone-50"
-            >
-              下一頁 →
-            </button>
-          </div>
-        )}
+        {totalPages > 1 && (() => {
+          const pages = [];
+          const start = Math.max(1, page - 2);
+          const end = Math.min(totalPages, page + 2);
+          for (let i = start; i <= end; i++) pages.push(i);
+          return (
+            <div className="flex items-center justify-center gap-1.5 mt-6">
+              <button
+                onClick={() => setPage(Math.max(1, page - 1))}
+                disabled={page === 1}
+                className="px-3 py-1.5 text-sm text-[#777] hover:bg-[#f5f4f0] rounded-md disabled:opacity-30 transition-colors"
+              >
+                ←
+              </button>
+              {start > 1 && (
+                <>
+                  <button onClick={() => setPage(1)} className="w-8 h-8 rounded-full text-sm text-[#777] hover:bg-[#f5f4f0] transition-colors">1</button>
+                  {start > 2 && <span className="text-[#999] px-1">…</span>}
+                </>
+              )}
+              {pages.map(p => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`w-8 h-8 rounded-full text-sm transition-colors ${
+                    p === page ? 'bg-[#5a6b4e] text-white' : 'text-[#777] hover:bg-[#f5f4f0]'
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+              {end < totalPages && (
+                <>
+                  {end < totalPages - 1 && <span className="text-[#999] px-1">…</span>}
+                  <button onClick={() => setPage(totalPages)} className="w-8 h-8 rounded-full text-sm text-[#777] hover:bg-[#f5f4f0] transition-colors">{totalPages}</button>
+                </>
+              )}
+              <button
+                onClick={() => setPage(Math.min(totalPages, page + 1))}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 text-sm text-[#777] hover:bg-[#f5f4f0] rounded-md disabled:opacity-30 transition-colors"
+              >
+                →
+              </button>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );
@@ -669,78 +687,79 @@ function TradeCard({ trade, isSelected, isExpanded, isHovered, onSelect, onToggl
   return (
     <div
       data-trade-id={trade.id}
-      className={`bg-white rounded-xl border transition-all cursor-pointer mb-2 ${
-        isSelected ? 'border-emerald-400 shadow-md ring-1 ring-emerald-200' : isHovered ? 'border-emerald-300 shadow-sm' : 'border-stone-200 hover:border-stone-300 hover:shadow-sm'
+      className={`bg-white rounded-lg shadow-sm border border-[#e8e4df] p-5 mb-3 transition-all cursor-pointer hover:border-[#d0cdc8] ${
+        isSelected ? 'border-[#5a6b4e] ring-1 ring-[#5a6b4e]/20' : ''
       }`}
       onClick={onSelect}
       onMouseEnter={() => onHover?.(trade.id)}
       onMouseLeave={() => onHover?.(null)}
     >
-      <div className="px-4 py-3">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-              <h3 className="font-semibold text-stone-800 truncate">{trade.address}</h3>
-              {trade.has_elevator && <span className="text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded whitespace-nowrap">電梯</span>}
-              {trade.building_type && trade.building_type !== '其他' && <span className="text-xs bg-stone-100 text-stone-600 px-1.5 py-0.5 rounded whitespace-nowrap">{trade.building_type}</span>}
-            </div>
-            <p className="text-xs text-stone-500 truncate">{trade.city}{trade.district}</p>
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+            <h3 className="text-[#2a2a2a] font-medium truncate">{trade.address}</h3>
+            {trade.has_elevator && <span className="inline-block px-2 py-0.5 text-xs rounded bg-[#f5f4f0] text-[#777] whitespace-nowrap">電梯</span>}
+            {trade.building_type && trade.building_type !== '其他' && <span className="inline-block px-2 py-0.5 text-xs rounded bg-[#f5f4f0] text-[#777] whitespace-nowrap">{trade.building_type}</span>}
           </div>
-          <div className="text-right flex-shrink-0">
-            <div className="text-lg font-bold text-emerald-700">{totalPriceWan}<span className="text-xs font-normal text-stone-500 ml-0.5">萬</span></div>
-            <div className="text-xs text-stone-500">{unitPriceStr}/坪</div>
+          <div className="flex items-center gap-2 text-sm text-[#999]">
+            <span>{trade.city}{trade.district}</span>
+            <span>·</span>
+            <span>{dateStr}</span>
           </div>
         </div>
-
-        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-stone-500">
-          <span>{buildingAreaPing} 坪{landAreaPing ? ` (土地${landAreaPing}坪)` : ''}</span>
-          <span>{layoutStr}</span>
-          <span>屋齡{ageStr}</span>
-          <span>{floorStr}</span>
-          <span>{dateStr}</span>
+        <div className="text-right flex-shrink-0">
+          <div className="text-[#5a6b4e] font-medium">{totalPriceWan}<span className="text-xs font-normal text-[#999] ml-0.5">萬</span></div>
+          <div className="text-xs text-[#999]">{unitPriceStr}/坪</div>
         </div>
-
-        {/* ── 生活機能評分 + POI toggle（常駐顯示） ── */}
-        {(trade.score_transit != null || trade.score_education != null || trade.score_medical != null || trade.score_shopping != null || trade.score_leisure != null || trade.score_dining != null) && (
-          <div className="mt-3 pt-3 border-t border-stone-100">
-            <div className="flex items-start gap-3">
-              {/* Overall score circle */}
-              {trade.score_overall != null && (
-                <div className="flex-shrink-0 flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full border-2 flex items-center justify-center"
-                       style={{ borderColor: getScoreRingColor(trade.score_overall) }}>
-                    <span className="text-base font-bold" style={{ color: getScoreRingColor(trade.score_overall) }}>
-                      {trade.score_overall}
-                    </span>
-                  </div>
-                  <span className="text-[10px] text-stone-400 mt-0.5">綜合</span>
-                </div>
-              )}
-              {/* Category score pills + POI toggle */}
-              <div className="flex flex-wrap items-center gap-1.5 flex-1">
-                {trade.score_transit != null && <ScorePill icon={<Icons.transit />} label="交通" score={trade.score_transit} />}
-                {trade.score_education != null && <ScorePill icon={<Icons.education />} label="教育" score={trade.score_education} />}
-                {trade.score_medical != null && <ScorePill icon={<Icons.medical />} label="醫療" score={trade.score_medical} />}
-                {trade.score_shopping != null && <ScorePill icon={<Icons.shopping />} label="購物" score={trade.score_shopping} />}
-                {trade.score_leisure != null && <ScorePill icon={<Icons.leisure />} label="休閒" score={trade.score_leisure} />}
-                {trade.score_dining != null && <ScorePill icon={<Icons.dining />} label="餐飲" score={trade.score_dining} />}
-                {/* POI 展開/收合按鈕 — 固定在評分列右側 */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
-                  className={`ml-auto text-xs flex items-center gap-0.5 transition-colors ${isExpanded ? 'text-emerald-600 hover:text-emerald-700' : 'text-stone-400 hover:text-stone-600'}`}
-                >
-                  {isExpanded ? '▲ 收起' : '▼ 查看'} POI
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
+
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-[#999]">
+        <span>{buildingAreaPing} 坪{landAreaPing ? ` (土地${landAreaPing}坪)` : ''}</span>
+        <span>{layoutStr}</span>
+        <span>屋齡{ageStr}</span>
+        <span>{floorStr}</span>
+      </div>
+
+      {/* ── 生活機能評分 + POI toggle（常駐顯示） ── */}
+      {(trade.score_transit != null || trade.score_education != null || trade.score_medical != null || trade.score_shopping != null || trade.score_leisure != null || trade.score_dining != null) && (
+        <div className="mt-3 pt-3 border-t border-[#e8e4df]">
+          <div className="flex items-start gap-3">
+            {/* Overall score circle */}
+            {trade.score_overall != null && (
+              <div className="flex-shrink-0 flex flex-col items-center">
+                <div className="w-10 h-10 rounded-full border-2 flex items-center justify-center"
+                     style={{ borderColor: getScoreRingColor(trade.score_overall) }}>
+                  <span className="text-sm font-bold" style={{ color: getScoreRingColor(trade.score_overall) }}>
+                    {trade.score_overall}
+                  </span>
+                </div>
+                <span className="text-[10px] text-[#999] mt-0.5">綜合</span>
+              </div>
+            )}
+            {/* Category score pills + POI toggle */}
+            <div className="flex flex-wrap items-center gap-1.5 flex-1">
+              {trade.score_transit != null && <ScorePill icon={<Icons.transit />} label="交通" score={trade.score_transit} />}
+              {trade.score_education != null && <ScorePill icon={<Icons.education />} label="教育" score={trade.score_education} />}
+              {trade.score_medical != null && <ScorePill icon={<Icons.medical />} label="醫療" score={trade.score_medical} />}
+              {trade.score_shopping != null && <ScorePill icon={<Icons.shopping />} label="購物" score={trade.score_shopping} />}
+              {trade.score_leisure != null && <ScorePill icon={<Icons.leisure />} label="休閒" score={trade.score_leisure} />}
+              {trade.score_dining != null && <ScorePill icon={<Icons.dining />} label="餐飲" score={trade.score_dining} />}
+              {/* POI 展開/收合按鈕 — 固定在評分列右側 */}
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
+                className={`ml-auto text-xs flex items-center gap-0.5 transition-colors ${isExpanded ? 'text-[#5a6b4e]' : 'text-[#999] hover:text-[#5a6b4e]'}`}
+              >
+                {isExpanded ? '▲ 收起' : '▼ 查看'} POI
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── POI 清單展開區（可捲動） ── */}
       {isExpanded && (
-        <div className="px-4 pb-3 border-t border-stone-100 pt-3">
-          <h4 className="text-xs font-semibold text-stone-600 mb-2 flex items-center gap-1.5"><Icons.shopping /> 周邊生活機能</h4>
+        <div className="px-0 pb-3 border-t border-[#e8e4df] pt-3 overflow-hidden transition-all">
+          <h4 className="text-xs font-medium text-[#777] mb-2 flex items-center gap-1.5"><Icons.shopping /> 周邊生活機能</h4>
           {trade.amenities && trade.amenities.length > 0 ? (() => {
             const CATEGORY_LABELS = { transit: '交通', education: '教育', medical: '醫療', shopping: '購物', leisure: '休閒', dining: '餐飲' };
             const groups = {};
@@ -752,15 +771,15 @@ function TradeCard({ trade, isSelected, isExpanded, isHovered, onSelect, onToggl
               <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
                 {Object.entries(groups).map(([cat, items]) => (
                   <div key={cat}>
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-stone-600 mb-1">
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-[#777] mb-1">
                       {(() => { const IconComp = AMENITY_ICONS[cat]; return IconComp ? <IconComp /> : <Icons.location />; })()}
                       <span>{CATEGORY_LABELS[cat] || cat}</span>
                     </div>
                     <div className="flex flex-wrap gap-1.5 ml-5">
                       {items.map((item, idx) => (
-                        <span key={idx} className="inline-flex items-center gap-1 bg-stone-50 border border-stone-200 rounded-full px-2 py-0.5 text-xs text-stone-600">
+                        <span key={idx} className="inline-flex items-center gap-1 px-2 py-0.5 text-xs rounded bg-[#f5f4f0] text-[#777]">
                           {item.name}
-                          <span className="text-stone-400">{item.distance}m</span>
+                          <span className="text-[#999]">{item.distance}m</span>
                         </span>
                       ))}
                     </div>
@@ -769,7 +788,7 @@ function TradeCard({ trade, isSelected, isExpanded, isHovered, onSelect, onToggl
               </div>
             );
           })() : (
-            <p className="text-xs text-stone-400">此筆成交紀錄暫無周邊 POI 明細</p>
+            <p className="text-xs text-[#999]">此筆成交紀錄暫無周邊 POI 明細</p>
           )}
         </div>
       )}
@@ -781,14 +800,14 @@ function ScoreBar({ label, score }) {
   const pct = Math.min(100, (score || 0));
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-stone-500 w-8">{label}</span>
-      <div className="flex-1 bg-stone-100 rounded-full h-2">
+      <span className="text-xs text-[#999] w-8">{label}</span>
+      <div className="flex-1 bg-[#f5f4f0] rounded-full h-2">
         <div
           className={`h-2 rounded-full transition-all ${getScoreBarColor(score)}`}
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-xs font-medium text-stone-600 w-8 text-right">{score}</span>
+      <span className="text-xs font-medium text-[#777] w-8 text-right">{score}</span>
     </div>
   );
 }
@@ -815,12 +834,12 @@ function getScoreRingColor(score) {
 }
 
 function ScorePill({ icon, label, score, color }) {
-  const bg = color ? (score >= 80 ? 'bg-emerald-50 border-emerald-200' : score >= 60 ? 'bg-blue-50 border-blue-200' : score >= 40 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200') : 'bg-stone-50 border-stone-200';
-  const textCol = color ? (score >= 80 ? 'text-emerald-700' : score >= 60 ? 'text-blue-700' : score >= 40 ? 'text-amber-700' : 'text-red-700') : 'text-stone-700';
+  const bg = color ? (score >= 80 ? 'bg-emerald-50 border-emerald-200' : score >= 60 ? 'bg-blue-50 border-blue-200' : score >= 40 ? 'bg-amber-50 border-amber-200' : 'bg-red-50 border-red-200') : 'bg-[#f5f4f0] border-[#e8e4df]';
+  const textCol = color ? (score >= 80 ? 'text-emerald-700' : score >= 60 ? 'text-blue-700' : score >= 40 ? 'text-amber-700' : 'text-red-700') : 'text-[#777]';
   return (
     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-xs ${bg}`}>
       <span>{icon}</span>
-      <span className="text-stone-500">{label}</span>
+      <span className="text-[#999]">{label}</span>
       <span className={`font-semibold ${textCol}`}>{score}</span>
     </div>
   );

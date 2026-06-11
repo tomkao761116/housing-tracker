@@ -476,119 +476,109 @@ export default function HomePage() {
   /* ── Shared select styling ── */
   const selectClass = 'appearance-none bg-white border border-[#ddd8d2] rounded-sm px-3 py-2 pr-8 text-sm text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#5a6b4e]/30 focus:border-[#5a6b4e] cursor-pointer';
 
+  /* ── Build hero stats from highlights ── */
+  const heroStats = (() => {
+    const d = highlights?.data;
+    if (!d) return null;
+    const stats = [];
+    if (d.price_up_city) {
+      stats.push({
+        label: '漲幅最多',
+        val: d.price_up_city.city,
+        sub: `${d.price_up_city.yoy_pct > 0 ? '+' : ''}${d.price_up_city.yoy_pct}%`,
+        accent: true,
+      });
+    }
+    if (d.price_down_city) {
+      stats.push({
+        label: '跌幅最多',
+        val: d.price_down_city.city,
+        sub: `${d.price_down_city.yoy_pct > 0 ? '+' : ''}${d.price_down_city.yoy_pct}%`,
+        down: true,
+      });
+    }
+    if (d.cheapest_city) {
+      stats.push({
+        label: '最便宜',
+        val: d.cheapest_city.city,
+        sub: `${d.cheapest_city.avg_unit_price.toFixed(1)} 萬/坪`,
+      });
+    }
+    return stats.length >= 3 ? stats : null;
+  })();
+
   return (
-    <div className="space-y-12 animate-fade-in">
-      {/* ═══ Hero ═══ */}
-      <section className="relative py-8 sm:py-12 lg:py-16">
+    <div className="animate-fade-in">
+
+      {/* ══════════════════════════════════════
+          HERO — Japanese Minimalist Style
+          Left-aligned, tag + title + subtitle
+          + button + divider + stats grid
+          ══════════════════════════════════════ */}
+      <section className="py-10 sm:py-14 lg:py-18">
         <div className="max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-zinc-500 mb-6 border-b border-[#d0cdc8] pb-1.5">
+
+          {/* ── Tag ── */}
+          <span className="tag-jp-neutral">
             資料來源：內政部地政司實價登錄
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1a1a1a] leading-tight tracking-tight">
+          </span>
+
+          {/* ── Title + Subtitle ── */}
+          <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-normal text-[#2a2a2a] leading-[1.5] tracking-tight">
             全台房屋成交紀錄
+            <br />
+            <em className="not-italic text-[#5a6b4e] font-normal">一查就懂</em>
           </h1>
-          <p className="mt-2 text-2xl sm:text-3xl font-light text-[#5a6b4e] leading-tight">
-            一查就懂
-          </p>
-          <p className="mt-4 text-base sm:text-lg text-stone-500 max-w-xl leading-relaxed">
+
+          {/* ── Description ── */}
+          <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
             輸入城市、區域或地址，立即查看該地區的成交行情與生活機能評估。
           </p>
-          <HouseButton as={Link} href="/find" className="mt-8 inline-flex items-center gap-2.5 px-8 py-3 text-base border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
+
+          {/* ── CTA Button ── */}
+          <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
             開始找房
-            <IconArrowRight className="w-5 h-5" />
+            <IconArrowRight className="w-4 h-4" />
           </HouseButton>
+
+          {/* ── Divider ── */}
+          <HouseDivider className="mt-10" />
+
+          {/* ── Stats Grid (3-column with 1px gap separators) ── */}
+          {heroStats && (
+            <div className="stat-grid-jp mt-10">
+              {heroStats.map((s, i) => (
+                <div key={i} className="stat-item">
+                  <div className="stat-label">{s.label}</div>
+                  <div className="stat-value">{s.val}</div>
+                  <div className="stat-label" style={{
+                    color: s.accent ? '#5a6b4e' : s.down ? '#a36b6b' : '#777',
+                    marginTop: '2px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                  }}>
+                    {s.sub}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* House divider */}
-      <HouseDivider className="max-w-5xl mx-auto" />
+      {/* ══════════════════════════════════════
+          即時房市儀表板
+          White card, rounded corners, subtle shadow
+          ══════════════════════════════════════ */}
+      <section className="max-w-5xl mx-auto pb-16">
+        <div className="bg-white border border-[#e8e4df] rounded-lg shadow-sm overflow-hidden">
 
-      {/* ═══ 全台年度亮點 ═══ */}
-      {highlights?.data && (() => {
-        const d = highlights.data;
-        const hasData = d.price_up_city || d.price_down_city || d.cheapest_city;
-        if (!hasData) return null;
-
-        const Card = ({ label, name, city: subCity, curPrice, prevPrice, pct, color }) => {
-          const isUp   = color === 'emerald';
-          const isDown = color === 'rose';
-          const isCheap = color === 'violet';
-
-          const bgMap = { emerald: 'bg-[#f2f5f0] border-[#dde0d8]', rose: 'bg-[#f8f0f0] border-[#e8d8d8]', violet: 'bg-[#f0eff5] border-[#d8d8e8]' };
-          const badgeBg = { emerald: 'bg-[#dde0d8] text-[#5a6b4e]', rose: 'bg-[#e8d8d8] text-[#a36b6b]', violet: 'bg-[#d8d8e8] text-[#7d6ba3]' };
-          const iconColor = { emerald: 'text-[#5a6b4e]', rose: 'text-[#a36b6b]', violet: 'text-[#7d6ba3]' };
-
-          return (
-            <div className={`${bgMap[color]} border rounded-sm p-4 flex flex-col justify-between min-h-[120px]`}>
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-xs font-medium text-stone-500">{label}</span>
-                {!isCheap && (
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-bold ${badgeBg[color]}`}>
-                    {isUp ? <IconTrendingUpBig className="w-3.5 h-3.5" /> : <IconTrendingDown className="w-3.5 h-3.5" />}
-                    {pct > 0 ? '+' : ''}{pct}%
-                  </span>
-                )}
-                {isCheap && (
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-sm text-xs font-bold ${badgeBg[color]}`}>
-                    <IconTag className="w-3.5 h-3.5" />
-                    最低
-                  </span>
-                )}
-              </div>
-              <div className="mt-2">
-                <div className="text-lg font-bold text-[#1a1a1a] leading-tight truncate">{name}</div>
-                {subCity && (
-                  <div className="text-xs text-stone-500 mt-0.5">{subCity}</div>
-                )}
-              </div>
-              <div className="mt-auto pt-3 flex items-baseline gap-2">
-                <span className="text-2xl font-bold text-[#1a1a1a] tabular-nums">{curPrice.toFixed(1)}</span>
-                <span className="text-xs text-stone-500">萬/坪</span>
-                {prevPrice != null && (
-                  <span className="text-sm text-stone-400 line-through ml-1 tabular-nums">{prevPrice.toFixed(1)}萬</span>
-                )}
-              </div>
-            </div>
-          );
-        };
-
-        return (
-          <section className="max-w-5xl mx-auto">
-            <div className="bg-white border border-[#e0ddd8] rounded-sm shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-[#edeae5] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <IconTrendingUp className="w-5 h-5 text-[#5a6b4e]" />
-                  <h2 className="text-base font-bold text-[#1a1a1a]">全台年度亮點</h2>
-                </div>
-                <div className="relative">
-                  <select value={highlightYear} onChange={(e) => setHighlightYear(parseInt(e.target.value))}
-                    className={`${selectClass} w-20`}>
-                    {years.slice(0, 5).map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
-                  <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
-                </div>
-              </div>
-              <div className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {d.price_up_city && <Card label="縣市漲最多" name={d.price_up_city.city} curPrice={d.price_up_city.avg_unit_price} prevPrice={d.price_up_city.prev_price} pct={d.price_up_city.yoy_pct} color="emerald" />}
-                {d.price_down_city && <Card label="縣市跌最多" name={d.price_down_city.city} curPrice={d.price_down_city.avg_unit_price} prevPrice={d.price_down_city.prev_price} pct={d.price_down_city.yoy_pct} color="rose" />}
-                {d.cheapest_city && <Card label="最便宜縣市" name={d.cheapest_city.city} curPrice={d.cheapest_city.avg_unit_price} color="violet" />}
-                {d.price_up_district && <Card label="行政區漲最多" name={d.price_up_district.district} city={d.price_up_district.city} curPrice={d.price_up_district.avg_unit_price} prevPrice={d.price_up_district.prev_price} pct={d.price_up_district.yoy_pct} color="emerald" />}
-                {d.price_down_district && <Card label="行政區跌最多" name={d.price_down_district.district} city={d.price_down_district.city} curPrice={d.price_down_district.avg_unit_price} prevPrice={d.price_down_district.prev_price} pct={d.price_down_district.yoy_pct} color="rose" />}
-                {d.cheapest_district && <Card label="最便宜行政區" name={d.cheapest_district.district} city={d.cheapest_district.city} curPrice={d.cheapest_district.avg_unit_price} color="violet" />}
-              </div>
-            </div>
-          </section>
-        );
-      })()}
-
-      {/* ═══ 即時房市儀表板 ═══ */}
-      <section className="max-w-5xl mx-auto">
-        <div className="bg-white border border-[#e0ddd8] rounded-sm shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-[#edeae5]">
+          {/* ── Dashboard Header ── */}
+          <div className="px-5 sm:px-6 py-4 border-b border-[#edeae5]">
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <IconTrendingUp className="w-5 h-5 text-[#5a6b4e]" />
-                <h2 className="text-base font-bold text-[#1a1a1a]">即時房市行情</h2>
+                <h2 className="text-base font-semibold text-[#2a2a2a]">即時房市行情</h2>
               </div>
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -607,7 +597,7 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <p className="text-xs text-stone-500 mt-2">{displayCity} · {year}年成交數據</p>
+            <p className="text-xs text-[#777] mt-2">{displayCity} · {year}年成交數據</p>
           </div>
 
           {loading ? (
@@ -619,7 +609,7 @@ export default function HomePage() {
             </div>
           ) : error ? (
             <div className="p-8 text-center">
-              <div className="text-sm text-stone-500">即時數據正在維護中，請稍後再試。</div>
+              <div className="text-sm text-[#777]">即時數據正在維護中，請稍後再試。</div>
               <Link href="/find" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border border-[#5a6b4e] text-[#5a6b4e] text-sm font-medium rounded-sm hover:bg-[#5a6b4e] hover:text-white transition-colors">
                 <IconSearch className="w-4 h-4" />
                 前往找房
@@ -627,7 +617,7 @@ export default function HomePage() {
             </div>
           ) : districts?.data?.length === 0 ? (
             <div className="p-8 text-center">
-              <div className="text-sm text-stone-500">{displayCity} {year}年暫無成交統計資料</div>
+              <div className="text-sm text-[#777]">{displayCity} {year}年暫無成交統計資料</div>
               <Link href="/find" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border border-[#5a6b4e] text-[#5a6b4e] text-sm font-medium rounded-sm hover:bg-[#5a6b4e] hover:text-white transition-colors">
                 <IconSearch className="w-4 h-4" />
                 前往找房
@@ -635,43 +625,46 @@ export default function HomePage() {
             </div>
           ) : (
             <div>
-              {/* ── Section 1: KPI Cards ── */}
-              <div className="px-5 pt-5 pb-2">
+
+              {/* ── KPI Cards using kpi-card-jp ── */}
+              <div className="px-5 sm:px-6 pt-5 pb-3">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {[
-                    { icon: <IconHome className="w-5 h-5" />, label: '總成交量', value: formatNum(totalTx), sub: '筆', color: 'text-[#5a6b4e]', bgColor: 'bg-[#f5f7f3]' },
-                    { icon: <IconTrendingUp className="w-5 h-5" />, label: '平均單價', value: avgUnitPrice.toFixed(1), sub: yoyChange ? `${yoyChange > 0 ? '+' : ''}${yoyChange}% YoY` : '萬/坪', color: 'text-[#5a6b4e]', bgColor: 'bg-[#f5f7f3]' },
-                    { icon: <IconMapPin className="w-5 h-5" />, label: '涵蓋區域', value: districts?.data?.length || 0, sub: '個行政區', color: 'text-[#6b7fa3]', bgColor: 'bg-[#f3f5f7]' },
-                    { icon: <IconBuilding className="w-5 h-5" />, label: '平均總價', value: formatTotal(districts?.data?.reduce((s, r) => s + ((r.avg_total_price || 0) * (r.count || 0)), 0) / totalTx), sub: '', color: 'text-[#b8956a]', bgColor: 'bg-[#f7f5f3]' },
+                    { icon: <IconHome className="w-4 h-4" />, label: '總成交量', value: formatNum(totalTx), change: '筆', type: '' },
+                    { icon: <IconTrendingUp className="w-4 h-4" />, label: '平均單價', value: `${avgUnitPrice.toFixed(1)} 萬/坪`, change: yoyChange ? `${yoyChange > 0 ? '+' : ''}${yoyChange}% YoY` : '', type: '' },
+                    { icon: <IconMapPin className="w-4 h-4" />, label: '涵蓋區域', value: `${districts?.data?.length || 0}`, change: '個行政區', type: 'kpi-info' },
+                    { icon: <IconBuilding className="w-4 h-4" />, label: '平均總價', value: formatTotal(districts?.data?.reduce((s, r) => s + ((r.avg_total_price || 0) * (r.count || 0)), 0) / totalTx), change: '', type: '' },
                   ].map((kpi, i) => (
-                    <div key={i} className={`${kpi.bgColor} rounded-sm p-4`}>
-                      <div className="flex items-center gap-1.5 text-stone-500 mb-2">
-                        {kpi.icon}
-                        <span className="text-xs font-medium">{kpi.label}</span>
+                    <div key={i} className={`kpi-card-jp ${kpi.type}`}>
+                      <div className="kpi-label flex items-center gap-1.5">
+                        <span className="text-[#5a6b4e]">{kpi.icon}</span>
+                        {kpi.label}
                       </div>
-                      <div className={`text-2xl font-bold ${kpi.color} tabular-nums`}>{kpi.value}</div>
-                      {kpi.sub && <div className="text-xs text-stone-500 mt-1">{kpi.sub}</div>}
+                      <div className="kpi-value tabular-nums">{kpi.value}</div>
+                      {kpi.change && (
+                        <div className="kpi-change positive">{kpi.change}</div>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* ── Section 2: Trend Charts ── */}
-              <div className="px-5 py-4">
-                <div className="text-sm font-semibold text-stone-700 mb-3">近月均價走勢</div>
+              {/* ── Trend Charts ── */}
+              <div className="px-5 sm:px-6 py-4">
+                <div className="text-sm font-semibold text-[#2a2a2a] mb-3">近月均價走勢</div>
                 <PriceTrendChart data={trends?.data || []} />
               </div>
 
-              <div className="px-5 py-4 border-t border-[#edeae5]">
-                <div className="text-sm font-semibold text-stone-700 mb-3">近月成交量</div>
+              <div className="px-5 sm:px-6 py-4 border-t border-[#edeae5]">
+                <div className="text-sm font-semibold text-[#2a2a2a] mb-3">近月成交量</div>
                 <VolumeBarChart data={trends?.data || []} />
               </div>
 
-              {/* ── Section 3: Rankings & Distributions ── */}
+              {/* ── Rankings & Distributions ── */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-0 divide-y md:divide-y-0 md:divide-x divide-[#edeae5]">
-                <div className="p-5 space-y-6">
+                <div className="p-5 sm:p-6 space-y-6">
                   <div>
-                    <div className="text-sm font-semibold text-stone-700 mb-3">單價最高前 5 區</div>
+                    <div className="text-sm font-semibold text-[#2a2a2a] mb-3">單價最高前 5 區</div>
                     <HBarRanking
                       items={top5Price}
                       valueKey="avg_unit_price"
@@ -681,7 +674,7 @@ export default function HomePage() {
                     />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-stone-700 mb-3">成交量最高前 5 區</div>
+                    <div className="text-sm font-semibold text-[#2a2a2a] mb-3">成交量最高前 5 區</div>
                     <HBarRanking
                       items={top5Volume}
                       valueKey="count"
@@ -693,13 +686,13 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="p-5 space-y-6">
+                <div className="p-5 sm:p-6 space-y-6">
                   <div>
-                    <div className="text-sm font-semibold text-stone-700 mb-3">總價區間分佈</div>
+                    <div className="text-sm font-semibold text-[#2a2a2a] mb-3">總價區間分佈</div>
                     <DonutChart data={(priceDist?.data || []).map(d => ({ label: d.label, count: d.value }))} size={160} />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-stone-700 mb-3">建物型態 TOP 5</div>
+                    <div className="text-sm font-semibold text-[#2a2a2a] mb-3">建物型態 TOP 5</div>
                     <HBarRanking
                       items={buildingTypes?.data?.slice(0, 5) || []}
                       valueKey="count"
@@ -710,10 +703,10 @@ export default function HomePage() {
                     />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-stone-700 mb-3 flex items-center gap-2">
+                    <div className="text-sm font-semibold text-[#2a2a2a] mb-3 flex items-center gap-2">
                       屋齡分佈
                       {ageDist?.avg_building_age != null && (
-                        <span className="text-xs font-normal text-stone-400">（平均 {ageDist.avg_building_age} 年）</span>
+                        <span className="text-xs font-normal text-[#777]">（平均 {ageDist.avg_building_age} 年）</span>
                       )}
                     </div>
                     <AgeDistChart data={ageDist?.data || []} avgAge={ageDist?.avg_building_age} />
@@ -721,9 +714,9 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* CTA */}
-              <div className="px-5 py-4 border-t border-[#edeae5]">
-                <Link href="/find" className="flex items-center justify-center gap-2 w-full py-3 rounded-sm bg-stone-50 border border-[#e0ddd8] text-sm font-medium text-stone-700 hover:bg-stone-100 hover:border-[#d0cdc8] transition-all">
+              {/* ── CTA ── */}
+              <div className="px-5 sm:px-6 py-4 border-t border-[#edeae5]">
+                <Link href="/find" className="flex items-center justify-center gap-2 w-full py-3 rounded-sm bg-stone-50 border border-[#e8e4df] text-sm font-medium text-[#2a2a2a] hover:bg-stone-100 hover:border-[#d0cdc8] transition-all">
                   瀏覽更多成交紀錄
                   <IconArrowRight className="w-4 h-4" />
                 </Link>
@@ -734,8 +727,8 @@ export default function HomePage() {
       </section>
 
       {/* ═══ Footer ═══ */}
-      <footer className="text-center py-6 border-t border-[#e0ddd8]">
-        <p className="text-xs text-stone-400">資料僅供參考，實際交易條件以內政部實價登錄為準。</p>
+      <footer className="text-center py-6 border-t border-[#e8e4df]">
+        <p className="text-xs text-[#777]">資料僅供參考，實際交易條件以內政部實價登錄為準。</p>
       </footer>
     </div>
   );

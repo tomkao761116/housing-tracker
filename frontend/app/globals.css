@@ -1,311 +1,297 @@
 @import "tailwindcss";
 
 /* ============================================
-  TAILWIND V4 — Override emerald/stone with Scheme A
-  讓現有頁面的 emerald-* / stone-* 類別直接套用方案 A 配色
+  TAILWIND V4 — Japanese Minimalist Palette
+  Maps all Tailwind color families to a cohesive
+  muted sage + warm neutral system.
   ============================================ */
 
 @theme {
-  /* emerald → Muted Sage Green (霧銅綠) */
-  --color-emerald-50: #f0f7ed;
-  --color-emerald-100: #e3edd9;
-  --color-emerald-200: #cddcb8;
-  --color-emerald-300: #b5c99a;
-  --color-emerald-400: #9ab57d;
-  --color-emerald-500: #637d56;
-  --color-emerald-600: #556b48;
-  --color-emerald-700: #4a5d3e;
-  --color-emerald-800: #3f4f34;
-  --color-emerald-900: #35412a;
+  /* emerald → Muted Sage Green (accent core) */
+  --color-emerald-50: #f4f6f2;
+  --color-emerald-100: #e8ede3;
+  --color-emerald-200: #cdd8cb;
+  --color-emerald-300: #a8b89e;
+  --color-emerald-400: #7e9773;
+  --color-emerald-500: #5a6b4e;
+  --color-emerald-600: #4d5c42;
+  --color-emerald-700: #404d36;
+  --color-emerald-800: #333e2b;
+  --color-emerald-900: #262f1f;
 
-  /* stone → Slate/Navy (深鈦灰) */
-  --color-stone-50: #f8fafc;
-  --color-stone-100: #f1f5f9;
-  --color-stone-200: #e2e8f0;
-  --color-stone-300: #cbd5e1;
-  --color-stone-400: #94a3b8;
-  --color-stone-500: #64748b;
-  --color-stone-600: #475569;
-  --color-stone-700: #334155;
-  --color-stone-800: #1e293b;
-  --color-stone-900: #0f172a;
+  /* stone → Warm Greys (Japanese paper tones) */
+  --color-stone-50: #faf9f7;
+  --color-stone-100: #f2f0ec;
+  --color-stone-200: #e8e4df;
+  --color-stone-300: #d0cdc8;
+  --color-stone-400: #a8a49e;
+  --color-stone-500: #777777;
+  --color-stone-600: #5c5c5c;
+  --color-stone-700: #404040;
+  --color-stone-800: #2a2a2a;
+  --color-stone-900: #1a1a1a;
 
-  /* slate → 深鈦灰 (Layout 導航列等使用) */
-  --color-slate-50: #f8fafc;
-  --color-slate-100: #f1f5f9;
-  --color-slate-200: #e2e8f0;
-  --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
-  --color-slate-800: #1e293b;
-  --color-slate-900: #0f172a;
+  /* slate → Warm Neutral (text & layout) */
+  --color-slate-50: #faf9f7;
+  --color-slate-100: #f2f0ec;
+  --color-slate-200: #e8e4df;
+  --color-slate-300: #d0cdc8;
+  --color-slate-400: #a8a49e;
+  --color-slate-500: #888888;
+  --color-slate-600: #5c5c5c;
+  --color-slate-700: #404040;
+  --color-slate-800: #2a2a2a;
+  --color-slate-900: #1a1a1a;
 
-  /* zinc → 深鈦灰 (文字、邊框等使用) */
-  --color-zinc-50: #fafafa;
-  --color-zinc-100: #f4f4f5;
-  --color-zinc-200: #e4e4e7;
-  --color-zinc-300: #d4d4d8;
-  --color-zinc-400: #a1a1aa;
-  --color-zinc-500: #71717a;
-  --color-zinc-600: #52525b;
-  --color-zinc-700: #3f3f46;
-  --color-zinc-800: #27272a;
-  --color-zinc-900: #18181b;
+  /* zinc → Warm Neutral (secondary text) */
+  --color-zinc-50: #faf9f7;
+  --color-zinc-100: #f2f0ec;
+  --color-zinc-200: #e8e4df;
+  --color-zinc-300: #d0cdc8;
+  --color-zinc-400: #999999;
+  --color-zinc-500: #777777;
+  --color-zinc-600: #5c5c5c;
+  --color-zinc-700: #404040;
+  --color-zinc-800: #2a2a2a;
+  --color-zinc-900: #1a1a1a;
 
-  /* blue → 深鈦灰偏藍 (KPI 卡片等使用) */
-  --color-blue-50: #f1f5f9;
-  --color-blue-100: #e2e8f0;
-  --color-blue-200: #cbd5e1;
-  --color-blue-300: #94a3b8;
-  --color-blue-400: #64748b;
-  --color-blue-500: #475569;
-  --color-blue-600: #334155;
-  --color-blue-700: #1e293b;
-  --color-blue-800: #0f172a;
-  --color-blue-900: #0c1220;
+  /* gray → Warm Neutral */
+  --color-gray-50: #faf9f7;
+  --color-gray-100: #f2f0ec;
+  --color-gray-200: #e8e4df;
+  --color-gray-300: #d0cdc8;
+  --color-gray-400: #a8a49e;
+  --color-gray-500: #888888;
+  --color-gray-600: #5c5c5c;
+  --color-gray-700: #404040;
+  --color-gray-800: #2a2a2a;
+  --color-gray-900: #1a1a1a;
 
-  /* amber → 琥珀金 (方案A 強調色) */
-  --color-amber-50: #fffbeb;
-  --color-amber-100: #fef3c7;
-  --color-amber-200: #fde68a;
-  --color-amber-300: #fcd34d;
-  --color-amber-400: #fbbf24;
-  --color-amber-500: #f59e0b;
-  --color-amber-600: #d97706;
-  --color-amber-700: #b45309;
-  --color-amber-800: #92400e;
-  --color-amber-900: #78350f;
+  /* blue → Muted Blue-Grey (KPI accent, calm) */
+  --color-blue-50: #f0f2f4;
+  --color-blue-100: #e2e6ea;
+  --color-blue-200: #c8d0d8;
+  --color-blue-300: #a0adb8;
+  --color-blue-400: #7a8da0;
+  --color-blue-500: #5a6e82;
+  --color-blue-600: #4a5c6e;
+  --color-blue-700: #3a4a5a;
+  --color-blue-800: #2a3846;
+  --color-blue-900: #1a2632;
 
-  /* teal → 霧銅綠 (與 emerald 一致) */
-  --color-teal-50: #f0f7ed;
-  --color-teal-100: #e3edd9;
-  --color-teal-200: #cddcb8;
-  --color-teal-300: #b5c99a;
-  --color-teal-400: #9ab57d;
-  --color-teal-500: #637d56;
-  --color-teal-600: #556b48;
-  --color-teal-700: #4a5d3e;
-  --color-teal-800: #3f4f34;
-  --color-teal-900: #35412a;
+  /* amber → Warm Gold (warnings, highlights) */
+  --color-amber-50: #fdf9f0;
+  --color-amber-100: #f7edd4;
+  --color-amber-200: #efdbaf;
+  --color-amber-300: #e2c47a;
+  --color-amber-400: #d4a84a;
+  --color-amber-500: #c49432;
+  --color-amber-600: #a67d2a;
+  --color-amber-700: #886622;
+  --color-amber-800: #6a501a;
+  --color-amber-900: #4c3a12;
 
-  /* rose → 深鈦灰紅調 (錯誤/警示用) */
-  --color-rose-50: #fef2f2;
-  --color-rose-100: #fee2e2;
-  --color-rose-200: #fecaca;
-  --color-rose-300: #fca5a5;
-  --color-rose-400: #f87171;
-  --color-rose-500: #ef4444;
-  --color-rose-600: #dc2626;
-  --color-rose-700: #b91c1c;
-  --color-rose-800: #991b1b;
-  --color-rose-900: #7f1d1d;
+  /* red / rose → Muted Crimson (errors, alerts) */
+  --color-red-50: #fdf3f3;
+  --color-red-100: #f9e0e0;
+  --color-red-200: #f0c8c8;
+  --color-red-300: #e0a0a0;
+  --color-red-400: #c97a7a;
+  --color-red-500: #a85555;
+  --color-red-600: #8a4444;
+  --color-red-700: #6b3333;
+  --color-red-800: #4d2222;
+  --color-red-900: #2e1111;
 
-  /* red → 與 rose 一致 */
-  --color-red-50: #fef2f2;
-  --color-red-100: #fee2e2;
-  --color-red-200: #fecaca;
-  --color-red-300: #fca5a5;
-  --color-red-400: #f87171;
-  --color-red-500: #ef4444;
-  --color-red-600: #dc2626;
-  --color-red-700: #b91c1c;
-  --color-red-800: #991b1b;
-  --color-red-900: #7f1d1d;
+  --color-rose-50: #fdf3f3;
+  --color-rose-100: #f9e0e0;
+  --color-rose-200: #f0c8c8;
+  --color-rose-300: #e0a0a0;
+  --color-rose-400: #c97a7a;
+  --color-rose-500: #a85555;
+  --color-rose-600: #8a4444;
+  --color-rose-700: #6b3333;
+  --color-rose-800: #4d2222;
+  --color-rose-900: #2e1111;
 
-  /* green → 霧銅綠 (與 emerald 一致) */
-  --color-green-50: #f0f7ed;
-  --color-green-100: #e3edd9;
-  --color-green-200: #cddcb8;
-  --color-green-300: #b5c99a;
-  --color-green-400: #9ab57d;
-  --color-green-500: #637d56;
-  --color-green-600: #556b48;
-  --color-green-700: #4a5d3e;
-  --color-green-800: #3f4f34;
-  --color-green-900: #35412a;
+  /* green → Muted Sage (matches emerald) */
+  --color-green-50: #f4f6f2;
+  --color-green-100: #e8ede3;
+  --color-green-200: #cdd8cb;
+  --color-green-300: #a8b89e;
+  --color-green-400: #7e9773;
+  --color-green-500: #5a6b4e;
+  --color-green-600: #4d5c42;
+  --color-green-700: #404d36;
+  --color-green-800: #333e2b;
+  --color-green-900: #262f1f;
 
-  /* indigo → 深鈦灰偏紫 (方案A 輔助色) */
-  --color-indigo-50: #f1f5f9;
-  --color-indigo-100: #e2e8f0;
-  --color-indigo-200: #cbd5e1;
-  --color-indigo-300: #94a3b8;
-  --color-indigo-400: #64748b;
-  --color-indigo-500: #475569;
-  --color-indigo-600: #334155;
-  --color-indigo-700: #1e293b;
-  --color-indigo-800: #0f172a;
-  --color-indigo-900: #0c1220;
+  /* teal → Muted Sage-Teal */
+  --color-teal-50: #f2f5f4;
+  --color-teal-100: #e3ece9;
+  --color-teal-200: #c9ddd5;
+  --color-teal-300: #a0beb3;
+  --color-teal-400: #789e92;
+  --color-teal-500: #557f72;
+  --color-teal-600: #466a5e;
+  --color-teal-700: #37554a;
+  --color-teal-800: #284036;
+  --color-teal-900: #192b22;
 
-  /* purple → 深鈦灰偏紫 */
-  --color-purple-50: #f1f5f9;
-  --color-purple-100: #e2e8f0;
-  --color-purple-200: #cbd5e1;
-  --color-purple-300: #94a3b8;
-  --color-purple-400: #64748b;
-  --color-purple-500: #475569;
-  --color-purple-600: #334155;
-  --color-purple-700: #1e293b;
-  --color-purple-800: #0f172a;
-  --color-purple-900: #0c1220;
+  /* cyan → Muted Aqua */
+  --color-cyan-50: #f0f5f6;
+  --color-cyan-100: #ddf0f2;
+  --color-cyan-200: #bce0e4;
+  --color-cyan-300: #8cc8cf;
+  --color-cyan-400: #5baaae;
+  --color-cyan-500: #408a94;
+  --color-cyan-600: #336e76;
+  --color-cyan-700: #265258;
+  --color-cyan-800: #19363a;
+  --color-cyan-900: #0c1a1c;
 
-  /* orange → 琥珀金 (與 amber 一致) */
-  --color-orange-50: #fffbeb;
-  --color-orange-100: #fef3c7;
-  --color-orange-200: #fde68a;
-  --color-orange-300: #fcd34d;
-  --color-orange-400: #fbbf24;
-  --color-orange-500: #f59e0b;
-  --color-orange-600: #d97706;
-  --color-orange-700: #b45309;
-  --color-orange-800: #92400e;
-  --color-orange-900: #78350f;
+  /* indigo → Muted Indigo-Grey */
+  --color-indigo-50: #f2f2f6;
+  --color-indigo-100: #e4e4ed;
+  --color-indigo-200: #c9c9dc;
+  --color-indigo-300: #a0a0c0;
+  --color-indigo-400: #7878a4;
+  --color-indigo-500: #5c5c88;
+  --color-indigo-600: #4a4a6e;
+  --color-indigo-700: #383854;
+  --color-indigo-800: #26263a;
+  --color-indigo-900: #141420;
 
-  /* yellow → 琥珀金淺色 */
-  --color-yellow-50: #fffbeb;
-  --color-yellow-100: #fef3c7;
-  --color-yellow-200: #fde68a;
-  --color-yellow-300: #fcd34d;
-  --color-yellow-400: #fbbf24;
-  --color-yellow-500: #f59e0b;
-  --color-yellow-600: #d97706;
-  --color-yellow-700: #b45309;
-  --color-yellow-800: #92400e;
-  --color-yellow-900: #78350f;
+  /* purple → Muted Lavender-Grey */
+  --color-purple-50: #f4f2f6;
+  --color-purple-100: #e8e2ed;
+  --color-purple-200: #d2c8dc;
+  --color-purple-300: #b4a0c0;
+  --color-purple-400: #9678a4;
+  --color-purple-500: #785088;
+  --color-purple-600: #5e3e6e;
+  --color-purple-700: #442c54;
+  --color-purple-800: #2a1a3a;
+  --color-purple-900: #140820;
 
-  /* cyan → 霧銅綠偏藍 */
-  --color-cyan-50: #f0f7ed;
-  --color-cyan-100: #e3edd9;
-  --color-cyan-200: #cddcb8;
-  --color-cyan-300: #b5c99a;
-  --color-cyan-400: #9ab57d;
-  --color-cyan-500: #637d56;
-  --color-cyan-600: #556b48;
-  --color-cyan-700: #4a5d3e;
-  --color-cyan-800: #3f4f34;
-  --color-cyan-900: #35412a;
+  /* pink → Muted Dusty Rose */
+  --color-pink-50: #fdf4f5;
+  --color-pink-100: #fae4e8;
+  --color-pink-200: #f3ccd3;
+  --color-pink-300: #e8a8b4;
+  --color-pink-400: #d08494;
+  --color-pink-500: #b46074;
+  --color-pink-600: #8e4c5c;
+  --color-pink-700: #683844;
+  --color-pink-800: #42242c;
+  --color-pink-900: #1c1014;
 
-  /* fuchsia → 深鈦灰 */
-  --color-fuchsia-50: #f8fafc;
-  --color-fuchsia-100: #f1f5f9;
-  --color-fuchsia-200: #e2e8f0;
-  --color-fuchsia-300: #cbd5e1;
-  --color-fuchsia-400: #94a3b8;
-  --color-fuchsia-500: #64748b;
-  --color-fuchsia-600: #475569;
-  --color-fuchsia-700: #334155;
-  --color-fuchsia-800: #1e293b;
-  --color-fuchsia-900: #0f172a;
+  /* orange → Warm Terracotta */
+  --color-orange-50: #fdf6f0;
+  --color-orange-100: #fae6d4;
+  --color-orange-200: #f3cdbf;
+  --color-orange-300: #e8ad8e;
+  --color-orange-400: #d48a5e;
+  --color-orange-500: #b86a3a;
+  --color-orange-600: #94542e;
+  --color-orange-700: #703e22;
+  --color-orange-800: #4c2816;
+  --color-orange-900: #28120a;
 
-  /* pink → 深鈦灰 */
-  --color-pink-50: #f8fafc;
-  --color-pink-100: #f1f5f9;
-  --color-pink-200: #e2e8f0;
-  --color-pink-300: #cbd5e1;
-  --color-pink-400: #94a3b8;
-  --color-pink-500: #64748b;
-  --color-pink-600: #475569;
-  --color-pink-700: #334155;
-  --color-pink-800: #1e293b;
-  --color-pink-900: #0f172a;
+  /* yellow → Warm Ochre */
+  --color-yellow-50: #fdfbf0;
+  --color-yellow-100: #faf3d4;
+  --color-yellow-200: #f4e6bf;
+  --color-yellow-300: #e8d48e;
+  --color-yellow-400: #d4bc5e;
+  --color-yellow-500: #b8a03a;
+  --color-yellow-600: #94802e;
+  --color-yellow-700: #706022;
+  --color-yellow-800: #4c4016;
+  --color-yellow-900: #28200a;
 
-  /* lime → 霧銅綠 */
-  --color-lime-50: #f0f7ed;
-  --color-lime-100: #e3edd9;
-  --color-lime-200: #cddcb8;
-  --color-lime-300: #b5c99a;
-  --color-lime-400: #9ab57d;
-  --color-lime-500: #637d56;
-  --color-lime-600: #556b48;
-  --color-lime-700: #4a5d3e;
-  --color-lime-800: #3f4f34;
-  --color-lime-900: #35412a;
+  /* lime → Muted Lime-Sage */
+  --color-lime-50: #f5f7f0;
+  --color-lime-100: #e8ecd4;
+  --color-lime-200: #d4dbbf;
+  --color-lime-300: #b8c48e;
+  --color-lime-400: #94ab5e;
+  --color-lime-500: #70883a;
+  --color-lime-600: #586a2e;
+  --color-lime-700: #404c22;
+  --color-lime-800: #282e16;
+  --color-lime-900: #10100a;
 
-  /* sky → 深鈦灰 */
-  --color-sky-50: #f8fafc;
-  --color-sky-100: #f1f5f9;
-  --color-sky-200: #e2e8f0;
-  --color-sky-300: #cbd5e1;
-  --color-sky-400: #94a3b8;
-  --color-sky-500: #64748b;
-  --color-sky-600: #475569;
-  --color-sky-700: #334155;
-  --color-sky-800: #1e293b;
-  --color-sky-900: #0f172a;
+  /* sky → Muted Sky Grey */
+  --color-sky-50: #f0f4f7;
+  --color-sky-100: #dbe8f0;
+  --color-sky-200: #b9d2e4;
+  --color-sky-300: #8bb4cc;
+  --color-sky-400: #5d96bc;
+  --color-sky-500: #4078a0;
+  --color-sky-600: #335e80;
+  --color-sky-700: #264460;
+  --color-sky-800: #192a40;
+  --color-sky-900: #0c1020;
 
-  /* gray → 深鈦灰 */
-  --color-gray-50: #f8fafc;
-  --color-gray-100: #f1f5f9;
-  --color-gray-200: #e2e8f0;
-  --color-gray-300: #cbd5e1;
-  --color-gray-400: #94a3b8;
-  --color-gray-500: #64748b;
-  --color-gray-600: #475569;
-  --color-gray-700: #334155;
-  --color-gray-800: #1e293b;
-  --color-gray-900: #0f172a;
+  /* fuchsia → Muted Mauve */
+  --color-fuchsia-50: #f6f2f6;
+  --color-fuchsia-100: #ede0ed;
+  --color-fuchsia-200: #d4bcd6;
+  --color-fuchsia-300: #c4a0c0;
+  --color-fuchsia-400: #a878a4;
+  --color-fuchsia-500: #8c5088;
+  --color-fuchsia-600: #703e6e;
+  --color-fuchsia-700: #542c54;
+  --color-fuchsia-800: #381a3a;
+  --color-fuchsia-900: #1c0820;
 }
 
 /* ============================================
-  DESIGN SYSTEM — Deep Titanium + Muted Sage (方案A)
-  深鈦灰 + 霧銅綠 — 沉穩、專業、高質感
+  DESIGN SYSTEM — Japanese Minimalist
+  和風ミニマル — 静寂、余白、自然
+  Core palette: warm cream, muted sage, near-black
   ============================================ */
 
 :root {
-  /* Primary — Slate/Navy (專業、沉穩、可信賴) */
-  --primary-50: #f8fafc;
-  --primary-100: #f1f5f9;
-  --primary-200: #e2e8f0;
-  --primary-300: #cbd5e1;
-  --primary-400: #94a3b8;
-  --primary-500: #64748b;
-  --primary-600: #475569;
-  --primary-700: #334155;
-  --primary-800: #1e293b;
-  --primary-900: #0f172a;
+  /* Brand Accent — Muted Sage Green */
+  --jp-accent: #5a6b4e;
+  --jp-accent-hover: #4d5c42;
+  --jp-accent-light: #e8ede3;
+  --jp-accent-lighter: #f4f6f2;
+  --jp-accent-subtle: rgba(90, 107, 78, 0.08);
+  --jp-accent-border: rgba(90, 107, 78, 0.2);
 
-  /* Accent — Muted Sage Green (低調、自然、安定) */
-  --accent-50: #f0f7ed;
-  --accent-100: #e3edd9;
-  --accent-200: #cddcb8;
-  --accent-300: #b5c99a;
-  --accent-400: #9ab57d;
-  --accent-500: #637d56;
-  --accent-600: #556b48;
-  --accent-700: #4a5d3e;
-
-  /* Solid brand colors (no gradients) */
-  --brand-solid: var(--accent-500);
-  --brand-solid-hover: var(--accent-600);
-  --warm-solid: var(--accent-600);
-  --hero-solid: var(--primary-800);
-
-  /* Neutrals — Cool Zinc (冷調灰階) */
-  --neutral-50: #fafafa;
-  --neutral-100: #f4f4f5;
-  --neutral-200: #e4e4e7;
-  --neutral-300: #d4d4d8;
-  --neutral-400: #a1a1aa;
-  --neutral-500: #71717a;
-  --neutral-600: #52525b;
-  --neutral-700: #3f3f46;
-  --neutral-800: #27272a;
-  --neutral-900: #18181b;
+  /* Neutrals — Warm Paper Tones */
+  --jp-bg: #faf9f7;
+  --jp-bg-elevated: #ffffff;
+  --jp-bg-muted: #f2f0ec;
+  --jp-text-primary: #2a2a2a;
+  --jp-text-secondary: #777777;
+  --jp-text-tertiary: #999999;
+  --jp-text-disabled: #bbbbbb;
+  --jp-border-light: #e8e4df;
+  --jp-border-medium: #d0cdc8;
+  --jp-border-strong: #a8a49e;
 
   /* Semantic */
-  --success: #637d56;
-  --warning: #928a5a;
-  --danger: #991b1b;
-  --info: #475569;
+  --jp-success: #5a6b4e;
+  --jp-warning: #b8943a;
+  --jp-danger: #a85555;
+  --jp-info: #5a6e82;
 
-  /* Chart Palette — Muted tones for data visualization */
-  --chart-1: #475569;
-  --chart-2: #637d56;
-  --chart-3: #7c8a9a;
-  --chart-4: #8b9da0;
-  --chart-5: #a3b0a0;
-  --chart-6: #b8c4b0;
+  /* Shadows — Subtle, layered */
+  --jp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --jp-shadow-md: 0 1px 4px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
+  --jp-shadow-lg: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  /* Chart Palette — Muted, harmonious */
+  --chart-1: #5a6b4e;
+  --chart-2: #5a6e82;
+  --chart-3: #7e9773;
+  --chart-4: #a8a49e;
+  --chart-5: #b8943a;
+  --chart-6: #a85555;
 }
 
 /* ============================================
@@ -320,79 +306,42 @@ html {
 }
 
 body {
-  background: #f1f5f9;
-  color: var(--neutral-900);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+  background: var(--jp-bg);
+  color: var(--jp-text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
   min-height: 100vh;
-  position: relative;
   overflow-x: hidden;
   font-size: 16px;
-  line-height: 1.6;
-}
-
-/* Park line art background */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url('/park-background.svg');
-  background-size: 800px 600px;
-  background-position: center;
-  background-repeat: repeat;
-  opacity: 0.4;
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Subtle sage overlay for warmth */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(241, 245, 249, 0.95) 0%,
-    rgba(240, 247, 237, 0.9) 50%,
-    rgba(241, 245, 249, 0.95) 100%
-  );
-  pointer-events: none;
-  z-index: -1;
+  line-height: 1.7;
 }
 
 /* ============================================
-   CUSTOM SCROLLBAR
+   CUSTOM SCROLLBAR — Adapted to JP palette
    ============================================ */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--neutral-100);
-  border-radius: 4px;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 125, 86, 0.25);
-  border-radius: 4px;
+  background: rgba(90, 107, 78, 0.2);
+  border-radius: 3px;
   transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 125, 86, 0.4);
+  background: rgba(90, 107, 78, 0.35);
 }
 
 /* Firefox scrollbar */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(99, 125, 86, 0.25) var(--neutral-100);
+  scrollbar-color: rgba(90, 107, 78, 0.2) transparent;
 }
 
 /* ============================================
@@ -428,10 +377,10 @@ body::after {
 
 @keyframes pulseGlow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(99, 125, 86, 0.2);
+    box-shadow: 0 0 5px rgba(90, 107, 78, 0.15);
   }
   50% {
-    box-shadow: 0 0 20px rgba(99, 125, 86, 0.4);
+    box-shadow: 0 0 20px rgba(90, 107, 78, 0.3);
   }
 }
 
@@ -468,45 +417,6 @@ body::after {
   50% {
     transform: translateY(-8px);
   }
-}
-
-/* ============================================
-   TEXTURE SHADOW SYSTEM — Premium depth layers
-   ============================================ */
-
-/* Subtle surface shadow — cards, panels */
-.shadow-texture-sm {
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 2px 4px rgba(0, 0, 0, 0.02);
-}
-
-/* Medium depth — elevated cards, modals */
-.shadow-texture-md {
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    0 4px 8px rgba(0, 0, 0, 0.03),
-    0 1px 0 rgba(255, 255, 255, 0.8) inset;
-}
-
-/* Large depth — hero sections, featured content */
-.shadow-texture-lg {
-  box-shadow:
-    0 4px 8px rgba(0, 0, 0, 0.05),
-    0 8px 16px rgba(0, 0, 0, 0.04),
-    0 1px 0 rgba(255, 255, 255, 0.9) inset;
-}
-
-/* Premium border highlight — subtle top edge light */
-.border-texture {
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-top: 1px solid rgba(255, 255, 255, 0.9);
-}
-
-/* Sage accent border variant */
-.border-texture-sage {
-  border: 1px solid rgba(99, 125, 86, 0.1);
-  border-top: 1px solid rgba(255, 255, 255, 0.9);
 }
 
 .animate-fade-in {
@@ -560,61 +470,349 @@ body::after {
 .skeleton {
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.03) 25%,
-    rgba(0, 0, 0, 0.06) 50%,
-    rgba(0, 0, 0, 0.03) 75%
+    rgba(0, 0, 0, 0.02) 25%,
+    rgba(0, 0, 0, 0.05) 50%,
+    rgba(0, 0, 0, 0.02) 75%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-  border-radius: 8px;
+  border-radius: 6px;
 }
+
+/* ============================================
+   COMPONENT CLASSES — Japanese Minimalist
+   ============================================ */
+
+/* --- Card --- */
+.card-jp {
+  background: var(--jp-bg-elevated);
+  border-radius: 16px;
+  box-shadow: var(--jp-shadow-sm);
+  border: 1px solid var(--jp-border-light);
+  padding: 24px;
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.card-jp:hover {
+  box-shadow: var(--jp-shadow-md);
+}
+
+/* --- Buttons --- */
+.btn-jp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--jp-accent);
+  background: transparent;
+  border: 1px solid var(--jp-accent);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-jp:hover {
+  background: var(--jp-accent);
+  color: #ffffff;
+}
+
+.btn-jp:active {
+  background: var(--jp-accent-hover);
+  border-color: var(--jp-accent-hover);
+}
+
+.btn-jp:focus-visible {
+  outline: 2px solid var(--jp-accent);
+  outline-offset: 2px;
+}
+
+.btn-jp-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #ffffff;
+  background: var(--jp-accent);
+  border: 1px solid var(--jp-accent);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.btn-jp-solid:hover {
+  background: var(--jp-accent-hover);
+  border-color: var(--jp-accent-hover);
+}
+
+.btn-jp-solid:active {
+  background: var(--jp-accent-hover);
+  border-color: var(--jp-accent-hover);
+}
+
+.btn-jp-solid:focus-visible {
+  outline: 2px solid var(--jp-accent);
+  outline-offset: 2px;
+}
+
+/* --- Divider --- */
+.divider-jp {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.divider-jp::before,
+.divider-jp::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--jp-border-medium);
+}
+
+.divider-jp svg,
+.divider-jp span {
+  flex-shrink: 0;
+  color: var(--jp-text-tertiary);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+/* --- Stat Grid --- */
+.stat-grid-jp {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: var(--jp-bg-elevated);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--jp-shadow-sm);
+  border: 1px solid var(--jp-border-light);
+}
+
+.stat-grid-jp > :not(:last-child) {
+  border-right: 1px solid var(--jp-border-light);
+}
+
+.stat-grid-jp .stat-item {
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.stat-grid-jp .stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--jp-text-primary);
+  line-height: 1.2;
+}
+
+.stat-grid-jp .stat-label {
+  font-size: 13px;
+  color: var(--jp-text-secondary);
+  margin-top: 4px;
+}
+
+/* --- Tag --- */
+.tag-jp {
+  display: inline-block;
+  padding: 2px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--jp-accent);
+  border-bottom: 1.5px solid var(--jp-accent);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.tag-jp-neutral {
+  display: inline-block;
+  padding: 2px 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--jp-text-secondary);
+  border-bottom: 1.5px solid var(--jp-border-medium);
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+/* --- Section Header --- */
+.section-header-jp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.section-header-jp h2,
+.section-header-jp h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--jp-text-primary);
+  margin: 0;
+}
+
+.section-header-jp .section-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--jp-accent);
+  flex-shrink: 0;
+}
+
+.section-header-jp .section-controls {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Input --- */
+.input-jp {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--jp-text-primary);
+  background: var(--jp-bg-elevated);
+  border: 1px solid var(--jp-border-light);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.input-jp::placeholder {
+  color: var(--jp-text-tertiary);
+}
+
+.input-jp:focus {
+  border-color: var(--jp-accent);
+  box-shadow: 0 0 0 3px var(--jp-accent-subtle);
+}
+
+.input-jp:disabled {
+  background: var(--jp-bg-muted);
+  color: var(--jp-text-disabled);
+  cursor: not-allowed;
+}
+
+textarea.input-jp {
+  resize: vertical;
+  min-height: 80px;
+}
+
+select.input-jp {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23777' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+/* --- KPI Card --- */
+.kpi-card-jp {
+  position: relative;
+  background: var(--jp-bg-elevated);
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: var(--jp-shadow-sm);
+  border: 1px solid var(--jp-border-light);
+  border-left: 3px solid var(--jp-accent);
+  transition: box-shadow 200ms ease;
+}
+
+.kpi-card-jp:hover {
+  box-shadow: var(--jp-shadow-md);
+}
+
+.kpi-card-jp.kpi-success { border-left-color: var(--jp-success); }
+.kpi-card-jp.kpi-warning { border-left-color: var(--jp-warning); }
+.kpi-card-jp.kpi-danger { border-left-color: var(--jp-danger); }
+.kpi-card-jp.kpi-info { border-left-color: var(--jp-info); }
+
+.kpi-card-jp .kpi-label {
+  font-size: 13px;
+  color: var(--jp-text-secondary);
+  margin-bottom: 6px;
+}
+
+.kpi-card-jp .kpi-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--jp-text-primary);
+  line-height: 1.2;
+}
+
+.kpi-card-jp .kpi-change {
+  font-size: 12px;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kpi-card-jp .kpi-change.positive { color: var(--jp-success); }
+.kpi-card-jp .kpi-change.negative { color: var(--jp-danger); }
 
 /* ============================================
    LEAFLET MAP CONTAINER
    ============================================ */
 
 .leaflet-container {
-  background: var(--neutral-100) !important;
+  background: var(--jp-bg-muted) !important;
   border-radius: 16px;
   font-family: inherit;
 }
 
 .leaflet-control-zoom a {
   background: #ffffff !important;
-  color: var(--neutral-900) !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
+  color: var(--jp-text-primary) !important;
+  border-color: var(--jp-border-light) !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background: var(--neutral-100) !important;
-  color: var(--primary-700) !important;
+  background: var(--jp-bg-muted) !important;
+  color: var(--jp-accent) !important;
 }
 
 .leaflet-control-attribution {
-  background: rgba(0, 0, 0, 0.03) !important;
-  color: var(--neutral-400) !important;
+  background: rgba(250, 249, 247, 0.8) !important;
+  color: var(--jp-text-tertiary) !important;
   backdrop-filter: blur(8px);
 }
 
 .leaflet-popup-content-wrapper {
   background: #ffffff !important;
-  color: var(--neutral-900) !important;
+  color: var(--jp-text-primary) !important;
   border-radius: 12px !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  border: 1px solid var(--jp-border-light) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
 }
 
 .leaflet-popup-tip {
   background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid var(--jp-border-light) !important;
 }
 
 .leaflet-popup-close-button {
-  color: var(--neutral-500) !important;
+  color: var(--jp-text-secondary) !important;
 }
 
 .leaflet-popup-close-button:hover {
-  color: var(--neutral-900) !important;
+  color: var(--jp-text-primary) !important;
 }
 
 /* ============================================
@@ -623,10 +821,10 @@ body::after {
 
 .echarts-dark-tooltip {
   background: #ffffff !important;
-  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid var(--jp-border-light) !important;
   border-radius: 10px !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
-  color: var(--neutral-900) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+  color: var(--jp-text-primary) !important;
 }
 
 /* ============================================
@@ -636,7 +834,7 @@ body::after {
 .mobile-menu-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   z-index: 40;
   opacity: 0;
@@ -656,8 +854,8 @@ body::after {
   width: 280px;
   max-width: 85vw;
   height: 100vh;
-  background: var(--neutral-50);
-  border-left: 1px solid var(--neutral-200);
+  background: var(--jp-bg);
+  border-left: 1px solid var(--jp-border-light);
   z-index: 41;
   transform: translateX(100%);
   transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -675,127 +873,8 @@ body::after {
    ============================================ */
 
 ::selection {
-  background: rgba(99, 125, 86, 0.15);
-  color: var(--neutral-900);
-}
-
-/* ============================================
-   HOUSE DECORATIVE ELEMENTS
-   ============================================ */
-
-/* House divider line */
-.house-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 32px 0;
-}
-
-.house-divider::before,
-.house-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(99, 125, 86, 0.3), transparent);
-}
-
-.house-divider svg {
-  flex-shrink: 0;
-  color: rgba(99, 125, 86, 0.5);
-}
-
-/* House-shaped button decoration */
-.btn-house {
-  position: relative;
-  background: var(--accent-500);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 200ms ease;
-  overflow: hidden;
-}
-
-.btn-house::before {
-  content: '';
-  position: absolute;
-  top: -8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-bottom: 8px solid var(--accent-500);
-  transition: border-bottom-color 200ms ease;
-}
-
-.btn-house:hover {
-  background: var(--accent-600);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(99, 125, 86, 0.3);
-}
-
-.btn-house:hover::before {
-  border-bottom-color: var(--accent-600);
-}
-
-/* Card with house accent */
-.card-house-accent {
-  position: relative;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  border: 1px solid rgba(99, 125, 86, 0.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  transition: all 200ms ease;
-}
-
-.card-house-accent::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-400), var(--accent-500), var(--accent-400));
-  border-radius: 12px 12px 0 0;
-}
-
-.card-house-accent:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(99, 125, 86, 0.15);
-}
-
-/* Section header with house icon */
-.section-header-house {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.section-header-house::before {
-  content: '';
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  background-image: url('/house-icon.svg');
-  background-size: contain;
-  background-repeat: no-repeat;
-  color: var(--accent-500);
-}
-
-/* Park-themed scrollbar */
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(99, 125, 86, 0.3), rgba(99, 125, 86, 0.5));
-  border-radius: 4px;
-  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, rgba(99, 125, 86, 0.5), rgba(99, 125, 86, 0.7));
+  background: rgba(90, 107, 78, 0.12);
+  color: var(--jp-text-primary);
 }
 
 /* ============================================
@@ -803,7 +882,65 @@ body::after {
    ============================================ */
 
 :focus-visible {
-  outline: 2px solid var(--primary-600);
+  outline: 2px solid var(--jp-accent);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .card-jp,
+  .kpi-card-jp,
+  .stat-grid-jp {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+    break-inside: avoid;
+  }
+
+  .mobile-menu-overlay,
+  .mobile-menu-panel {
+    display: none !important;
+  }
+
+  .btn-jp,
+  .btn-jp-solid {
+    border: 1px solid #999 !important;
+    color: #000 !important;
+    background: transparent !important;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ============================================
+   RESPONSIVE UTILITIES
+   ============================================ */
+
+@media (max-width: 640px) {
+  .stat-grid-jp {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-grid-jp > :not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid var(--jp-border-light);
+  }
+
+  .card-jp {
+    padding: 16px;
+  }
+
+  .kpi-card-jp {
+    padding: 16px 20px;
+  }
 }
