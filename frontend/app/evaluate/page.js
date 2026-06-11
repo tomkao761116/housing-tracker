@@ -419,7 +419,7 @@ export default function EvaluatePage() {
       {/* ════════════════════════════════════════
           INPUT SECTION (精簡版)
           ═════════════════════════════════════════ */}
-      <div className="card-jp p-6 space-y-4">
+      <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-6 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-[#2a2a2a]">位置設定</h2>
           <button
@@ -574,7 +574,7 @@ export default function EvaluatePage() {
             {/* Overall score + Radar */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {/* Score Ring */}
-              <div className="card-jp p-6 flex flex-col items-center justify-center">
+              <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-6 flex flex-col items-center justify-center">
                 <h3 className="text-base font-semibold text-[#2a2a2a] mb-4">綜合評分</h3>
                 <ScoreRing score={overallScore ?? 0} size={160} />
                 <div className="mt-4 text-center">
@@ -621,7 +621,7 @@ export default function EvaluatePage() {
               </div>
 
               {/* Radar Chart */}
-              <div className="card-jp p-6">
+              <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-6">
                 <h3 className="text-base font-semibold text-[#2a2a2a] mb-4 text-center">六維度雷達圖</h3>
                 <RadarChart
                   scores={DIMENSIONS.reduce((acc, dim) => {
@@ -637,7 +637,7 @@ export default function EvaluatePage() {
             </div>
 
             {/* Dimension Scores — Clickable Accordions */}
-            <div className="card-jp overflow-hidden">
+            <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] overflow-hidden">
               <div className="divide-y divide-stone-100">
                 {DIMENSIONS.map(dim => {
                   const dimData = dimScores[dim.key] || {};
@@ -721,7 +721,7 @@ export default function EvaluatePage() {
 
         {/* Empty state */}
         {!scoreResult && !scoreLoading && !scoreError && (
-          <div className="card-jp p-12 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-12 text-center">
             <IconLocation className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#999]">輸入位置後點擊「查詢生活圈評分」開始評估</p>
           </div>
@@ -739,7 +739,7 @@ export default function EvaluatePage() {
         />
 
         {/* Commute settings */}
-        <div className="card-jp p-6 space-y-4">
+        <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-6 space-y-4">
           {/* Destination with autocomplete */}
           <div className="relative" onClick={e => e.stopPropagation()}>
             <label className="text-xs font-medium text-[#999] uppercase tracking-wider mb-2 block">目的地</label>
@@ -802,7 +802,7 @@ export default function EvaluatePage() {
 
         {/* Results — Bar chart visualization */}
         {commuteResult && (
-          <div className="card-jp p-6">
+          <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-6">
             <h3 className="text-base font-semibold text-[#2a2a2a] mb-4 flex items-center gap-2">
               <IconTrendUp className="w-5 h-5 text-[#5a6b4e]" />
               通勤時間（{commuteResult.data?.[0]?.destination || ''}）
@@ -861,7 +861,7 @@ export default function EvaluatePage() {
 
         {/* Empty state */}
         {!commuteResult && !commuteLoading && !commuteError && (
-          <div className="card-jp p-12 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-12 text-center">
             <IconClock className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#777] mb-4">輸入目的地後即可查詢各交通方式的通勤時間</p>
             {filteredDestinations.length > 0 && (
@@ -897,7 +897,7 @@ export default function EvaluatePage() {
 
         {/* Loading */}
         {tradesLoading && (
-          <div className="card-jp p-12 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-12 text-center">
             <svg className="animate-spin w-8 h-8 text-emerald-500 mx-auto mb-3" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -987,7 +987,7 @@ export default function EvaluatePage() {
 
         {/* No results */}
         {!tradesLoading && tradesResult && tradesResult.data && tradesResult.data.length === 0 && (
-          <div className="card-jp p-12 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-12 text-center">
             <IconEmpty className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#999]">該區域附近暫無成交紀錄</p>
           </div>
@@ -995,7 +995,7 @@ export default function EvaluatePage() {
 
         {/* Empty state - no data yet and not loading */}
         {!tradesLoading && !tradesResult && !tradesError && (
-          <div className="card-jp p-12 text-center">
+          <div className="bg-white/80 backdrop-blur-sm rounded-sm border border-[#e8e4df] p-12 text-center">
             <IconHome className="w-12 h-12 text-stone-300 mx-auto mb-4" />
             <p className="text-[#999]">先搜尋生活圈評分後，下方即可看到周邊成交</p>
           </div>

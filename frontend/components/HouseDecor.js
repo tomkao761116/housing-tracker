@@ -21,14 +21,14 @@ export function HouseButton({ children, className = '', as: AsComponent = 'butto
   if (AsComponent) {
     return (
       <AsComponent className={`${baseClasses} ${className}`} {...props}>
-        <span>{children}</span>
+        {children}
       </AsComponent>
     );
   }
 
   return (
     <button className={`${baseClasses} ${className}`} {...props}>
-      <span>{children}</span>
+      {children}
     </button>
   );
 }

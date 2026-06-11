@@ -379,6 +379,26 @@ def highlights(
     """
     cheapest_dist_row = db.execute(text(cheapest_dist_sql)).fetchone()
 
+    # Most expensive city & district (current year, weighted)
+    most_expensive_city_sql = f"""
+        SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+        FROM mv_yearly_stats WHERE year = {year}
+        GROUP BY city
+        ORDER BY avg_unit_price DESC
+        LIMIT 1
+    """
+    most_expensive_city_row = db.execute(text(most_expensive_city_sql)).fetchone()
+
+    most_expensive_dist_sql = f"""
+        SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+        FROM mv_yearly_stats WHERE year = {year}
+        GROUP BY district, city
+        HAVING sum(cnt) >= 3
+        ORDER BY avg_unit_price DESC
+        LIMIT 1
+    """
+    most_expensive_dist_row = db.execute(text(most_expensive_dist_sql)).fetchone()
+
     # Process results
     city_yoy = [{"city": r[0], "avg_unit_price": r[1], "prev_price": r[2], "yoy_pct": r[3]} for r in city_yoy_rows if r[3] is not None]
     dist_yoy = [{
@@ -403,5 +423,11 @@ def highlights(
 
     if cheapest_dist_row:
         result["cheapest_district"] = {"district": cheapest_dist_row[0], "city": cheapest_dist_row[1], "avg_unit_price": cheapest_dist_row[2]}
+
+    if most_expensive_city_row:
+        result["most_expensive_city"] = {"city": most_expensive_city_row[0], "avg_unit_price": most_expensive_city_row[1]}
+
+    if most_expensive_dist_row:
+        result["most_expensive_district"] = {"district": most_expensive_dist_row[0], "city": most_expensive_dist_row[1], "avg_unit_price": most_expensive_dist_row[2]}
 
     return {"year": year, "prev_year": prev_year, "data": result}

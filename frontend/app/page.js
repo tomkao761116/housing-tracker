@@ -476,35 +476,91 @@ export default function HomePage() {
   /* ── Shared select styling ── */
   const selectClass = 'appearance-none bg-white border border-[#ddd8d2] rounded-sm px-3 py-2 pr-8 text-sm text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#5a6b4e]/30 focus:border-[#5a6b4e] cursor-pointer';
 
-  /* ── Build hero stats from highlights ── */
+  /* ── Build hero stats from highlights (6 cards) ── */
   const heroStats = (() => {
     const d = highlights?.data;
     if (!d) return null;
     const stats = [];
+
+    // Row 1: City-level
     if (d.price_up_city) {
       stats.push({
-        label: '漲幅最多',
+        label: '縣市漲最多',
         val: d.price_up_city.city,
         sub: `${d.price_up_city.yoy_pct > 0 ? '+' : ''}${d.price_up_city.yoy_pct}%`,
+        price: `${d.price_up_city.avg_unit_price.toFixed(1)} 萬/坪`,
         accent: true,
       });
     }
     if (d.price_down_city) {
       stats.push({
-        label: '跌幅最多',
+        label: '縣市跌最多',
         val: d.price_down_city.city,
         sub: `${d.price_down_city.yoy_pct > 0 ? '+' : ''}${d.price_down_city.yoy_pct}%`,
+        price: `${d.price_down_city.avg_unit_price.toFixed(1)} 萬/坪`,
         down: true,
+      });
+    }
+    if (d.most_expensive_city) {
+      stats.push({
+        label: '最貴縣市',
+        val: d.most_expensive_city.city,
+        sub: '最高',
+        price: `${d.most_expensive_city.avg_unit_price.toFixed(1)} 萬/坪`,
+        expensive: true,
       });
     }
     if (d.cheapest_city) {
       stats.push({
-        label: '最便宜',
+        label: '最便宜縣市',
         val: d.cheapest_city.city,
-        sub: `${d.cheapest_city.avg_unit_price.toFixed(1)} 萬/坪`,
+        sub: '最低',
+        price: `${d.cheapest_city.avg_unit_price.toFixed(1)} 萬/坪`,
       });
     }
-    return stats.length >= 3 ? stats : null;
+
+    // Row 2: District-level
+    if (d.price_up_district) {
+      stats.push({
+        label: '行政區漲最多',
+        val: d.price_up_district.district,
+        subVal: d.price_up_district.city,
+        sub: `${d.price_up_district.yoy_pct > 0 ? '+' : ''}${d.price_up_district.yoy_pct}%`,
+        price: `${d.price_up_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        accent: true,
+      });
+    }
+    if (d.price_down_district) {
+      stats.push({
+        label: '行政區跌最多',
+        val: d.price_down_district.district,
+        subVal: d.price_down_district.city,
+        sub: `${d.price_down_district.yoy_pct > 0 ? '+' : ''}${d.price_down_district.yoy_pct}%`,
+        price: `${d.price_down_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        down: true,
+      });
+    }
+    if (d.most_expensive_district) {
+      stats.push({
+        label: '最貴行政區',
+        val: d.most_expensive_district.district,
+        subVal: d.most_expensive_district.city,
+        sub: '最高',
+        price: `${d.most_expensive_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        expensive: true,
+      });
+    }
+    if (d.cheapest_district) {
+      stats.push({
+        label: '最便宜行政區',
+        val: d.cheapest_district.district,
+        subVal: d.cheapest_district.city,
+        sub: '最低',
+        price: `${d.cheapest_district.avg_unit_price.toFixed(1)} 萬/坪`,
+      });
+    }
+
+    return stats.length >= 4 ? stats : null;
   })();
 
   return (
@@ -559,25 +615,57 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* ── Stats Grid (centered, 3-column) ── */}
-          {heroStats && (
-            <div className="stat-grid-jp max-w-3xl mx-auto">
-              {heroStats.map((s, i) => (
-                <div key={i} className="stat-item">
-                  <div className="stat-label">{s.label}</div>
-                  <div className="stat-value">{s.val}</div>
-                  <div className="stat-label" style={{
-                    color: s.accent ? '#5a6b4e' : s.down ? '#a36b6b' : '#777',
-                    marginTop: '2px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                  }}>
-                    {s.sub}
-                  </div>
+          {/* ── Stats Grid (centered, responsive columns) ── */}
+          {heroStats && (() => {
+            const cityStats = heroStats.slice(0, 4);
+            const distStats = heroStats.slice(4);
+            return (
+              <>
+                <div className="stat-grid-jp max-w-5xl mx-auto" style={{ gridTemplateColumns: `repeat(${cityStats.length}, 1fr)` }}>
+                  {cityStats.map((s, i) => (
+                    <div key={`c${i}`} className="stat-item">
+                      <div className="stat-label">{s.label}</div>
+                      <div className="stat-value">{s.val}</div>
+                      <div className="stat-label" style={{
+                        color: s.accent ? '#5a6b4e' : s.down ? '#a36b6b' : s.expensive ? '#5a6b4e' : '#777',
+                        marginTop: '2px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                      }}>
+                        {s.sub}
+                      </div>
+                      <div className="stat-label" style={{ color: '#999', fontSize: '12px', marginTop: '1px' }}>
+                        {s.price}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+                {distStats.length > 0 && (
+                  <div className="stat-grid-jp max-w-5xl mx-auto mt-4" style={{ gridTemplateColumns: `repeat(${distStats.length}, 1fr)` }}>
+                    {distStats.map((s, i) => (
+                      <div key={`d${i}`} className="stat-item">
+                        <div className="stat-label">{s.label}</div>
+                        <div className="stat-value">{s.val}</div>
+                        <div className="stat-label" style={{ color: '#999', fontSize: '12px', marginTop: '0', marginBottom: '2px' }}>
+                          {s.subVal}
+                        </div>
+                        <div className="stat-label" style={{
+                          color: s.accent ? '#5a6b4e' : s.down ? '#a36b6b' : s.expensive ? '#5a6b4e' : '#777',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                        }}>
+                          {s.sub}
+                        </div>
+                        <div className="stat-label" style={{ color: '#999', fontSize: '12px', marginTop: '1px' }}>
+                          {s.price}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       </section>
 
