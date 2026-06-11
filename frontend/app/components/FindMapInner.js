@@ -326,10 +326,10 @@ function TradeDetailModal({ trade, onClose }) {
 // 生活圈評分：四色明顯可辨 — 綠 / 藍 / 琥珀 / 紅棕
 function getScoreColor(score) {
   if (score == null) return '#999999';
-  if (score >= 80) return '#16a34a';    // 鮮綠 — 優異
-  if (score >= 60) return '#ea580c';    // 橘色 — 良好（與綠色完全不同色相）
-  if (score >= 40) return '#ca8a04';    // 金黃 — 普通
-  return '#dc2626';                      // 正紅 — 待加強
+  if (score >= 80) return '#4a8c5c';    // 優異
+  if (score >= 60) return '#5a7a9a';    // 良好
+  if (score >= 40) return '#c49a3a';    // 普通
+  return '#b55a5a';                      // 待加強
 }
 
 // 總價區間：高價偏紅、低價偏藍，使用柔和色調
@@ -352,10 +352,10 @@ function getMarkerColor(trade, colorMode) {
 /* ─── Map Legend — 主視覺色系 ─────────────────────────── */
 function MapLegend({ colorMode }) {
   const scoreColors = [
-    { min: 80, label: '80+ 優異', color: '#16a34a' },
-    { min: 60, label: '60-79 良好', color: '#ea580c' },
-    { min: 40, label: '40-59 普通', color: '#ca8a04' },
-    { min: 0, label: '40- 待加強', color: '#dc2626' },
+    { min: 80, label: '80+ 優異', color: '#4a8c5c' },
+    { min: 60, label: '60-79 良好', color: '#5a7a9a' },
+    { min: 40, label: '40-59 普通', color: '#c49a3a' },
+    { min: 0, label: '40- 待加強', color: '#b55a5a' },
   ];
   const priceColors = [
     { min: 200, label: '200 萬以上', color: '#dc2626' },
@@ -539,7 +539,8 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
 
       const clusterGroup = L.markerClusterGroup({
         maxClusterRadius: 50,
-        spiderfyOnMaxZoom: false, // 讓使用者在任何縮放層級都能展開看個別點
+        maxZoom: 18, // zoom 到 18 再點就 spiderfy 展開
+        spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
         iconCreateFunction: (cluster) => {

@@ -827,15 +827,15 @@ function getScoreBarColor(score) {
 }
 
 function getScoreRingColor(score) {
-  if (score >= 80) return '#5a6b4e';
-  if (score >= 60) return '#5a6e82';
-  if (score >= 40) return '#b8943a';
-  return '#a85555';
+  if (score >= 80) return '#4a8c5c';
+  if (score >= 60) return '#5a7a9a';
+  if (score >= 40) return '#c49a3a';
+  return '#b55a5a';
 }
 
 function ScorePill({ icon, label, score, color }) {
-  const bg = color ? (score >= 80 ? 'bg-[#f4f6f2] border-[#dce0d8]' : score >= 60 ? 'bg-[#edf1f5] border-[#d5dde5]' : score >= 40 ? 'bg-[#faf5eb] border-[#ece4d0]' : 'bg-[#f9efef] border-[#e5d5d5]') : 'bg-[#f5f4f0] border-[#e8e4df]';
-  const textCol = color ? (score >= 80 ? 'text-[#5a6b4e]' : score >= 60 ? 'text-[#5a6e82]' : score >= 40 ? 'text-[#b8943a]' : 'text-[#a85555]') : 'text-[#777]';
+  const bg = color ? (score >= 80 ? 'bg-[#f4f7f5] border-[#d5e3da]' : score >= 60 ? 'bg-[#f0f3f7] border-[#d5dde5]' : score >= 40 ? 'bg-[#faf5eb] border-[#ece4d0]' : 'bg-[#f9efef] border-[#e5d5d5]') : 'bg-[#f5f4f0] border-[#e8e4df]';
+  const textCol = color ? (score >= 80 ? 'text-[#4a8c5c]' : score >= 60 ? 'text-[#5a7a9a]' : score >= 40 ? 'text-[#c49a3a]' : 'text-[#b55a5a]') : 'text-[#777]';
   return (
     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-xs ${bg}`}>
       <span>{icon}</span>
