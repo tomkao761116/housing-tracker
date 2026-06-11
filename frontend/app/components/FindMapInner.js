@@ -326,20 +326,20 @@ function TradeDetailModal({ trade, onClose }) {
 // 生活圈評分：四色明顯可辨 — 綠 / 藍 / 琥珀 / 紅棕
 function getScoreColor(score) {
   if (score == null) return '#999999';
-  if (score >= 80) return '#1b7a1b';    // 深翠綠 — 優異
-  if (score >= 60) return '#1e5fa8';    // 深寶藍 — 良好（與綠色強烈冷暖對比）
-  if (score >= 40) return '#c4912a';    // 琥珀 — 普通
-  return '#b54a3a';                      // 紅棕 — 待加強
+  if (score >= 80) return '#16a34a';    // 鮮綠 — 優異
+  if (score >= 60) return '#ea580c';    // 橘色 — 良好（與綠色完全不同色相）
+  if (score >= 40) return '#ca8a04';    // 金黃 — 普通
+  return '#dc2626';                      // 正紅 — 待加強
 }
 
 // 總價區間：高價偏紅、低價偏藍，使用柔和色調
 function getPriceColor(totalPrice) {
   const priceWan = totalPrice / 10000;
-  if (priceWan > 200) return '#b54a3a';
-  if (priceWan > 150) return '#c4912a';
-  if (priceWan > 100) return '#c47a3a';
-  if (priceWan > 50) return '#1e5fa8';
-  return '#1b7a1b';
+  if (priceWan > 200) return '#dc2626';
+  if (priceWan > 150) return '#ea580c';
+  if (priceWan > 100) return '#ca8a04';
+  if (priceWan > 50) return '#3b82f6';
+  return '#16a34a';
 }
 
 function getMarkerColor(trade, colorMode) {
@@ -352,17 +352,17 @@ function getMarkerColor(trade, colorMode) {
 /* ─── Map Legend — 主視覺色系 ─────────────────────────── */
 function MapLegend({ colorMode }) {
   const scoreColors = [
-    { min: 80, label: '80+ 優異', color: '#1b7a1b' },
-    { min: 60, label: '60-79 良好', color: '#1e5fa8' },
-    { min: 40, label: '40-59 普通', color: '#c4912a' },
-    { min: 0, label: '40- 待加強', color: '#b54a3a' },
+    { min: 80, label: '80+ 優異', color: '#16a34a' },
+    { min: 60, label: '60-79 良好', color: '#ea580c' },
+    { min: 40, label: '40-59 普通', color: '#ca8a04' },
+    { min: 0, label: '40- 待加強', color: '#dc2626' },
   ];
   const priceColors = [
-    { min: 200, label: '200 萬以上', color: '#b54a3a' },
-    { min: 150, label: '150-200 萬', color: '#c4912a' },
-    { min: 100, label: '100-150 萬', color: '#c47a3a' },
-    { min: 50, label: '50-100 萬', color: '#1e5fa8' },
-    { min: 0, label: '50 萬以下', color: '#1b7a1b' },
+    { min: 200, label: '200 萬以上', color: '#dc2626' },
+    { min: 150, label: '150-200 萬', color: '#ea580c' },
+    { min: 100, label: '100-150 萬', color: '#ca8a04' },
+    { min: 50, label: '50-100 萬', color: '#3b82f6' },
+    { min: 0, label: '50 萬以下', color: '#16a34a' },
   ];
   const items = colorMode === 'score' ? scoreColors : priceColors;
   return (
