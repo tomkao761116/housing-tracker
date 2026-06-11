@@ -281,15 +281,15 @@
   --jp-info: #5a6e82;
 
   /* Score Rating — 四色一眼可辨，低飽和日式簡約 */
-  --score-excellent: var(--jp-success);   /* 優異 80+ 橄欖綠 #5a6b4e */
-  --score-good: #4a5d8a;                  /* 良好 60-79 靛藍 — 與綠色相/明度雙重差異 */
-  --score-average: var(--jp-warning);     /* 普通 40-59 琥珀金 #b8943a */
-  --score-poor: var(--jp-danger);         /* 待加強 <40 暗紅 #a85555 */
-  --score-null: var(--jp-text-tertiary);  /* 無資料 */
+  --score-excellent: #2d7a5f;                /* 優異 80+ 深翡翠綠 — 與 primary #5a6b4e 色相差 68° */
+  --score-good: #4a5d8a;                      /* 良好 60-79 靛藍 — 與優秀色相差 110° */
+  --score-average: var(--jp-warning);          /* 普通 40-59 琥珀金 #b8943a */
+  --score-poor: var(--jp-danger);              /* 待加強 <40 暗紅 #a85555 */
+  --score-null: var(--jp-text-tertiary);       /* 無資料 */
 
   /* Score backgrounds — 日式淡色版 */
-  --score-excellent-bg: var(--jp-accent-lighter);
-  --score-excellent-border: var(--jp-accent-border);
+  --score-excellent-bg: #edf7f3;
+  --score-excellent-border: rgba(45, 122, 95, 0.2);
   --score-good-bg: #eef1f7;
   --score-good-border: rgba(74, 93, 138, 0.2);
   --score-average-bg: #faf6ee;
