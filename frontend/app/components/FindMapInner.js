@@ -323,13 +323,24 @@ function TradeDetailModal({ trade, onClose }) {
 }
 
 /* ─── Color helpers — 主視覺色系（高對比版）──────────────────── */
-// 生活圈評分：四色明顯可辨 — 綠 / 藍 / 琥珀 / 紅棕
+// 生活圈評分：四色明顯可辨 — 從 design system 讀取
+const scoreColorsCache = (() => {
+  const s = getComputedStyle(document.documentElement);
+  return {
+    null: s.getPropertyValue('--score-null').trim() || '#999999',
+    excellent: s.getPropertyValue('--score-excellent').trim() || '#2d8a4e',
+    good: s.getPropertyValue('--score-good').trim() || '#5b6abf',
+    average: s.getPropertyValue('--score-average').trim() || '#c49a3a',
+    poor: s.getPropertyValue('--score-poor').trim() || '#b55a5a',
+  };
+})();
+
 function getScoreColor(score) {
-  if (score == null) return '#999999';
-  if (score >= 80) return '#2d8a4e';    // 翠綠 — 優異
-  if (score >= 60) return '#5b6abf';    // 靛藍 — 良好（與綠色色相差大）
-  if (score >= 40) return '#c49a3a';    // 金黃 — 普通
-  return '#b55a5a';                      // 暗紅 — 待加強
+  if (score == null) return scoreColorsCache.null;
+  if (score >= 80) return scoreColorsCache.excellent;
+  if (score >= 60) return scoreColorsCache.good;
+  if (score >= 40) return scoreColorsCache.average;
+  return scoreColorsCache.poor;
 }
 
 // 總價區間：高價偏紅、低價偏藍，使用柔和色調
@@ -352,10 +363,10 @@ function getMarkerColor(trade, colorMode) {
 /* ─── Map Legend — 主視覺色系 ─────────────────────────── */
 function MapLegend({ colorMode }) {
   const scoreColors = [
-    { min: 80, label: '80+ 優異', color: '#2d8a4e' },
-    { min: 60, label: '60-79 良好', color: '#5b6abf' },
-    { min: 40, label: '40-59 普通', color: '#c49a3a' },
-    { min: 0, label: '40- 待加強', color: '#b55a5a' },
+    { min: 80, label: '80+ 優異', color: 'var(--score-excellent)' },
+    { min: 60, label: '60-79 良好', color: 'var(--score-good)' },
+    { min: 40, label: '40-59 普通', color: 'var(--score-average)' },
+    { min: 0, label: '40- 待加強', color: 'var(--score-poor)' },
   ];
   const priceColors = [
     { min: 200, label: '200 萬以上', color: '#dc2626' },

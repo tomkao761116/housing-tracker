@@ -280,6 +280,28 @@
   --jp-danger: #a85555;
   --jp-info: #5a6e82;
 
+  /* Score Rating — 日式極簡低飽和版 (四色明顯可辨) */
+  --score-excellent: #2d8a4e;   /* 優異 80+ 翠綠 */
+  --score-good: #5b6abf;        /* 良好 60-79 靛藍 */
+  --score-average: #c49a3a;     /* 普通 40-59 金黃 */
+  --score-poor: #b55a5a;        /* 待加強 <40 暗紅 */
+  --score-null: #999999;        /* 無資料 */
+
+  /* Score backgrounds — 對應各級別的淡色背景 */
+  --score-excellent-bg: #f4f7f5;
+  --score-excellent-border: #d5e3da;
+  --score-good-bg: #f2f3fa;
+  --score-good-border: #d8dae8;
+  --score-average-bg: #faf5eb;
+  --score-average-border: #ece4d0;
+  --score-poor-bg: #f9efef;
+  --score-poor-border: #e5d5d5;
+  --score-null-bg: #f5f4f0;
+  --score-null-border: #e8e4df;
+
+  /* Sun accent — 暖橘紅跳色 */
+  --sun-accent: #d48a5a;
+
   /* Shadows — Subtle, layered */
   --jp-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.04);
   --jp-shadow-md: 0 1px 4px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);

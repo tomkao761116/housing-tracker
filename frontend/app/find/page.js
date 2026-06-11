@@ -827,15 +827,15 @@ function getScoreBarColor(score) {
 }
 
 function getScoreRingColor(score) {
-  if (score >= 80) return '#2d8a4e';
-  if (score >= 60) return '#5b6abf';
-  if (score >= 40) return '#c49a3a';
-  return '#b55a5a';
+  if (score >= 80) return 'var(--score-excellent)';
+  if (score >= 60) return 'var(--score-good)';
+  if (score >= 40) return 'var(--score-average)';
+  return 'var(--score-poor)';
 }
 
 function ScorePill({ icon, label, score, color }) {
-  const bg = color ? (score >= 80 ? 'bg-[#f4f7f5] border-[#d5e3da]' : score >= 60 ? 'bg-[#f2f3fa] border-[#d8dae8]' : score >= 40 ? 'bg-[#faf5eb] border-[#ece4d0]' : 'bg-[#f9efef] border-[#e5d5d5]') : 'bg-[#f5f4f0] border-[#e8e4df]';
-  const textCol = color ? (score >= 80 ? 'text-[#2d8a4e]' : score >= 60 ? 'text-[#5b6abf]' : score >= 40 ? 'text-[#c49a3a]' : 'text-[#b55a5a]') : 'text-[#777]';
+  const bg = color ? (score >= 80 ? 'bg-[var(--score-excellent-bg)] border-[var(--score-excellent-border)]' : score >= 60 ? 'bg-[var(--score-good-bg)] border-[var(--score-good-border)]' : score >= 40 ? 'bg-[var(--score-average-bg)] border-[var(--score-average-border)]' : 'bg-[var(--score-poor-bg)] border-[var(--score-poor-border)]') : 'bg-[var(--score-null-bg)] border-[var(--score-null-border)]';
+  const textCol = color ? (score >= 80 ? 'text-[var(--score-excellent)]' : score >= 60 ? 'text-[var(--score-good)]' : score >= 40 ? 'text-[var(--score-average)]' : 'text-[var(--score-poor)]') : 'text-[#777]';
   return (
     <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full border text-xs ${bg}`}>
       <span>{icon}</span>
