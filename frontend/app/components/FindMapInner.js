@@ -329,7 +329,7 @@ const scoreColorsCache = (() => {
   return {
     null: s.getPropertyValue('--score-null').trim() || '#999999',
     excellent: s.getPropertyValue('--score-excellent').trim() || '#5a6b4e',
-    good: s.getPropertyValue('--score-good').trim() || '#5a6e82',
+    good: s.getPropertyValue('--score-good').trim() || '#4a5d8a',
     average: s.getPropertyValue('--score-average').trim() || '#b8943a',
     poor: s.getPropertyValue('--score-poor').trim() || '#a85555',
   };
