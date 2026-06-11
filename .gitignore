@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build output
+out/
+.next/
+.next.old/
+.next.bak/
+dist/
+build/
+
+# Environment
+.env
+frontend/.env.local
+
+# Runtime
+.pids/
+logs/
+*.log
+
+# Python
+.venv/
+**/__pycache__/
+**/*.pyc
+
+# Backend data (large / local-only)
+backend/data_raw/
+backend/app/data.db
+backend/.geocode_cache/
+data.db
+
+# Design sketches
+frontend/design-preview*.html
+frontend/design-preview*.txt
+frontend/sketches/
+
+# Backup files
+*.bak
+*.old

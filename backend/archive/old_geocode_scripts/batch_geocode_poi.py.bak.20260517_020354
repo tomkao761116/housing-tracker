@@ -1,0 +1,282 @@
+"""
+批次 Geocoding + POI 查詢 — 差異更新版本
+只處理缺乏資料的紀錄，已完成的跳過不重跑
+可安全多次執行、凌晨定時排程
+
+Usage:
+    python batch_geocode_poi.py          # 全跑 (geocoding + POI)
+    python batch_geocode_poi.py --poi-only  # 只補缺的 POI
+"""
+import sys
+import time
+import json
+import math
+import urllib.request
+import urllib.parse
+import psycopg2
+
+DB_URL = "postgresql://hermes@localhost:5432/housing_tracker"
+
+# CLI: python batch_geocode_poi.py [--poi-only]
+# --poi-only: skip geocoding, only fill missing POI data
+POI_ONLY = '--poi-only' in sys.argv
+
+CATEGORIES = {
+    "school": {"query": 'amenity=school', "label": "學校"},
+    "transit": {"query": 'railway=station', "label": "捷運/火車站"},
+    "hospital": {"query": 'amenity=hospital', "label": "醫院"},
+    "shop": {"query": 'shop=supermarket', "label": "超市"},
+    "park": {"query": 'leisure=park', "label": "公園"},
+    "restaurant": {"query": 'amenity=restaurant', "label": "餐廳"},
+    "pharmacy": {"query": 'amenity=pharmacy', "label": "藥局"},
+}
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    """計算兩點距離（公尺）"""
+    R = 6371000
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+    a = (math.sin(dlat / 2) ** 2 +
+         math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon / 2) ** 2)
+    return R * 2 * math.asin(math.sqrt(a))
+
+
+# ============================================
+# Step 0: 建立 trade_amenities 表 & 時間戳記欄位
+# ============================================
+print("=" * 60)
+print("Step 0: 建立 trade_amenities 表")
+print("=" * 60)
+
+conn = psycopg2.connect(DB_URL)
+conn.autocommit = True
+cur = conn.cursor()
+
+cur.execute("""
+    CREATE TABLE IF NOT EXISTS trade_amenities (
+        id SERIAL PRIMARY KEY,
+        trade_id INTEGER NOT NULL REFERENCES trades(id),
+        category VARCHAR(50) NOT NULL,
+        amenity_name VARCHAR(255) NOT NULL,
+        distance INTEGER NOT NULL,
+        lat REAL,
+        lon REAL,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW(),
+        UNIQUE(trade_id, category, amenity_name)
+    )
+""")
+cur.execute("CREATE INDEX IF NOT EXISTS idx_trade_amenities_trade_id ON trade_amenities(trade_id)")
+
+# Ensure timestamp columns exist (for existing tables)
+for col, dtype in [('created_at', 'TIMESTAMP'), ('updated_at', 'TIMESTAMP')]:
+    cur.execute("""
+        SELECT column_name FROM information_schema.columns 
+        WHERE table_name = 'trade_amenities' AND column_name = %s
+    """, (col,))
+    if not cur.fetchone():
+        cur.execute(f"ALTER TABLE trade_amenities ADD COLUMN {col} {dtype} DEFAULT NOW()")
+        print(f"  Added {col}")
+
+# Trigger for auto-updating updated_at
+cur.execute("""
+    CREATE OR REPLACE FUNCTION update_trade_amenities_updated_at()
+    RETURNS TRIGGER AS $$
+    BEGIN
+        NEW.updated_at = NOW();
+        RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+""")
+cur.execute("""
+    DROP TRIGGER IF EXISTS set_trade_amenities_updated_at ON trade_amenities;
+    CREATE TRIGGER set_trade_amenities_updated_at
+        BEFORE UPDATE ON trade_amenities
+        FOR EACH ROW
+        EXECUTE FUNCTION update_trade_amenities_updated_at();
+""")
+print("✓ trade_amenities 表就緒\n")
+
+
+# ============================================
+# Step 1: 統計目前狀態
+# ============================================
+print("=" * 60)
+print("Step 1: 統計目前狀態")
+print("=" * 60)
+
+cur.execute("SELECT COUNT(*) FROM trades")
+total = cur.fetchone()[0]
+
+cur.execute("SELECT COUNT(*) FROM trades WHERE lat IS NOT NULL AND lon IS NOT NULL")
+has_coords = cur.fetchone()[0]
+
+cur.execute("SELECT COUNT(DISTINCT trade_id) FROM trade_amenities")
+has_poi = cur.fetchone()[0]
+
+needs_geo = total - has_coords
+needs_poi = has_coords - has_poi if has_coords > has_poi else 0
+
+print(f"總筆數: {total}")
+print(f"已有座標: {has_coords}")
+print(f"需 Geocoding: {needs_geo}")
+print(f"有座標但缺少 POI: {needs_poi}\n")
+
+
+# ============================================
+# Step 2: 批次 Geocoding（差異更新）
+# ============================================
+if POI_ONLY or needs_geo == 0:
+    print(f"Step 2: Geocoding — {'--poi-only 模式跳過' if POI_ONLY else '全部已完成，跳過'}\n")
+else:
+    print("=" * 60)
+    print(f"Step 2: 批次 Geocoding（{needs_geo} 筆需處理）")
+    print("=" * 60)
+
+    cur.execute("""
+        SELECT t.id, t.address 
+        FROM trades t 
+        WHERE t.lat IS NULL OR t.lon IS NULL
+        ORDER BY t.trade_date DESC NULLS LAST
+    """)
+    no_coords = cur.fetchall()
+
+    geo_success = 0
+    geo_failed = 0
+
+    for i, (tid, addr) in enumerate(no_coords):
+        print(f"[{i+1}/{len(no_coords)}] Trade #{tid}: {addr}", end=" → ")
+        url = f"https://nominatim.openstreetmap.org/search?format=json&q={urllib.parse.quote(addr)}&limit=1"
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "HousingTracker/1.0"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                if data:
+                    lat = float(data[0]["lat"])
+                    lon = float(data[0]["lon"])
+                    cur.execute(
+                        "UPDATE trades SET lat = %s, lon = %s WHERE id = %s",
+                        (lat, lon, tid)
+                    )
+                    geo_success += 1
+                    print(f"✓ ({lat:.4f}, {lon:.4f})")
+                else:
+                    geo_failed += 1
+                    print("✗ 找不到地址")
+        except Exception as e:
+            geo_failed += 1
+            print(f"✗ {e}")
+        time.sleep(1.0)
+
+    print(f"\nGeocoding 完成: 成功 {geo_success} 筆, 失敗 {geo_failed} 筆\n")
+
+
+# ============================================
+# Step 3: 批次 POI 查詢（差異更新）
+# ============================================
+print("=" * 60)
+print("Step 3: 批次 POI 查詢（差異更新）")
+print("=" * 60)
+
+def fetch_poi(lat, lon, query):
+    """使用 Overpass API 查詢周邊設施"""
+    overpass_query = f"""
+        [out:json][timeout:10];
+        node["{query.split('=')[0]}="{query.split('=')[1]}""](around:500,{lat},{lon});
+        out center limit 10;
+    """
+    url = "https://overpass-api.de/api/interpreter"
+    data = urllib.parse.urlencode({"data": overpass_query}).encode()
+    req = urllib.request.Request(url, data=data, headers={"User-Agent": "HousingTracker/1.0"})
+
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                result = json.loads(resp.read().decode("utf-8"))
+                elements = result.get("elements", [])
+                pois = []
+                for elem in elements:
+                    name = elem.get("tags", {}).get("name", "未知")
+                    elat = elem.get("lat", lat)
+                    elon = elem.get("lon", lon)
+                    dist = int(haversine(lat, lon, elat, elon))
+                    pois.append({"name": name, "distance": dist, "lat": elat, "lon": elon})
+                return sorted(pois, key=lambda x: x["distance"])[:5]
+        except Exception as e:
+            print(f"  ⚠ POI 查詢嘗試 {attempt+1}/3 失敗: {e}")
+            time.sleep(2)
+    return []
+
+# 取得有座標但缺少 POI 的紀錄
+cur.execute("""
+    SELECT t.id, t.lat, t.lon 
+    FROM trades t
+    WHERE t.lat IS NOT NULL AND t.lon IS NOT NULL
+    AND NOT EXISTS (
+        SELECT 1 FROM trade_amenities a WHERE a.trade_id = t.id
+    )
+""")
+needs_poi_trades = cur.fetchall()
+print(f"需查詢 POI: {len(needs_poi_trades)} 筆\n")
+
+poi_success = 0
+poi_failed = 0
+
+for i, (tid, lat, lon) in enumerate(needs_poi_trades):
+    print(f"[{i+1}/{len(needs_poi_trades)}] Trade #{tid} ({lat:.4f}, {lon:.4f})", end=" → ")
+
+    total_pois = 0
+    for cat, info in CATEGORIES.items():
+        pois = fetch_poi(lat, lon, info["query"])
+        for poi in pois:
+            try:
+                cur.execute(
+                    "INSERT INTO trade_amenities (trade_id, category, amenity_name, distance, lat, lon) VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT DO NOTHING",
+                    (tid, cat, poi["name"], poi["distance"], poi["lat"], poi["lon"])
+                )
+                total_pois += 1
+            except Exception as e:
+                print(f"  ⚠ 插入失敗: {e}")
+        time.sleep(0.5)  # Overpass rate limit
+
+    if total_pois > 0:
+        poi_success += 1
+        print(f"✓ {total_pois} 個設施")
+    else:
+        poi_failed += 1
+        print("✗ 無資料")
+
+    time.sleep(1.0)  # General rate limit
+
+print(f"\nPOI 查詢完成: 成功 {poi_success} 筆, 失敗 {poi_failed} 筆\n")
+
+
+# ============================================
+# Step 4: 最終統計
+# ============================================
+print("=" * 60)
+print("Step 4: 最終統計")
+print("=" * 60)
+
+cur.execute("SELECT COUNT(*) FROM trades WHERE lat IS NOT NULL AND lon IS NOT NULL")
+final_coords = cur.fetchone()[0]
+
+cur.execute("SELECT COUNT(DISTINCT trade_id) FROM trade_amenities")
+final_poi = cur.fetchone()[0]
+
+cur.execute("SELECT COUNT(*) FROM trade_amenities")
+final_poi_records = cur.fetchone()[0]
+
+# Timestamp stats
+cur.execute("SELECT MIN(created_at), MAX(created_at), MIN(updated_at), MAX(updated_at) FROM trade_amenities")
+ts = cur.fetchone()
+print(f"POI created_at: {ts[0]} ~ {ts[1]}")
+print(f"POI updated_at: {ts[2]} ~ {ts[3]}")
+
+print(f"\n已有座標: {final_coords}/{total} ({final_coords/total*100:.1f}%)")
+print(f"已有 POI: {final_poi}/{total} 筆 ({final_poi_records} 條設施紀錄)")
+
+cur.close()
+conn.close()
+print("\n✅ 批次處理完成！")

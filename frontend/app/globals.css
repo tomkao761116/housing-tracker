@@ -1,0 +1,809 @@
+@import "tailwindcss";
+
+/* ============================================
+  TAILWIND V4 — Override emerald/stone with Scheme A
+  讓現有頁面的 emerald-* / stone-* 類別直接套用方案 A 配色
+  ============================================ */
+
+@theme {
+  /* emerald → Muted Sage Green (霧銅綠) */
+  --color-emerald-50: #f0f7ed;
+  --color-emerald-100: #e3edd9;
+  --color-emerald-200: #cddcb8;
+  --color-emerald-300: #b5c99a;
+  --color-emerald-400: #9ab57d;
+  --color-emerald-500: #637d56;
+  --color-emerald-600: #556b48;
+  --color-emerald-700: #4a5d3e;
+  --color-emerald-800: #3f4f34;
+  --color-emerald-900: #35412a;
+
+  /* stone → Slate/Navy (深鈦灰) */
+  --color-stone-50: #f8fafc;
+  --color-stone-100: #f1f5f9;
+  --color-stone-200: #e2e8f0;
+  --color-stone-300: #cbd5e1;
+  --color-stone-400: #94a3b8;
+  --color-stone-500: #64748b;
+  --color-stone-600: #475569;
+  --color-stone-700: #334155;
+  --color-stone-800: #1e293b;
+  --color-stone-900: #0f172a;
+
+  /* slate → 深鈦灰 (Layout 導航列等使用) */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+
+  /* zinc → 深鈦灰 (文字、邊框等使用) */
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-600: #52525b;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-900: #18181b;
+
+  /* blue → 深鈦灰偏藍 (KPI 卡片等使用) */
+  --color-blue-50: #f1f5f9;
+  --color-blue-100: #e2e8f0;
+  --color-blue-200: #cbd5e1;
+  --color-blue-300: #94a3b8;
+  --color-blue-400: #64748b;
+  --color-blue-500: #475569;
+  --color-blue-600: #334155;
+  --color-blue-700: #1e293b;
+  --color-blue-800: #0f172a;
+  --color-blue-900: #0c1220;
+
+  /* amber → 琥珀金 (方案A 強調色) */
+  --color-amber-50: #fffbeb;
+  --color-amber-100: #fef3c7;
+  --color-amber-200: #fde68a;
+  --color-amber-300: #fcd34d;
+  --color-amber-400: #fbbf24;
+  --color-amber-500: #f59e0b;
+  --color-amber-600: #d97706;
+  --color-amber-700: #b45309;
+  --color-amber-800: #92400e;
+  --color-amber-900: #78350f;
+
+  /* teal → 霧銅綠 (與 emerald 一致) */
+  --color-teal-50: #f0f7ed;
+  --color-teal-100: #e3edd9;
+  --color-teal-200: #cddcb8;
+  --color-teal-300: #b5c99a;
+  --color-teal-400: #9ab57d;
+  --color-teal-500: #637d56;
+  --color-teal-600: #556b48;
+  --color-teal-700: #4a5d3e;
+  --color-teal-800: #3f4f34;
+  --color-teal-900: #35412a;
+
+  /* rose → 深鈦灰紅調 (錯誤/警示用) */
+  --color-rose-50: #fef2f2;
+  --color-rose-100: #fee2e2;
+  --color-rose-200: #fecaca;
+  --color-rose-300: #fca5a5;
+  --color-rose-400: #f87171;
+  --color-rose-500: #ef4444;
+  --color-rose-600: #dc2626;
+  --color-rose-700: #b91c1c;
+  --color-rose-800: #991b1b;
+  --color-rose-900: #7f1d1d;
+
+  /* red → 與 rose 一致 */
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+
+  /* green → 霧銅綠 (與 emerald 一致) */
+  --color-green-50: #f0f7ed;
+  --color-green-100: #e3edd9;
+  --color-green-200: #cddcb8;
+  --color-green-300: #b5c99a;
+  --color-green-400: #9ab57d;
+  --color-green-500: #637d56;
+  --color-green-600: #556b48;
+  --color-green-700: #4a5d3e;
+  --color-green-800: #3f4f34;
+  --color-green-900: #35412a;
+
+  /* indigo → 深鈦灰偏紫 (方案A 輔助色) */
+  --color-indigo-50: #f1f5f9;
+  --color-indigo-100: #e2e8f0;
+  --color-indigo-200: #cbd5e1;
+  --color-indigo-300: #94a3b8;
+  --color-indigo-400: #64748b;
+  --color-indigo-500: #475569;
+  --color-indigo-600: #334155;
+  --color-indigo-700: #1e293b;
+  --color-indigo-800: #0f172a;
+  --color-indigo-900: #0c1220;
+
+  /* purple → 深鈦灰偏紫 */
+  --color-purple-50: #f1f5f9;
+  --color-purple-100: #e2e8f0;
+  --color-purple-200: #cbd5e1;
+  --color-purple-300: #94a3b8;
+  --color-purple-400: #64748b;
+  --color-purple-500: #475569;
+  --color-purple-600: #334155;
+  --color-purple-700: #1e293b;
+  --color-purple-800: #0f172a;
+  --color-purple-900: #0c1220;
+
+  /* orange → 琥珀金 (與 amber 一致) */
+  --color-orange-50: #fffbeb;
+  --color-orange-100: #fef3c7;
+  --color-orange-200: #fde68a;
+  --color-orange-300: #fcd34d;
+  --color-orange-400: #fbbf24;
+  --color-orange-500: #f59e0b;
+  --color-orange-600: #d97706;
+  --color-orange-700: #b45309;
+  --color-orange-800: #92400e;
+  --color-orange-900: #78350f;
+
+  /* yellow → 琥珀金淺色 */
+  --color-yellow-50: #fffbeb;
+  --color-yellow-100: #fef3c7;
+  --color-yellow-200: #fde68a;
+  --color-yellow-300: #fcd34d;
+  --color-yellow-400: #fbbf24;
+  --color-yellow-500: #f59e0b;
+  --color-yellow-600: #d97706;
+  --color-yellow-700: #b45309;
+  --color-yellow-800: #92400e;
+  --color-yellow-900: #78350f;
+
+  /* cyan → 霧銅綠偏藍 */
+  --color-cyan-50: #f0f7ed;
+  --color-cyan-100: #e3edd9;
+  --color-cyan-200: #cddcb8;
+  --color-cyan-300: #b5c99a;
+  --color-cyan-400: #9ab57d;
+  --color-cyan-500: #637d56;
+  --color-cyan-600: #556b48;
+  --color-cyan-700: #4a5d3e;
+  --color-cyan-800: #3f4f34;
+  --color-cyan-900: #35412a;
+
+  /* fuchsia → 深鈦灰 */
+  --color-fuchsia-50: #f8fafc;
+  --color-fuchsia-100: #f1f5f9;
+  --color-fuchsia-200: #e2e8f0;
+  --color-fuchsia-300: #cbd5e1;
+  --color-fuchsia-400: #94a3b8;
+  --color-fuchsia-500: #64748b;
+  --color-fuchsia-600: #475569;
+  --color-fuchsia-700: #334155;
+  --color-fuchsia-800: #1e293b;
+  --color-fuchsia-900: #0f172a;
+
+  /* pink → 深鈦灰 */
+  --color-pink-50: #f8fafc;
+  --color-pink-100: #f1f5f9;
+  --color-pink-200: #e2e8f0;
+  --color-pink-300: #cbd5e1;
+  --color-pink-400: #94a3b8;
+  --color-pink-500: #64748b;
+  --color-pink-600: #475569;
+  --color-pink-700: #334155;
+  --color-pink-800: #1e293b;
+  --color-pink-900: #0f172a;
+
+  /* lime → 霧銅綠 */
+  --color-lime-50: #f0f7ed;
+  --color-lime-100: #e3edd9;
+  --color-lime-200: #cddcb8;
+  --color-lime-300: #b5c99a;
+  --color-lime-400: #9ab57d;
+  --color-lime-500: #637d56;
+  --color-lime-600: #556b48;
+  --color-lime-700: #4a5d3e;
+  --color-lime-800: #3f4f34;
+  --color-lime-900: #35412a;
+
+  /* sky → 深鈦灰 */
+  --color-sky-50: #f8fafc;
+  --color-sky-100: #f1f5f9;
+  --color-sky-200: #e2e8f0;
+  --color-sky-300: #cbd5e1;
+  --color-sky-400: #94a3b8;
+  --color-sky-500: #64748b;
+  --color-sky-600: #475569;
+  --color-sky-700: #334155;
+  --color-sky-800: #1e293b;
+  --color-sky-900: #0f172a;
+
+  /* gray → 深鈦灰 */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
+}
+
+/* ============================================
+  DESIGN SYSTEM — Deep Titanium + Muted Sage (方案A)
+  深鈦灰 + 霧銅綠 — 沉穩、專業、高質感
+  ============================================ */
+
+:root {
+  /* Primary — Slate/Navy (專業、沉穩、可信賴) */
+  --primary-50: #f8fafc;
+  --primary-100: #f1f5f9;
+  --primary-200: #e2e8f0;
+  --primary-300: #cbd5e1;
+  --primary-400: #94a3b8;
+  --primary-500: #64748b;
+  --primary-600: #475569;
+  --primary-700: #334155;
+  --primary-800: #1e293b;
+  --primary-900: #0f172a;
+
+  /* Accent — Muted Sage Green (低調、自然、安定) */
+  --accent-50: #f0f7ed;
+  --accent-100: #e3edd9;
+  --accent-200: #cddcb8;
+  --accent-300: #b5c99a;
+  --accent-400: #9ab57d;
+  --accent-500: #637d56;
+  --accent-600: #556b48;
+  --accent-700: #4a5d3e;
+
+  /* Solid brand colors (no gradients) */
+  --brand-solid: var(--accent-500);
+  --brand-solid-hover: var(--accent-600);
+  --warm-solid: var(--accent-600);
+  --hero-solid: var(--primary-800);
+
+  /* Neutrals — Cool Zinc (冷調灰階) */
+  --neutral-50: #fafafa;
+  --neutral-100: #f4f4f5;
+  --neutral-200: #e4e4e7;
+  --neutral-300: #d4d4d8;
+  --neutral-400: #a1a1aa;
+  --neutral-500: #71717a;
+  --neutral-600: #52525b;
+  --neutral-700: #3f3f46;
+  --neutral-800: #27272a;
+  --neutral-900: #18181b;
+
+  /* Semantic */
+  --success: #637d56;
+  --warning: #928a5a;
+  --danger: #991b1b;
+  --info: #475569;
+
+  /* Chart Palette — Muted tones for data visualization */
+  --chart-1: #475569;
+  --chart-2: #637d56;
+  --chart-3: #7c8a9a;
+  --chart-4: #8b9da0;
+  --chart-5: #a3b0a0;
+  --chart-6: #b8c4b0;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+}
+
+body {
+  background: #f1f5f9;
+  color: var(--neutral-900);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', 'Noto Sans TC', sans-serif;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Park line art background */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/park-background.svg');
+  background-size: 800px 600px;
+  background-position: center;
+  background-repeat: repeat;
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Subtle sage overlay for warmth */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(241, 245, 249, 0.95) 0%,
+    rgba(240, 247, 237, 0.9) 50%,
+    rgba(241, 245, 249, 0.95) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral-100);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 125, 86, 0.25);
+  border-radius: 4px;
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 125, 86, 0.4);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(99, 125, 86, 0.25) var(--neutral-100);
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(99, 125, 86, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(99, 125, 86, 0.4);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes barGrow {
+  from {
+    width: 0%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* ============================================
+   TEXTURE SHADOW SYSTEM — Premium depth layers
+   ============================================ */
+
+/* Subtle surface shadow — cards, panels */
+.shadow-texture-sm {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* Medium depth — elevated cards, modals */
+.shadow-texture-md {
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 4px 8px rgba(0, 0, 0, 0.03),
+    0 1px 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+/* Large depth — hero sections, featured content */
+.shadow-texture-lg {
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.05),
+    0 8px 16px rgba(0, 0, 0, 0.04),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+/* Premium border highlight — subtle top edge light */
+.border-texture {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Sage accent border variant */
+.border-texture-sage {
+  border: 1px solid rgba(99, 125, 86, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+.animate-bar-grow {
+  animation: barGrow 0.7s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Staggered children animation */
+.stagger-children > * {
+  opacity: 0;
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 50ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 100ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 150ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 200ms; }
+.stagger-children > *:nth-child(6) { animation-delay: 250ms; }
+.stagger-children > *:nth-child(7) { animation-delay: 300ms; }
+.stagger-children > *:nth-child(8) { animation-delay: 350ms; }
+.stagger-children > *:nth-child(9) { animation-delay: 400ms; }
+.stagger-children > *:nth-child(10) { animation-delay: 450ms; }
+.stagger-children > *:nth-child(11) { animation-delay: 500ms; }
+.stagger-children > *:nth-child(12) { animation-delay: 550ms; }
+
+/* Shimmer loading skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.03) 25%,
+    rgba(0, 0, 0, 0.06) 50%,
+    rgba(0, 0, 0, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+/* ============================================
+   LEAFLET MAP CONTAINER
+   ============================================ */
+
+.leaflet-container {
+  background: var(--neutral-100) !important;
+  border-radius: 16px;
+  font-family: inherit;
+}
+
+.leaflet-control-zoom a {
+  background: #ffffff !important;
+  color: var(--neutral-900) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--neutral-100) !important;
+  color: var(--primary-700) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(0, 0, 0, 0.03) !important;
+  color: var(--neutral-400) !important;
+  backdrop-filter: blur(8px);
+}
+
+.leaflet-popup-content-wrapper {
+  background: #ffffff !important;
+  color: var(--neutral-900) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+.leaflet-popup-tip {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.leaflet-popup-close-button {
+  color: var(--neutral-500) !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: var(--neutral-900) !important;
+}
+
+/* ============================================
+   ECHARTS TOOLTIP OVERRIDES
+   ============================================ */
+
+.echarts-dark-tooltip {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  color: var(--neutral-900) !important;
+}
+
+/* ============================================
+   MOBILE MENU
+   ============================================ */
+
+.mobile-menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mobile-menu-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-menu-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 280px;
+  max-width: 85vw;
+  height: 100vh;
+  background: var(--neutral-50);
+  border-left: 1px solid var(--neutral-200);
+  z-index: 41;
+  transform: translateX(100%);
+  transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+}
+
+.mobile-menu-panel.open {
+  transform: translateX(0);
+}
+
+/* ============================================
+   SELECTION
+   ============================================ */
+
+::selection {
+  background: rgba(99, 125, 86, 0.15);
+  color: var(--neutral-900);
+}
+
+/* ============================================
+   HOUSE DECORATIVE ELEMENTS
+   ============================================ */
+
+/* House divider line */
+.house-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 32px 0;
+}
+
+.house-divider::before,
+.house-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99, 125, 86, 0.3), transparent);
+}
+
+.house-divider svg {
+  flex-shrink: 0;
+  color: rgba(99, 125, 86, 0.5);
+}
+
+/* House-shaped button decoration */
+.btn-house {
+  position: relative;
+  background: var(--accent-500);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 200ms ease;
+  overflow: hidden;
+}
+
+.btn-house::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 8px solid var(--accent-500);
+  transition: border-bottom-color 200ms ease;
+}
+
+.btn-house:hover {
+  background: var(--accent-600);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(99, 125, 86, 0.3);
+}
+
+.btn-house:hover::before {
+  border-bottom-color: var(--accent-600);
+}
+
+/* Card with house accent */
+.card-house-accent {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(99, 125, 86, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 200ms ease;
+}
+
+.card-house-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-400), var(--accent-500), var(--accent-400));
+  border-radius: 12px 12px 0 0;
+}
+
+.card-house-accent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(99, 125, 86, 0.15);
+}
+
+/* Section header with house icon */
+.section-header-house {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.section-header-house::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-image: url('/house-icon.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  color: var(--accent-500);
+}
+
+/* Park-themed scrollbar */
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(99, 125, 86, 0.3), rgba(99, 125, 86, 0.5));
+  border-radius: 4px;
+  transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(99, 125, 86, 0.5), rgba(99, 125, 86, 0.7));
+}
+
+/* ============================================
+   FOCUS STYLES (Accessibility)
+   ============================================ */
+
+:focus-visible {
+  outline: 2px solid var(--primary-600);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

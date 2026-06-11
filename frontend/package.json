@@ -1,0 +1,32 @@
+{
+  "name": "housing-tracker-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "echo \"NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}\" > .env.local && next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "autoprefixer": "^10.4.0",
+    "echarts": "^5.5.0",
+    "echarts-for-react": "^3.0.0",
+    "leaflet": "^1.9.0",
+    "leaflet-draw": "^1.0.4",
+    "leaflet.markercluster": "^1.5.3",
+    "lucide-react": "^0.460.0",
+    "next": "^14.2.0",
+    "postcss": "^8.5.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "react-leaflet": "^4.2.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "19.2.17",
+    "pm2": "^7.0.1",
+    "typescript": "6.0.3"
+  }
+}

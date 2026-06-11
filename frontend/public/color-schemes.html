@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>房屋實價追蹤 — 配色方案比較</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif; background: #f5f5f5; }
+
+/* ===== 方案 A：經典翡翠綠（現行） ===== */
+.scheme-a { --primary: #059669; --primary-light: #d1fae5; --primary-dark: #064e3b; --accent: #f59e0b; --bg: #fafaf9; --surface: #ffffff; --text: #1c1917; --muted: #78716c; --border: #e7e5e4; }
+
+/* ===== 方案 B：深海藍金 ===== */
+.scheme-b { --primary: #1e3a5f; --primary-light: #dbeafe; --primary-dark: #0f172a; --accent: #d97706; --bg: #f8fafc; --surface: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0; }
+
+/* ===== 方案 C：暖陶土系 ===== */
+.scheme-c { --primary: #c2410c; --primary-light: #ffedd5; --primary-dark: #7c2d12; --accent: #0369a1; --bg: #fefcf8; --surface: #ffffff; --text: #1c1917; --muted: #78716c; --border: #f5ebe0; }
+
+/* ===== 方案 D：靛青紫韻 ===== */
+.scheme-d { --primary: #4f46e5; --primary-light: #e0e7ff; --primary-dark: #312e81; --accent: #f59e0b; --bg: #f5f3ff; --surface: #ffffff; --text: #1e1b4b; --muted: #6b7280; --border: #e0e7ff; }
+
+/* ===== 方案 E：墨黑極簡 ===== */
+.scheme-e { --primary: #18181b; --primary-light: #f4f4f5; --primary-dark: #09090b; --accent: #22c55e; --bg: #fafafa; --surface: #ffffff; --text: #18181b; --muted: #71717a; --border: #e4e4e7; }
+
+.scheme-card {
+  border-radius: 16px; overflow: hidden; width: 380px; flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+}
+</style>
+</head>
+<body class="p-8">
+
+<div class="max-w-[1600px] mx-auto mb-8">
+  <h1 class="text-3xl font-bold text-stone-800 mb-2">🎨 房屋實價追蹤 — 配色方案比較</h1>
+  <p class="text-stone-500">每套配色都模擬了實際頁面的導覽列、搜尋表單、結果卡片等元素</p>
+</div>
+
+<div class="flex gap-6 overflow-x-auto pb-8 max-w-[1600px] mx-auto">
+
+<!-- ========== 方案 A：經典翡翠綠（現行） ========== -->
+<div class="scheme-a" style="background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+<div class="scheme-card">
+  <!-- Navbar -->
+  <div style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;"><span style="color:#fff;font-size:14px;">🏠</span></div>
+      <span style="font-weight:700;font-size:14px;color:var(--primary-dark);">房屋實價追蹤</span>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">首頁儀表板</span>
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">實價排行</span>
+      <span style="font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;">生活圈找房</span>
+    </div>
+  </div>
+  <!-- Hero -->
+  <div style="padding:24px 20px 16px;">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">🚀 通勤時間熱力圖</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">根據上班地點與通勤時間，找出範圍內的理想房源</p>
+    <!-- Form -->
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">例：台北101、信義區松壽路...</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">30 分鐘</div>
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">🚗 開車</div>
+      </div>
+      <button style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔍 搜尋符合條件的房源</button>
+    </div>
+  </div>
+  <!-- Result Card -->
+  <div style="padding:0 20px 20px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="background:var(--primary-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:13px;color:var(--primary-dark);">中心區（&lt; 2 km）</span>
+        <span style="font-size:11px;color:var(--muted);">3 個行政區</span>
+      </div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市大安區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：1,247 ｜ 平均總價：1,850 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">82.35 萬/坪</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市中山區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：834 ｜ 平均總價：1,420 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">67.80 萬/坪</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Color Palette Strip -->
+  <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-light);border:1px solid var(--border);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-dark);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--muted);"></div>
+    <span style="font-size:11px;color:var(--muted);margin-left:4px;">#059669 · #d1fae5 · #064e3b · #f59e0b</span>
+  </div>
+</div>
+<div style="padding:12px 20px;text-align:center;">
+  <div style="font-weight:700;font-size:15px;margin-bottom:4px;">方案 A — 經典翡翠綠</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.6;">自然、安定、信賴<br><strong>現行配色</strong></div>
+</div>
+</div>
+
+<!-- ========== 方案 B：深海藍金 ========== -->
+<div class="scheme-b" style="background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+<div class="scheme-card">
+  <div style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;"><span style="color:#fff;font-size:14px;">🏠</span></div>
+      <span style="font-weight:700;font-size:14px;color:var(--primary-dark);">房屋實價追蹤</span>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">首頁儀表板</span>
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">實價排行</span>
+      <span style="font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;">生活圈找房</span>
+    </div>
+  </div>
+  <div style="padding:24px 20px 16px;">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">🚀 通勤時間熱力圖</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">根據上班地點與通勤時間，找出範圍內的理想房源</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">例：台北101、信義區松壽路...</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">30 分鐘</div>
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">🚗 開車</div>
+      </div>
+      <button style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔍 搜尋符合條件的房源</button>
+    </div>
+  </div>
+  <div style="padding:0 20px 20px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="background:var(--primary-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:13px;color:var(--primary-dark);">中心區（&lt; 2 km）</span>
+        <span style="font-size:11px;color:var(--muted);">3 個行政區</span>
+      </div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市大安區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：1,247 ｜ 平均總價：1,850 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">82.35 萬/坪</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市中山區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：834 ｜ 平均總價：1,420 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">67.80 萬/坪</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-light);border:1px solid var(--border);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-dark);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--muted);"></div>
+    <span style="font-size:11px;color:var(--muted);margin-left:4px;">#1e3a5f · #dbeafe · #0f172a · #d97706</span>
+  </div>
+</div>
+<div style="padding:12px 20px;text-align:center;">
+  <div style="font-weight:700;font-size:15px;margin-bottom:4px;">方案 B — 深海藍金</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.6;">專業、權威、穩重<br>金融級信任感</div>
+</div>
+</div>
+
+<!-- ========== 方案 C：暖陶土系 ========== -->
+<div class="scheme-c" style="background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+<div class="scheme-card">
+  <div style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;"><span style="color:#fff;font-size:14px;">🏠</span></div>
+      <span style="font-weight:700;font-size:14px;color:var(--primary-dark);">房屋實價追蹤</span>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">首頁儀表板</span>
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">實價排行</span>
+      <span style="font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;">生活圈找房</span>
+    </div>
+  </div>
+  <div style="padding:24px 20px 16px;">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">🚀 通勤時間熱力圖</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">根據上班地點與通勤時間，找出範圍內的理想房源</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">例：台北101、信義區松壽路...</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">30 分鐘</div>
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">🚗 開車</div>
+      </div>
+      <button style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔍 搜尋符合條件的房源</button>
+    </div>
+  </div>
+  <div style="padding:0 20px 20px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="background:var(--primary-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:13px;color:var(--primary-dark);">中心區（&lt; 2 km）</span>
+        <span style="font-size:11px;color:var(--muted);">3 個行政區</span>
+      </div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市大安區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：1,247 ｜ 平均總價：1,850 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">82.35 萬/坪</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市中山區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：834 ｜ 平均總價：1,420 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">67.80 萬/坪</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-light);border:1px solid var(--border);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-dark);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--muted);"></div>
+    <span style="font-size:11px;color:var(--muted);margin-left:4px;">#c2410c · #ffedd5 · #7c2d12 · #0369a1</span>
+  </div>
+</div>
+<div style="padding:12px 20px;text-align:center;">
+  <div style="font-weight:700;font-size:15px;margin-bottom:4px;">方案 C — 暖陶土系</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.6;">溫馨、居家、親切<br>生活氣息濃厚</div>
+</div>
+</div>
+
+<!-- ========== 方案 D：靛青紫韻 ========== -->
+<div class="scheme-d" style="background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+<div class="scheme-card">
+  <div style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;"><span style="color:#fff;font-size:14px;">🏠</span></div>
+      <span style="font-weight:700;font-size:14px;color:var(--primary-dark);">房屋實價追蹤</span>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">首頁儀表板</span>
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">實價排行</span>
+      <span style="font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;">生活圈找房</span>
+    </div>
+  </div>
+  <div style="padding:24px 20px 16px;">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">🚀 通勤時間熱力圖</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">根據上班地點與通勤時間，找出範圍內的理想房源</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">例：台北101、信義區松壽路...</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">30 分鐘</div>
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">🚗 開車</div>
+      </div>
+      <button style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔍 搜尋符合條件的房源</button>
+    </div>
+  </div>
+  <div style="padding:0 20px 20px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="background:var(--primary-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:13px;color:var(--primary-dark);">中心區（&lt; 2 km）</span>
+        <span style="font-size:11px;color:var(--muted);">3 個行政區</span>
+      </div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市大安區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：1,247 ｜ 平均總價：1,850 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">82.35 萬/坪</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市中山區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：834 ｜ 平均總價：1,420 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--primary);">67.80 萬/坪</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-light);border:1px solid var(--border);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-dark);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--muted);"></div>
+    <span style="font-size:11px;color:var(--muted);margin-left:4px;">#4f46e5 · #e0e7ff · #312e81 · #f59e0b</span>
+  </div>
+</div>
+<div style="padding:12px 20px;text-align:center;">
+  <div style="font-weight:700;font-size:15px;margin-bottom:4px;">方案 D — 靛青紫韻</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.6;">科技感、創新、年輕<br>SaaS 風格</div>
+</div>
+</div>
+
+<!-- ========== 方案 E：墨黑極簡 ========== -->
+<div class="scheme-e" style="background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+<div class="scheme-card">
+  <div style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:28px;height:28px;background:var(--primary);border-radius:6px;display:flex;align-items:center;justify-content:center;"><span style="color:#fff;font-size:14px;">🏠</span></div>
+      <span style="font-weight:700;font-size:14px;color:var(--primary-dark);">房屋實價追蹤</span>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">首頁儀表板</span>
+      <span style="font-size:12px;color:var(--muted);cursor:pointer;">實價排行</span>
+      <span style="font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;">生活圈找房</span>
+    </div>
+  </div>
+  <div style="padding:24px 20px 16px;">
+    <h2 style="font-size:20px;font-weight:700;margin-bottom:4px;">🚀 通勤時間熱力圖</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">根據上班地點與通勤時間，找出範圍內的理想房源</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">例：台北101、信義區松壽路...</div>
+      <div style="display:flex;gap:8px;">
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">30 分鐘</div>
+        <div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--muted);">🚗 開車</div>
+      </div>
+      <button style="background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;">🔍 搜尋符合條件的房源</button>
+    </div>
+  </div>
+  <div style="padding:0 20px 20px;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+      <div style="background:var(--primary-light);padding:10px 14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:13px;color:var(--primary-dark);">中心區（&lt; 2 km）</span>
+        <span style="font-size:11px;color:var(--muted);">3 個行政區</span>
+      </div>
+      <div style="padding:12px 14px;border-top:1px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市大安區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：1,247 ｜ 平均總價：1,850 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--accent);">82.35 萬/坪</div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">臺北市中山區</div>
+            <div style="font-size:11px;color:var(--muted);">交易筆數：834 ｜ 平均總價：1,420 萬元</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:14px;font-weight:700;color:var(--accent);">67.80 萬/坪</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:6px;align-items:center;">
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-light);border:1px solid var(--border);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--primary-dark);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);"></div>
+    <div style="width:32px;height:32px;border-radius:8px;background:var(--muted);"></div>
+    <span style="font-size:11px;color:var(--muted);margin-left:4px;">#18181b · #f4f4f5 · #09090b · #22c55e</span>
+  </div>
+</div>
+<div style="padding:12px 20px;text-align:center;">
+  <div style="font-weight:700;font-size:15px;margin-bottom:4px;">方案 E — 墨黑極簡</div>
+  <div style="font-size:12px;color:var(--muted);line-height:1.6;">冷靜、克制、高級<br>Apple / Linear 風格</div>
+</div>
+</div>
+
+</div>
+
+<!-- Comparison Table -->
+<div class="max-w-[1600px] mx-auto mt-8">
+<h2 style="font-size:20px;font-weight:700;margin-bottom:16px;">📊 五套配色比較</h2>
+<div style="overflow-x:auto;">
+<table style="width:100%;border-collapse:collapse;font-size:14px;" id="compare-table">
+<thead>
+<tr style="border-bottom:2px solid #e5e7eb;">
+  <th style="text-align:left;padding:10px 16px;font-weight:600;">維度</th>
+  <th style="text-align:center;padding:10px 16px;font-weight:600;">A 翡翠綠</th>
+  <th style="text-align:center;padding:10px 16px;font-weight:600;">B 深海藍金</th>
+  <th style="text-align:center;padding:10px 16px;font-weight:600;">C 暖陶土</th>
+  <th style="text-align:center;padding:10px 16px;font-weight:600;">D 靛青紫</th>
+  <th style="text-align:center;padding:10px 16px;font-weight:600;">E 墨黑極簡</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-weight:500;">主色調</td><td style="text-align:center;padding:10px;">🟢 翡翠綠</td><td style="text-align:center;padding:10px;">🔵 深海藍</td><td style="text-align:center;padding:10px;">🟠 陶土橘</td><td style="text-align:center;padding:10px;">🟣 靛青紫</td><td style="text-align:center;padding:10px;">⚫ 墨黑</td></tr>
+<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-weight:500;">氛圍感受</td><td style="text-align:center;padding:10px;">自然安定</td><td style="text-align:center;padding:10px;">專業權威</td><td style="text-align:center;padding:10px;">溫馨居家</td><td style="text-align:center;padding:10px;">科技創新</td><td style="text-align:center;padding:10px;">冷靜高級</td></tr>
+<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-weight:500;">適合受眾</td><td style="text-align:center;padding:10px;">一般自住族</td><td style="text-align:center;padding:10px;">投資客/專業人士</td><td style="text-align:center;padding:10px;">首購族/家庭</td><td style="text-align:center;padding:10px;">年輕族群</td><td style="text-align:center;padding:10px;">品味追求者</td></tr>
+<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-weight:500;">對比度</td><td style="text-align:center;padding:10px;">★★★★☆</td><td style="text-align:center;padding:10px;">★★★★★</td><td style="text-align:center;padding:10px;">★★★☆☆</td><td style="text-align:center;padding:10px;">★★★★☆</td><td style="text-align:center;padding:10px;">★★★★★</td></tr>
+<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-weight:500;">資料可讀性</td><td style="text-align:center;padding:10px;">好</td><td style="text-align:center;padding:10px;">很好</td><td style="text-align:center;padding:10px;">普通</td><td style="text-align:center;padding:10px;">好</td><td style="text-align:center;padding:10px;">很好</td></tr>
+<tr><td style="padding:10px 16px;font-weight:500;">推薦指數</td><td style="text-align:center;padding:10px;">⭐⭐⭐</td><td style="text-align:center;padding:10px;">⭐⭐⭐⭐</td><td style="text-align:center;padding:10px;">⭐⭐⭐</td><td style="text-align:center;padding:10px;">⭐⭐⭐</td><td style="text-align:center;padding:10px;">⭐⭐⭐⭐</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</body>
+</html>
