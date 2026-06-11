@@ -512,41 +512,56 @@ export default function HomePage() {
 
       {/* ══════════════════════════════════════
           HERO — Japanese Minimalist Style
-          Left-aligned, tag + title + subtitle
-          + button + divider + stats grid
+          Left-aligned tag/title, centered stats
           ══════════════════════════════════════ */}
       <section className="py-10 sm:py-14 lg:py-18">
-        <div className="max-w-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-          {/* ── Tag ── */}
-          <span className="tag-jp-neutral">
-            資料來源：內政部地政司實價登錄
-          </span>
+          {/* ── Tag + Title + CTA (left-aligned) ── */}
+          <div className="max-w-2xl">
+            <span className="tag-jp-neutral">
+              資料來源：內政部地政司實價登錄
+            </span>
 
-          {/* ── Title + Subtitle ── */}
-          <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-normal text-[#2a2a2a] leading-[1.5] tracking-tight">
-            全台房屋成交紀錄
-            <br />
-            <em className="not-italic text-[#5a6b4e] font-normal">一查就懂</em>
-          </h1>
+            <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-normal text-[#2a2a2a] leading-[1.5] tracking-tight">
+              全台房屋成交紀錄
+              <br />
+              <em className="not-italic text-[#5a6b4e] font-normal">一查就懂</em>
+            </h1>
 
-          {/* ── Description ── */}
-          <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
-            輸入城市、區域或地址，立即查看該地區的成交行情與生活機能評估。
-          </p>
+            <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
+              輸入城市、區域或地址，立即查看該地區的成交行情與生活機能評估。
+            </p>
 
-          {/* ── CTA Button ── */}
-          <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
-            開始找房
-            <IconArrowRight className="w-4 h-4" />
-          </HouseButton>
+            <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
+              開始找房
+              <IconArrowRight className="w-4 h-4" />
+            </HouseButton>
+          </div>
 
-          {/* ── Divider ── */}
-          <HouseDivider className="mt-10" />
+          {/* ── Full-width Divider ── */}
+          <div className="flex items-center gap-3 mt-10 mb-10">
+            <div className="flex-1 h-px bg-[#e0ddd8]" />
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7c5e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.35">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg>
+            <div className="flex-1 h-px bg-[#e0ddd8]" />
+          </div>
 
-          {/* ── Stats Grid (3-column with 1px gap separators) ── */}
+          {/* ── Year Selector for Highlights (centered) ── */}
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <select value={highlightYear} onChange={(e) => setHighlightYear(parseInt(e.target.value))}
+                className={selectClass}>
+                {years.map(y => <option key={y} value={y}>{y}</option>)}
+              </select>
+              <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* ── Stats Grid (centered, 3-column) ── */}
           {heroStats && (
-            <div className="stat-grid-jp mt-10">
+            <div className="stat-grid-jp max-w-3xl mx-auto">
               {heroStats.map((s, i) => (
                 <div key={i} className="stat-item">
                   <div className="stat-label">{s.label}</div>
