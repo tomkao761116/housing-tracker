@@ -411,12 +411,14 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
   const onSelectRef = useRef(onSelect);
   const onMarkerHoverRef = useRef(onMarkerHover);
   const onBoxSelectRef = useRef(onBoxSelect);
+  const selectedIdRef = useRef(selectedId);
 
   useEffect(() => { colorModeRef.current = colorMode; }, [colorMode]);
   useEffect(() => { tradesRef.current = trades; }, [trades]);
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
   useEffect(() => { onMarkerHoverRef.current = onMarkerHover; }, [onMarkerHover]);
   useEffect(() => { onBoxSelectRef.current = onBoxSelect; }, [onBoxSelect]);
+  useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
   // ── 建立 marker ──
   const createMarker = useCallback((trade) => {
@@ -468,9 +470,25 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       marker.setStyle({ radius: 8, fillOpacity: 1 });
     });
 
+    // 延遲處理 mouseout，讓使用者有時間點到 popup
+    let mouseoutTimer = null;
     marker.on('mouseout', () => {
-      if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
-      if (marker.tradeId !== selectedId) {
+      clearTimeout(mouseoutTimer);
+      mouseoutTimer = setTimeout(() => {
+        if (!marker.isPopupOpen() && marker.tradeId !== selectedIdRef.current) {
+          if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
+          marker.setStyle({ radius: 6, fillOpacity: 0.75 });
+        }
+      }, 1500); // 延遲清除，給 flyTo + openPopup (1100ms) 足夠時間
+    });
+
+    marker.on('popupopen', () => {
+      clearTimeout(mouseoutTimer);
+    });
+
+    marker.on('popupclose', () => {
+      if (marker.tradeId !== selectedIdRef.current) {
+        if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
         marker.setStyle({ radius: 6, fillOpacity: 0.75 });
       }
     });
