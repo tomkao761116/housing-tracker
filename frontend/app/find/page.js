@@ -8,7 +8,7 @@ import { API } from '@/lib/api';
 const FindMap = dynamic(() => import('../components/FindMap'), {
   ssr: false,
   loading: () => (
-    <div className="flex items-center justify-center h-[600px] bg-[#f5f4f0] rounded-lg border border-[#e8e4df]">
+    <div className="flex items-center justify-center h-[600px] bg-[#f5f4f0] rounded-sm border border-[#e8e4df]">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#5a6b4e]" />
       <span className="ml-3 text-[#999]">地圖載入中...</span>
     </div>
@@ -244,7 +244,7 @@ export default function FindPage() {
 
       {/* ═══════════════════ SEARCH CARD ═══════════════════ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-        <div className="bg-white rounded-lg shadow-sm border border-[#e8e4df] p-6">
+        <div className="bg-white rounded-sm shadow-sm border border-[#e8e4df] p-6">
           {/* Primary row: City + District + Keyword + Search + Reset */}
           <div className="flex flex-wrap gap-3 items-end mb-4">
             <div className="flex-1 min-w-[150px]">
@@ -687,7 +687,7 @@ function TradeCard({ trade, isSelected, isExpanded, isHovered, onSelect, onToggl
   return (
     <div
       data-trade-id={trade.id}
-      className={`bg-white rounded-lg shadow-sm border border-[#e8e4df] p-5 mb-3 transition-all cursor-pointer hover:border-[#d0cdc8] ${
+      className={`bg-white rounded-sm shadow-sm border border-[#e8e4df] p-5 mb-3 transition-all cursor-pointer hover:border-[#d0cdc8] ${
         isSelected ? 'border-[#5a6b4e] ring-1 ring-[#5a6b4e]/20' : ''
       }`}
       onClick={onSelect}
