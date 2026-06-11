@@ -627,7 +627,7 @@ export default function HomePage() {
                       <div className="stat-label">{s.label}</div>
                       <div className="stat-value">{s.val}</div>
                       <div className="stat-label" style={{
-                        color: s.accent ? '#5a6b4e' : s.down ? '#a36b6b' : s.expensive ? '#5a6b4e' : '#777',
+                        color: s.accent ? '#c0392b' : s.down ? '#5a6b4e' : s.expensive ? '#5a6b4e' : '#777',
                         marginTop: '2px',
                         fontSize: '14px',
                         fontWeight: '500',
@@ -650,7 +650,7 @@ export default function HomePage() {
                           {s.subVal}
                         </div>
                         <div className="stat-label" style={{
-                          color: s.accent ? '#5a6b4e' : s.down ? '#a36b6b' : s.expensive ? '#5a6b4e' : '#777',
+                          color: s.accent ? '#c0392b' : s.down ? '#5a6b4e' : s.expensive ? '#5a6b4e' : '#777',
                           fontSize: '14px',
                           fontWeight: '500',
                         }}>
