@@ -235,7 +235,7 @@ export default function FindPage() {
   return (
     <div className="min-h-screen bg-[#faf9f7]">
       {/* ═══════════════════ HEADER ═══════════════════ */}
-      <div className="border-b border-[#e8e4df] bg-white">
+      <div className="border-b border-[#e8e4df] bg-white/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
           <h1 className="text-xl font-medium text-[#2a2a2a] tracking-tight">全台房屋成交紀錄查詢</h1>
           <p className="text-sm text-[#999] mt-1">即時掌握各區域房價趨勢，找到最適合你的理想居所</p>
@@ -244,7 +244,7 @@ export default function FindPage() {
 
       {/* ═══════════════════ SEARCH CARD ═══════════════════ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-2">
-        <div className="bg-white rounded-sm shadow-sm border border-[#e8e4df] p-6">
+        <div className="bg-white/80 backdrop-blur-sm rounded-sm shadow-sm border border-[#e8e4df] p-6">
           {/* Primary row: City + District + Keyword + Search + Reset */}
           <div className="flex flex-wrap gap-3 items-end mb-4">
             <div className="flex-1 min-w-[150px]">
@@ -687,7 +687,7 @@ function TradeCard({ trade, isSelected, isExpanded, isHovered, onSelect, onToggl
   return (
     <div
       data-trade-id={trade.id}
-      className={`bg-white rounded-sm shadow-sm border border-[#e8e4df] p-5 mb-3 transition-all cursor-pointer hover:border-[#d0cdc8] ${
+      className={`bg-white/80 backdrop-blur-sm rounded-sm shadow-sm border border-[#e8e4df] p-5 mb-3 transition-all cursor-pointer hover:border-[#d0cdc8] ${
         isSelected ? 'border-[#5a6b4e] ring-1 ring-[#5a6b4e]/20' : ''
       }`}
       onClick={onSelect}

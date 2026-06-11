@@ -402,19 +402,21 @@ export default function EvaluatePage() {
 
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
+    <div className="min-h-screen bg-[#faf9f7]">
       {/* ════════════════════════════════════════
-          HERO HEADER (精簡版)
+          HEADER (仿照找房頁)
           ═════════════════════════════════════════ */}
-      <div className="flex items-center gap-3">
-        <div className="p-2 rounded-sm bg-[#f0eeeb]">
-          <IconLocation className="w-6 h-6 text-[#5a6b4e]" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-[#2a2a2a]">地點評估中心</h1>
-          <p className="text-sm text-[#777]">輸入地址，一次獲得生活圈評分、通勤時間與周邊成交比較。</p>
+      <div className="border-b border-[#e8e4df] bg-white/80 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+          <h1 className="text-xl font-medium text-[#2a2a2a] tracking-tight">地點評估中心</h1>
+          <p className="text-sm text-[#999] mt-1">輸入地址，一次獲得生活圈評分、通勤時間與周邊成交比較。</p>
         </div>
       </div>
+
+      {/* ════════════════════════════════════════
+          CONTENT
+          ═════════════════════════════════════════ */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-8 space-y-6">
 
       {/* ════════════════════════════════════════
           INPUT SECTION (精簡版)
@@ -1002,5 +1004,6 @@ export default function EvaluatePage() {
         )}
       </div>
     </div>
+  </div>
   );
 }
