@@ -634,7 +634,7 @@ export default function HomePage() {
                       }}>
                         {s.sub}
                       </div>
-                      <div className="stat-label" style={{ color: '#999', fontSize: '13px', marginTop: '1px' }}>
+                      <div className="stat-label" style={{ color: '#999', fontSize: '14px', marginTop: '1px' }}>
                         {s.price}
                       </div>
                     </div>
@@ -646,7 +646,7 @@ export default function HomePage() {
                       <div key={`d${i}`} className="stat-item">
                         <div className="stat-label">{s.label}</div>
                         <div className="stat-value">{s.val}</div>
-                        <div className="stat-label" style={{ color: '#999', fontSize: '13px', marginTop: '0', marginBottom: '2px' }}>
+                        <div className="stat-label" style={{ color: '#999', fontSize: '14px', marginTop: '0', marginBottom: '2px' }}>
                           {s.subVal}
                         </div>
                         <div className="stat-label" style={{
@@ -656,7 +656,7 @@ export default function HomePage() {
                         }}>
                           {s.sub}
                         </div>
-                        <div className="stat-label" style={{ color: '#999', fontSize: '13px', marginTop: '1px' }}>
+                        <div className="stat-label" style={{ color: '#999', fontSize: '14px', marginTop: '1px' }}>
                           {s.price}
                         </div>
                       </div>

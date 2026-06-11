@@ -92,12 +92,12 @@ function Tag({ color = 'stone', children }) {
 }
 
 const DIMENSIONS = [
-  { key: 'food', label: '餐飲', icon: UtensilsCrossed, color: '#f97316' },
-  { key: 'edu', label: '教育', icon: GraduationCap, color: '#3b82f6' },
-  { key: 'medical', label: '醫療', icon: HeartPulse, color: '#ef4444' },
-  { key: 'transport', label: '交通', icon: TrainFront, color: '#8b5cf6' },
-  { key: 'shopping', label: '購物', icon: ShoppingCart, color: '#ec4899' },
-  { key: 'recreation', label: '休閒', icon: Trees, color: '#22c55e' },
+  { key: 'food', label: '餐飲', icon: UtensilsCrossed, color: '#c47a3a' },
+  { key: 'edu', label: '教育', icon: GraduationCap, color: '#3b7ab5' },
+  { key: 'medical', label: '醫療', icon: HeartPulse, color: '#b54a3a' },
+  { key: 'transport', label: '交通', icon: TrainFront, color: '#7b6ba5' },
+  { key: 'shopping', label: '購物', icon: ShoppingCart, color: '#c45a7a' },
+  { key: 'recreation', label: '休閒', icon: Trees, color: '#5a8a5a' },
 ];
 
 function parseFloorNum(val) {
@@ -323,11 +323,11 @@ function TradeDetailModal({ trade, onClose }) {
 }
 
 /* ─── Color helpers — 主視覺色系（高對比版）──────────────────── */
-// 生活圈評分：優異深綠, 良好中藍, 普通琥珀, 待加強紅棕 — 四色明顯可辨
+// 生活圈評分：四色明顯可辨 — 綠 / 藍 / 琥珀 / 紅棕
 function getScoreColor(score) {
   if (score == null) return '#999999';
-  if (score >= 80) return '#3d6b3d';    // 深綠 — 優異
-  if (score >= 60) return '#3b7ab5';    // 中藍 — 良好
+  if (score >= 80) return '#2d8a2d';    // 鮮綠 — 優異
+  if (score >= 60) return '#3a6da8';    // 鋼藍 — 良好（與綠色明顯區別）
   if (score >= 40) return '#c4912a';    // 琥珀 — 普通
   return '#b54a3a';                      // 紅棕 — 待加強
 }
@@ -336,10 +336,10 @@ function getScoreColor(score) {
 function getPriceColor(totalPrice) {
   const priceWan = totalPrice / 10000;
   if (priceWan > 200) return '#b54a3a';
-  if (priceWan > 150) return '#c47a3a';
-  if (priceWan > 100) return '#c4912a';
-  if (priceWan > 50) return '#5a8a5a';
-  return '#3b7ab5';
+  if (priceWan > 150) return '#c4912a';
+  if (priceWan > 100) return '#c47a3a';
+  if (priceWan > 50) return '#3a6da8';
+  return '#2d8a2d';
 }
 
 function getMarkerColor(trade, colorMode) {
@@ -352,17 +352,17 @@ function getMarkerColor(trade, colorMode) {
 /* ─── Map Legend — 主視覺色系 ─────────────────────────── */
 function MapLegend({ colorMode }) {
   const scoreColors = [
-    { min: 80, label: '80+ 優異', color: '#3d6b3d' },
-    { min: 60, label: '60-79 良好', color: '#3b7ab5' },
+    { min: 80, label: '80+ 優異', color: '#2d8a2d' },
+    { min: 60, label: '60-79 良好', color: '#3a6da8' },
     { min: 40, label: '40-59 普通', color: '#c4912a' },
     { min: 0, label: '40- 待加強', color: '#b54a3a' },
   ];
   const priceColors = [
     { min: 200, label: '200 萬以上', color: '#b54a3a' },
-    { min: 150, label: '150-200 萬', color: '#c47a3a' },
-    { min: 100, label: '100-150 萬', color: '#c4912a' },
-    { min: 50, label: '50-100 萬', color: '#5a8a5a' },
-    { min: 0, label: '50 萬以下', color: '#3b7ab5' },
+    { min: 150, label: '150-200 萬', color: '#c4912a' },
+    { min: 100, label: '100-150 萬', color: '#c47a3a' },
+    { min: 50, label: '50-100 萬', color: '#3a6da8' },
+    { min: 0, label: '50 萬以下', color: '#2d8a2d' },
   ];
   const items = colorMode === 'score' ? scoreColors : priceColors;
   return (
@@ -550,7 +550,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
           
           return L.divIcon({
             html: `<div style="
-              background: linear-gradient(135deg, #10b981, #059669);
+              background: linear-gradient(135deg, #5a6b4e, #4a5d3e);
               color: white;
               border-radius: 50%;
               width: ${size === 'large' ? 56 : size === 'medium' ? 46 : 36}px;
@@ -584,10 +584,10 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
           marker: false,
           rectangle: {
             shapeOptions: {
-              color: '#10b981',
+              color: '#5a6b4e',
               weight: 2,
               fillOpacity: 0.1,
-              fillColor: '#10b981',
+              fillColor: '#5a6b4e',
             },
           },
           polygon: false,
