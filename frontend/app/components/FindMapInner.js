@@ -463,6 +463,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
 
     marker.on('click', () => {
       if (onSelectRef.current) onSelectRef.current(trade.id);
+      marker.openPopup();
     });
 
     marker.on('mouseover', () => {
@@ -470,20 +471,11 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       marker.setStyle({ radius: 8, fillOpacity: 1 });
     });
 
-    // 延遲處理 mouseout，讓使用者有時間點到 popup
-    let mouseoutTimer = null;
     marker.on('mouseout', () => {
-      clearTimeout(mouseoutTimer);
-      mouseoutTimer = setTimeout(() => {
-        if (!marker.isPopupOpen() && marker.tradeId !== selectedIdRef.current) {
-          if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
-          marker.setStyle({ radius: 6, fillOpacity: 0.75 });
-        }
-      }, 1500); // 延遲清除，給 flyTo + openPopup (1100ms) 足夠時間
-    });
-
-    marker.on('popupopen', () => {
-      clearTimeout(mouseoutTimer);
+      if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
+      if (marker.tradeId !== selectedIdRef.current) {
+        marker.setStyle({ radius: 6, fillOpacity: 0.75 });
+      }
     });
 
     marker.on('popupclose', () => {
@@ -704,7 +696,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     };
   }, []);
 
-  // ── 當 selectedId 改變時，飛到該點並彈出 Popup ──
+  // ── 當 selectedId 改變時，飛到該點 ──
   useEffect(() => {
     if (!selectedId || !mapInstanceRef.current) return;
 
@@ -715,14 +707,6 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       mapInstanceRef.current.flyTo(latlng, Math.max(mapInstanceRef.current.getZoom(), 14), {
         duration: 1,
       });
-
-      setTimeout(() => {
-        marker.openPopup();
-        marker.setStyle({ radius: 10, fillOpacity: 1 });
-        setTimeout(() => {
-          marker.setStyle({ radius: 6, fillOpacity: 0.75 });
-        }, 2000);
-      }, 1100);
     }
   }, [selectedId]);
 
