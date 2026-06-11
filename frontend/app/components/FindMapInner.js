@@ -322,21 +322,24 @@ function TradeDetailModal({ trade, onClose }) {
   );
 }
 
-/* ─── Color helpers ─────────────────────────────────── */
+/* ─── Color helpers — 主視覺色系（高對比版）──────────────────── */
+// 生活圈評分：優異深綠, 良好中藍, 普通琥珀, 待加強紅棕 — 四色明顯可辨
 function getScoreColor(score) {
-  if (score >= 80) return '#22c55e';
-  if (score >= 60) return '#3b82f6';
-  if (score >= 40) return '#eab308';
-  return '#ef4444';
+  if (score == null) return '#999999';
+  if (score >= 80) return '#3d6b3d';    // 深綠 — 優異
+  if (score >= 60) return '#3b7ab5';    // 中藍 — 良好
+  if (score >= 40) return '#c4912a';    // 琥珀 — 普通
+  return '#b54a3a';                      // 紅棕 — 待加強
 }
 
+// 總價區間：高價偏紅、低價偏藍，使用柔和色調
 function getPriceColor(totalPrice) {
   const priceWan = totalPrice / 10000;
-  if (priceWan > 200) return '#dc2626';
-  if (priceWan > 150) return '#f97316';
-  if (priceWan > 100) return '#eab308';
-  if (priceWan > 50) return '#22c55e';
-  return '#3b82f6';
+  if (priceWan > 200) return '#b54a3a';
+  if (priceWan > 150) return '#c47a3a';
+  if (priceWan > 100) return '#c4912a';
+  if (priceWan > 50) return '#5a8a5a';
+  return '#3b7ab5';
 }
 
 function getMarkerColor(trade, colorMode) {
@@ -346,30 +349,36 @@ function getMarkerColor(trade, colorMode) {
   return getScoreColor(trade.score_overall || 0);
 }
 
-/* ─── Map Legend ────────────────────────────────────── */
+/* ─── Map Legend — 主視覺色系 ─────────────────────────── */
 function MapLegend({ colorMode }) {
+  const scoreColors = [
+    { min: 80, label: '80+ 優異', color: '#3d6b3d' },
+    { min: 60, label: '60-79 良好', color: '#3b7ab5' },
+    { min: 40, label: '40-59 普通', color: '#c4912a' },
+    { min: 0, label: '40- 待加強', color: '#b54a3a' },
+  ];
+  const priceColors = [
+    { min: 200, label: '200 萬以上', color: '#b54a3a' },
+    { min: 150, label: '150-200 萬', color: '#c47a3a' },
+    { min: 100, label: '100-150 萬', color: '#c4912a' },
+    { min: 50, label: '50-100 萬', color: '#5a8a5a' },
+    { min: 0, label: '50 萬以下', color: '#3b7ab5' },
+  ];
+  const items = colorMode === 'score' ? scoreColors : priceColors;
   return (
-    <div className="absolute bottom-4 left-4 z-[400] bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-stone-200 p-3 text-xs">
-      <div className="font-semibold text-stone-700 mb-2 flex items-center gap-1.5">
+    <div className="absolute bottom-4 left-4 z-[400] bg-white/95 backdrop-blur-sm rounded-lg shadow-md border border-[#e8e4df] p-3 text-xs">
+      <div className="font-medium text-[#2a2a2a] mb-2 flex items-center gap-1.5">
         <Square className="w-3.5 h-3.5" />
         {colorMode === 'score' ? '生活圈評分' : '總價區間'}
       </div>
-      {colorMode === 'score' ? (
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0" /><span className="text-stone-600">80+ 優異</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0" /><span className="text-stone-600">60-79 良好</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0" /><span className="text-stone-600">40-59 普通</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-500 flex-shrink-0" /><span className="text-stone-600">40- 待加強</span></div>
-        </div>
-      ) : (
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-red-600 flex-shrink-0" /><span className="text-stone-600">200 萬以上</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-orange-500 flex-shrink-0" /><span className="text-stone-600">150-200 萬</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-yellow-500 flex-shrink-0" /><span className="text-stone-600">100-150 萬</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-green-500 flex-shrink-0" /><span className="text-stone-600">50-100 萬</span></div>
-          <div className="flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0" /><span className="text-stone-600">50 萬以下</span></div>
-        </div>
-      )}
+      <div className="space-y-1.5">
+        {items.map((item, i) => (
+          <div key={i} className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+            <span className="text-[#777]">{item.label}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -424,7 +433,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
           style="
             width: 100%;
             padding: 6px 12px;
-            background: #10b981;
+            background: #5a6b4e;
             color: white;
             border: none;
             border-radius: 6px;
@@ -437,7 +446,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         </button>
       </div>
     `;
-    marker.bindPopup(popupContent, { maxWidth: 280 });
+    marker.bindPopup(popupContent, { maxWidth: 280, closeOnClick: false }); // closeOnClick: false 讓 popup 不因點擊地圖其他地方而關閉
 
     marker.on('click', () => {
       if (onSelectRef.current) onSelectRef.current(trade.id);
@@ -530,7 +539,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
 
       const clusterGroup = L.markerClusterGroup({
         maxClusterRadius: 50,
-        spiderfyOnMaxZoom: true,
+        spiderfyOnMaxZoom: false, // 讓使用者在任何縮放層級都能展開看個別點
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
         iconCreateFunction: (cluster) => {
