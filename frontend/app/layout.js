@@ -193,7 +193,7 @@ function MountainSilhouette() {
     <div className="fixed top-0 right-0 pointer-events-none z-0" aria-hidden="true">
       <svg width="100vw" height="100vh" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin slice" style={{position:'absolute', top: 0, right: 0}}>
         {/* Sun circle — warm accent */}
-        <circle cx="960" cy="120" r="50" fill="#d48a5a" opacity="0.2"/>
+        <circle cx="960" cy="120" r="50" fill="#d48a5a" opacity="0.4"/>
         {/* Far mountains - lightest */}
         <path d="M1200 0 L1200 300 Q1100 270 1000 240 Q900 210 800 255 Q700 300 600 270 Q500 240 400 285 Q300 330 200 300 Q100 270 0 315 L0 0 Z"
               fill="#6b7c5e" opacity="0.25"/>

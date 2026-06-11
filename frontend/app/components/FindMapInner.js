@@ -326,10 +326,10 @@ function TradeDetailModal({ trade, onClose }) {
 // 生活圈評分：四色明顯可辨 — 綠 / 藍 / 琥珀 / 紅棕
 function getScoreColor(score) {
   if (score == null) return '#999999';
-  if (score >= 80) return '#4a8c5c';    // 優異
-  if (score >= 60) return '#5a7a9a';    // 良好
-  if (score >= 40) return '#c49a3a';    // 普通
-  return '#b55a5a';                      // 待加強
+  if (score >= 80) return '#2d8a4e';    // 翠綠 — 優異
+  if (score >= 60) return '#5b6abf';    // 靛藍 — 良好（與綠色色相差大）
+  if (score >= 40) return '#c49a3a';    // 金黃 — 普通
+  return '#b55a5a';                      // 暗紅 — 待加強
 }
 
 // 總價區間：高價偏紅、低價偏藍，使用柔和色調
@@ -352,8 +352,8 @@ function getMarkerColor(trade, colorMode) {
 /* ─── Map Legend — 主視覺色系 ─────────────────────────── */
 function MapLegend({ colorMode }) {
   const scoreColors = [
-    { min: 80, label: '80+ 優異', color: '#4a8c5c' },
-    { min: 60, label: '60-79 良好', color: '#5a7a9a' },
+    { min: 80, label: '80+ 優異', color: '#2d8a4e' },
+    { min: 60, label: '60-79 良好', color: '#5b6abf' },
     { min: 40, label: '40-59 普通', color: '#c49a3a' },
     { min: 0, label: '40- 待加強', color: '#b55a5a' },
   ];
