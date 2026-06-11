@@ -190,23 +190,23 @@ function MobileMenu({ open, onClose, activePath }) {
 /* ─── Mountain Silhouette SVG (top-right corner, ink wash style) ─── */
 function MountainSilhouette() {
   return (
-    <div className="fixed top-0 right-0 pointer-events-none z-0 opacity-[0.04]" aria-hidden="true">
-      <svg width="600" height="500" viewBox="0 0 600 500" xmlns="http://www.w3.org/2000/svg" style={{position:'absolute', top: 0, right: 0}}>
+    <div className="fixed top-0 right-0 pointer-events-none z-0" aria-hidden="true">
+      <svg width="100vw" height="100vh" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin slice" style={{position:'absolute', top: 0, right: 0}}>
         {/* Moon circle */}
-        <circle cx="480" cy="80" r="35" fill="#6b7c5e" opacity="0.15"/>
+        <circle cx="960" cy="120" r="50" fill="#6b7c5e" opacity="0.12"/>
         {/* Far mountains - lightest */}
-        <path d="M600 0 L600 200 Q550 180 500 160 Q450 140 400 170 Q350 200 300 180 Q250 160 200 190 Q150 220 100 200 Q50 180 0 210 L0 0 Z"
-              fill="#6b7c5e" opacity="0.3"/>
+        <path d="M1200 0 L1200 300 Q1100 270 1000 240 Q900 210 800 255 Q700 300 600 270 Q500 240 400 285 Q300 330 200 300 Q100 270 0 315 L0 0 Z"
+              fill="#6b7c5e" opacity="0.25"/>
         {/* Mid mountains */}
-        <path d="M600 0 L600 280 Q540 240 480 260 Q420 280 360 240 Q300 200 240 250 Q180 300 120 260 Q60 220 0 270 L0 0 Z"
-              fill="#6b7c5e" opacity="0.2"/>
+        <path d="M1200 0 L1200 420 Q1080 360 960 390 Q840 420 720 360 Q600 300 480 375 Q360 450 240 390 Q120 330 0 405 L0 0 Z"
+              fill="#6b7c5e" opacity="0.18"/>
         {/* Near mountains - darkest */}
-        <path d="M600 0 L600 350 Q530 300 460 330 Q390 360 320 310 Q250 260 180 320 Q110 380 0 330 L0 0 Z"
-              fill="#6b7c5e" opacity="0.15"/>
+        <path d="M1200 0 L1200 520 Q1060 450 920 495 Q780 540 640 465 Q500 390 360 480 Q220 570 0 495 L0 0 Z"
+              fill="#6b7c5e" opacity="0.12"/>
         {/* Mist layers between mountains */}
-        <path d="M600 150 Q500 140 400 155 Q300 170 200 150 Q100 130 0 155 L0 160 Q100 135 200 155 Q300 175 400 160 Q500 145 600 155 Z"
+        <path d="M1200 225 Q1000 210 800 232 Q600 255 400 225 Q200 195 0 232 L0 240 Q200 203 400 233 Q600 263 800 240 Q1000 217 1200 232 Z"
               fill="#6b7c5e" opacity="0.08"/>
-        <path d="M600 230 Q500 220 400 235 Q300 250 200 230 Q100 210 0 235 L0 240 Q100 215 200 235 Q300 255 400 240 Q500 225 600 235 Z"
+        <path d="M1200 345 Q1000 330 800 352 Q600 375 400 345 Q200 315 0 352 L0 360 Q200 323 400 353 Q600 383 800 360 Q1000 337 1200 352 Z"
               fill="#6b7c5e" opacity="0.06"/>
       </svg>
     </div>
