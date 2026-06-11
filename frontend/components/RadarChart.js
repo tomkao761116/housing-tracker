@@ -106,10 +106,10 @@ export default function RadarChart({ scores, size = 320, centerScore }) {
         const progress = clamped / 100;
         const offset = circ * (1 - progress);
         let ringColor;
-        if (clamped >= 80) ringColor = '#637d56';
-        else if (clamped >= 60) ringColor = '#475569';
-        else if (clamped >= 40) ringColor = '#d97706';
-        else ringColor = '#dc2626';
+        if (clamped >= 80) ringColor = '#5a6b4e';
+        else if (clamped >= 60) ringColor = '#5a6e82';
+        else if (clamped >= 40) ringColor = '#b8943a';
+        else ringColor = '#a85555';
         return (
           <g>
             {/* Background track */}

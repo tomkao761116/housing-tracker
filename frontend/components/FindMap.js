@@ -37,21 +37,21 @@ const OFFICE_LOCATIONS = {
 };
 
 function getScoreColor(score) {
-  if (score == null) return '#94a3b8';
-  if (score >= 80) return '#16a34a';
-  if (score >= 60) return '#2563eb';
-  if (score >= 40) return '#d97706';
-  return '#dc2626';
+  if (score == null) return '#999999';
+  if (score >= 80) return '#5a6b4e';
+  if (score >= 60) return '#5a6e82';
+  if (score >= 40) return '#b8943a';
+  return '#a85555';
 }
 
 function getPriceColor(unitPrice) {
-  if (unitPrice == null) return '#94a3b8';
+  if (unitPrice == null) return '#999999';
   const num = Number(unitPrice);
-  if (num > 80) return '#dc2626';
-  if (num > 60) return '#b91c1c';
-  if (num > 40) return '#d97706';
-  if (num > 25) return '#92400e';
-  return '#637d56';
+  if (num > 80) return '#a85555';
+  if (num > 60) return '#8f4444';
+  if (num > 40) return '#b8943a';
+  if (num > 25) return '#7a6430';
+  return '#5a6b4e';
 }
 
 export default function FindMap({ trades, selectedId, onSelect, colorMode = 'score', commuteCity, maxCommuteTime }) {

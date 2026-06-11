@@ -408,7 +408,7 @@ export default function EvaluatePage() {
           ═════════════════════════════════════════ */}
       <div className="border-b border-[#e8e4df] bg-white/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-          <h1 className="text-xl font-medium text-[#2a2a2a] tracking-tight">地點評估中心</h1>
+          <h1 className="text-xl font-medium text-[#2a2a2a] tracking-tight">地點評估</h1>
           <p className="text-sm text-[#999] mt-1">輸入地址，一次獲得生活圈評分、通勤時間與周邊成交比較。</p>
         </div>
       </div>
