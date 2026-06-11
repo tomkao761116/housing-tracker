@@ -1,2 +1,2 @@
-// API base URL - use env var, or fallback to cloudflared tunnel, or empty for local dev
-export const API = process.env.NEXT_PUBLIC_API_URL || 'https://cope-why-peterson-rebound.trycloudflare.com';
+// API base URL - set via NEXT_PUBLIC_API_URL env var in Cloudflare Pages settings
+export const API = process.env.NEXT_PUBLIC_API_URL || '';
