@@ -436,13 +436,14 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     });
 
     const popupContent = `
-      <div style="min-width: 200px; font-family: sans-serif;">
+      <div style="min-width: 200px; font-family: sans-serif;" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
         <div style="font-weight: bold; margin-bottom: 6px; font-size: 14px;">${trade.address || '—'}</div>
         ${trade.total_price ? `<div style="margin-bottom: 2px;">總價: ${Math.round(trade.total_price / 10000).toLocaleString()} 萬</div>` : ''}
         ${trade.unit_price_tping ? `<div style="margin-bottom: 2px;">單價: ${trade.unit_price_tping} 萬/坪</div>` : ''}
         ${trade.score_overall != null ? `<div style="margin-bottom: 6px;">生活圈評分: ${trade.score_overall} 分</div>` : ''}
         <button 
-          onclick="window.__showTradeDetail(${trade.id})"
+          onclick="event.stopPropagation(); window.__showTradeDetail(${trade.id})"
+          onmousedown="event.stopPropagation()"
           style="
             width: 100%;
             padding: 6px 12px;
@@ -459,9 +460,16 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         </button>
       </div>
     `;
-    marker.bindPopup(popupContent, { maxWidth: 280, closeOnClick: false }); // closeOnClick: false 讓 popup 不因點擊地圖其他地方而關閉
+    marker.bindPopup(popupContent, { 
+      maxWidth: 280, 
+      closeOnClick: false,
+      closeButton: true,
+      autoPan: true,
+    });
 
-    marker.on('click', () => {
+    marker.on('click', (e) => {
+      // 阻止事件冒泡到 cluster，避免 cluster 也觸發 zoomToBounds
+      if (e.originalEvent) e.originalEvent.stopPropagation();
       if (onSelectRef.current) onSelectRef.current(trade.id);
       marker.openPopup();
     });
@@ -574,10 +582,11 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
 
       const clusterGroup = L.markerClusterGroup({
         maxClusterRadius: 50,
-        maxZoom: 18, // zoom 到 18 再點就 spiderfy 展開
+        maxZoom: 17, // zoom 到 17 以上就 spiderfy 展開
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
+        spiderfyDistanceMultiplier: 1.5, // 加大 spiderfy 展開距離，避免重疊
         iconCreateFunction: (cluster) => {
           const childCount = cluster.getChildCount();
           let size = 'small';
@@ -597,11 +606,23 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
               font-weight: bold;
               font-size: ${size === 'large' ? 16 : 13}px;
               box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+              cursor: pointer;
             ">${childCount}</div>`,
             className: '',
             iconSize: [size === 'large' ? 56 : size === 'medium' ? 46 : 36, size === 'large' ? 56 : size === 'medium' ? 46 : 36],
           });
         },
+      });
+
+      // 確保 cluster 點擊事件正確觸發（spiderfy 或 zoomToBounds）
+      clusterGroup.on('clusterclick', (e) => {
+        const cluster = e.cluster;
+        const childCount = cluster.getChildCount();
+        // 如果已經在最大縮放層級，強制 spiderfy
+        if (map.getZoom() >= 16) {
+          cluster.spiderfy();
+        }
+        // 否則讓預設的 zoomToBounds 處理
       });
 
       map.addLayer(clusterGroup);
@@ -710,7 +731,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     };
   }, []);
 
-  // ── 當 selectedId 改變時，飛到該點 ──
+  // ── 當 selectedId 改變時，飛到該點並開啟 Popup ──
   useEffect(() => {
     if (!selectedId || !mapInstanceRef.current) return;
 
@@ -718,9 +739,20 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     if (marker) {
       const latlng = marker.getLatLng();
       
-      mapInstanceRef.current.flyTo(latlng, Math.max(mapInstanceRef.current.getZoom(), 14), {
-        duration: 1,
+      // 飛到 zoom 16+ 才能看到個別點位
+      const targetZoom = Math.max(mapInstanceRef.current.getZoom(), 16);
+      
+      mapInstanceRef.current.flyTo(latlng, targetZoom, {
+        duration: 0.8,
+        noMoveStart: true,
       });
+      
+      // 等 flyTo 完成後開啟 popup
+      setTimeout(() => {
+        if (marker.tradeId === selectedId) {
+          marker.openPopup();
+        }
+      }, 900);
     }
   }, [selectedId]);
 
