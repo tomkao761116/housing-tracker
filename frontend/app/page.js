@@ -449,7 +449,6 @@ export default function HomePage() {
   const [error, setError] = useState(null);
 
   // Date range for trend charts — default: last 12 months
-  const [datePreset, setDatePreset] = useState('1y'); // '6m' | '1y' | 'custom'
   const [startDate, setStartDate] = useState(() => {
     const d = new Date(); d.setMonth(d.getMonth() - 11);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
@@ -480,27 +479,12 @@ export default function HomePage() {
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    let qs;
-    if (datePreset === '6m') {
-      const endD = new Date();
-      const startD = new Date(); startD.setMonth(startD.getMonth() - 5);
-      const sd = `${startD.getFullYear()}-${String(startD.getMonth() + 1).padStart(2, '0')}`;
-      const ed = `${endD.getFullYear()}-${String(endD.getMonth() + 1).padStart(2, '0')}`;
-      qs = `${cityParam}&start_date=${sd}&end_date=${ed}`;
-    } else if (datePreset === '1y') {
-      const endD = new Date();
-      const startD = new Date(); startD.setMonth(startD.getMonth() - 11);
-      const sd = `${startD.getFullYear()}-${String(startD.getMonth() + 1).padStart(2, '0')}`;
-      const ed = `${endD.getFullYear()}-${String(endD.getMonth() + 1).padStart(2, '0')}`;
-      qs = `${cityParam}&start_date=${sd}&end_date=${ed}`;
-    } else {
-      qs = `${cityParam}&start_date=${startDate}&end_date=${endDate}`;
-    }
+    const qs = `${cityParam}&start_date=${startDate}&end_date=${endDate}`;
     fetchTimeout(`${API}/api/stats/trends/monthly?${qs}`, 10000)
       .then(res => res.json())
       .then(data => setTrends(data))
       .catch(() => {});
-  }, [city, datePreset, startDate, endDate]);
+  }, [city, startDate, endDate]);
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
@@ -781,6 +765,14 @@ export default function HomePage() {
                   </select>
                   <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
                 </div>
+                {/* Date range for trend charts */}
+                <div className="flex items-center gap-1.5 ml-1 pl-3 border-l border-[#e0ddd8]">
+                  <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)}
+                    className="text-xs border border-[#e0ddd8] rounded-sm px-1.5 py-1 bg-white text-[#555]" title="起始月份" />
+                  <span className="text-[#aaa] text-xs">~</span>
+                  <input type="month" value={endDate} onChange={(e) => setEndDate(e.target.value)}
+                    className="text-xs border border-[#e0ddd8] rounded-sm px-1.5 py-1 bg-white text-[#555]" title="結束月份" />
+                </div>
               </div>
             </div>
             <p className="text-xs text-[#777] mt-2">{displayCity} · {year}年成交數據</p>
@@ -836,24 +828,9 @@ export default function HomePage() {
               </div>
 
               {/* ── Trend Charts ── */}
-              {/* ── Trend Charts (controlled by date range) ── */}
+              {/* ── Trend Charts (controlled by date range in header) ── */}
               <div className="px-5 sm:px-6 py-4 border-t border-[#edeae5]">
-                <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
-                  <div className="text-sm font-semibold text-[#2a2a2a]">近月走勢</div>
-                  <div className="flex items-center gap-1.5">
-                    {['6m', '1y'].map(p => (
-                      <button key={p} onClick={() => setDatePreset(p)}
-                        className={`text-xs px-2 py-1 rounded-sm border transition-colors ${datePreset === p ? 'bg-[#5a6b4e] text-white border-[#5a6b4e]' : 'border-[#e0ddd8] text-[#777] hover:border-[#c0bdb8]'}`}>
-                        {p === '6m' ? '近半年' : '近一年'}
-                      </button>
-                    ))}
-                    <input type="month" value={startDate} onChange={(e) => { setDatePreset('custom'); setStartDate(e.target.value); }}
-                      className="text-xs border border-[#e0ddd8] rounded-sm px-1.5 py-1 bg-white text-[#555]" title="起始月份" />
-                    <span className="text-[#aaa] text-xs">~</span>
-                    <input type="month" value={endDate} onChange={(e) => { setDatePreset('custom'); setEndDate(e.target.value); }}
-                      className="text-xs border border-[#e0ddd8] rounded-sm px-1.5 py-1 bg-white text-[#555]" title="結束月份" />
-                  </div>
-                </div>
+                <div className="text-sm font-semibold text-[#2a2a2a] mb-3">近月走勢</div>
                 <div className="mb-4">
                   <div className="text-xs text-[#999] mb-2">均價走勢</div>
                   <PriceTrendChart data={trends?.data || []} />
