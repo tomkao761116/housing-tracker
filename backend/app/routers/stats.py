@@ -95,16 +95,40 @@ def district_stats_lightweight(
 def monthly_trend(
     city: str = Query(None),
     district: str = Query(None),
-    start_year: int = Query(2023, ge=2000),
-    end_year: int = Query(2025, le=2030),
+    start_year: int = Query(None, ge=2000),
+    end_year: int = Query(None, le=2030),
+    start_date: str = Query(None),  # YYYY-MM format
+    end_date: str = Query(None),    # YYYY-MM format
     db: Session = Depends(get_db)
 ):
-    """月度趨勢 — 使用物化視圖"""
-    if end_year - start_year > 4:
-        end_year = start_year + 4
-
-    conditions = [f"month >= '{start_year}-01' AND month < '{end_year+1}-01'"]
+    """月度趨勢 — 使用物化視圖，支援年份或日期區間篩選"""
+    conditions = []
     params = {}
+
+    # 優先使用精確日期區間 (YYYY-MM)
+    if start_date:
+        conditions.append("month >= :start_date")
+        params["start_date"] = start_date
+    elif start_year:
+        conditions.append(f"month >= '{start_year}-01'")
+
+    if end_date:
+        # end_date inclusive: go to next month
+        try:
+            y, m = map(int, end_date.split('-'))
+            next_m = m + 1
+            next_y = y
+            if next_m > 12:
+                next_m = 1
+                next_y += 1
+            end_bound = f"{next_y}-{next_m:02d}"
+        except Exception:
+            end_bound = end_date + "-99"
+        conditions.append("month < :end_bound")
+        params["end_bound"] = end_bound
+    elif end_year:
+        conditions.append(f"month < '{end_year+1}-01'")
+
     if city:
         conditions.append("city = :city")
         params["city"] = city
@@ -112,7 +136,7 @@ def monthly_trend(
         conditions.append("district = :district")
         params["district"] = district
 
-    where = ' AND '.join(conditions)
+    where = ' AND '.join(conditions) if conditions else '1=1'
 
     sql = f"""
         SELECT 

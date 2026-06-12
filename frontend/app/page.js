@@ -64,6 +64,7 @@ function fetchTimeout(url, timeout = 8000) {
    CHART: Price Trend Line (clean single-axis)
    ═══════════════════════════════════════════ */
 function PriceTrendChart({ data, height = 200 }) {
+  const [hoverIdx, setHoverIdx] = useState(null);
   if (!data || data.length === 0) return null;
 
   const w = 800;
@@ -118,10 +119,12 @@ function PriceTrendChart({ data, height = 200 }) {
   });
 
   const lastPt = validPoints[validPoints.length - 1];
+  const hoveredPt = hoverIdx != null ? validPoints.find(p => p.i === hoverIdx) : null;
 
   return (
     <div className="w-full overflow-x-auto">
-      <svg viewBox={`0 0 ${w} ${height}`} className="w-full min-w-[500px]" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox={`0 0 ${w} ${height}`} className="w-full min-w-[500px]" preserveAspectRatio="xMidYMid meet"
+        onMouseLeave={() => setHoverIdx(null)}>
         {yLabels}
         <defs>
           <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
@@ -133,6 +136,34 @@ function PriceTrendChart({ data, height = 200 }) {
         <path d={linePath} fill="none" stroke="#5a6b4e" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
         {lastPt && (
           <circle cx={xScale(lastPt.i)} cy={yScale(lastPt.v)} r={4} fill="#5a6b4e" stroke="white" strokeWidth={2} />
+        )}
+        {/* Invisible hit areas for each point */}
+        {validPoints.map((p) => (
+          <g key={`hit-${p.i}`}>
+            <rect
+              x={xScale(p.i) - cw / data.length / 2}
+              y={pad.top}
+              width={cw / data.length}
+              height={ch}
+              fill="transparent"
+              onMouseEnter={() => setHoverIdx(p.i)}
+              style={{ cursor: 'pointer' }}
+            />
+          </g>
+        ))}
+        {/* Hover indicator */}
+        {hoveredPt && (
+          <g>
+            <line x1={xScale(hoveredPt.i)} y1={pad.top} x2={xScale(hoveredPt.i)} y2={pad.top + ch}
+              stroke="#c0bdb8" strokeWidth={1} strokeDasharray="4 2" />
+            <circle cx={xScale(hoveredPt.i)} cy={yScale(hoveredPt.v)} r={5} fill="#5a6b4e" stroke="white" strokeWidth={2} />
+            <rect x={xScale(hoveredPt.i) - 52} y={yScale(hoveredPt.v) - 32} width={104} height={24} rx={4}
+              fill="#2a2a2a" opacity={0.9} />
+            <text x={xScale(hoveredPt.i)} y={yScale(hoveredPt.v) - 16} textAnchor="middle"
+              fontSize={11} fill="white" fontWeight="600">
+              {hoveredPt.v.toFixed(1)} 萬/坪
+            </text>
+          </g>
         )}
         <line x1={pad.left} y1={pad.top + ch} x2={w - pad.right} y2={pad.top + ch} stroke="#e0ddd8" strokeWidth={1} />
         {xLabels}
@@ -148,6 +179,7 @@ function PriceTrendChart({ data, height = 200 }) {
    CHART: Volume Bars (simple horizontal bars)
    ═══════════════════════════════════════════ */
 function VolumeBarChart({ data, height = 160 }) {
+  const [hoverIdx, setHoverIdx] = useState(null);
   if (!data || data.length === 0) return null;
 
   const w = 800;
@@ -189,22 +221,47 @@ function VolumeBarChart({ data, height = 160 }) {
     );
   });
 
+  const hoveredD = hoverIdx != null ? data[hoverIdx] : null;
+
   return (
     <div className="w-full overflow-x-auto">
-      <svg viewBox={`0 0 ${w} ${height}`} className="w-full min-w-[500px]" preserveAspectRatio="xMidYMid meet">
+      <svg viewBox={`0 0 ${w} ${height}`} className="w-full min-w-[500px]" preserveAspectRatio="xMidYMid meet"
+        onMouseLeave={() => setHoverIdx(null)}>
         {yLabels}
         {data.map((d, i) => (
-          <rect
-            key={i}
-            x={xScale(i) - barWidth / 2}
-            y={yScale(d.count)}
-            width={barWidth}
-            height={Math.max(0, pad.top + ch - yScale(d.count))}
-            fill="#5a6b4e"
-            opacity={0.45}
-            rx={1}
-          />
+          <g key={`bar-${i}`}>
+            <rect
+              x={xScale(i) - barWidth / 2}
+              y={yScale(d.count)}
+              width={barWidth}
+              height={Math.max(0, pad.top + ch - yScale(d.count))}
+              fill="#5a6b4e"
+              opacity={hoverIdx === i ? 0.8 : 0.45}
+              rx={1}
+            />
+            <rect
+              x={xScale(i) - cw / data.length / 2}
+              y={pad.top}
+              width={cw / data.length}
+              height={ch}
+              fill="transparent"
+              onMouseEnter={() => setHoverIdx(i)}
+              style={{ cursor: 'pointer' }}
+            />
+          </g>
         ))}
+        {/* Hover indicator */}
+        {hoveredD && (
+          <g>
+            <circle cx={xScale(hoverIdx)} cy={yScale(hoveredD.count)} r={4} fill="#5a6b4e" stroke="white" strokeWidth={2} />
+            <rect x={xScale(hoverIdx) - 36} y={yScale(hoveredD.count) - 26} width={72} height={20} rx={4}
+              fill="#2a2a2a" opacity={0.9} />
+            <text x={xScale(hoverIdx)} y={yScale(hoveredD.count) - 12} textAnchor="middle"
+              fontSize={11} fill="white" fontWeight="600">
+              {hoveredD.count} 筆
+            </text>
+          </g>
+        )}
         <line x1={pad.left} y1={pad.top + ch} x2={w - pad.right} y2={pad.top + ch} stroke="#e0ddd8" strokeWidth={1} />
         {xLabels}
         <text x={14} y={pad.top + ch / 2} textAnchor="middle" fontSize={11} fill="#a8a29e" transform={`rotate(-90, 14, ${pad.top + ch / 2})`}>
@@ -391,6 +448,17 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Date range for trend charts — default: last 12 months
+  const [datePreset, setDatePreset] = useState('1y'); // '6m' | '1y' | 'custom'
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date(); d.setMonth(d.getMonth() - 11);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  });
+  const [endDate, setEndDate] = useState(() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+  });
+
   const years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011];
 
   const allCitiesList = useMemo(() => {
@@ -412,12 +480,25 @@ export default function HomePage() {
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    const startYear = Math.max(year - 2, 2011);
-    fetchTimeout(`${API}/api/stats/trends/monthly?${cityParam}&start_year=${startYear}&end_year=${year}`, 10000)
+    let qs;
+    if (datePreset === '6m') {
+      const d = new Date(); d.setMonth(d.getMonth() - 5);
+      const sd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const ed = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      qs = `${cityParam}&start_date=${sd}&end_date=${ed}`;
+    } else if (datePreset === '1y') {
+      const d = new Date(); d.setMonth(d.getMonth() - 11);
+      const sd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      const ed = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      qs = `${cityParam}&start_date=${sd}&end_date=${ed}`;
+    } else {
+      qs = `${cityParam}&start_date=${startDate}&end_date=${endDate}`;
+    }
+    fetchTimeout(`${API}/api/stats/trends/monthly?${qs}`, 10000)
       .then(res => res.json())
       .then(data => setTrends(data))
       .catch(() => {});
-  }, [city, year]);
+  }, [city, datePreset, startDate, endDate]);
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
@@ -683,7 +764,7 @@ export default function HomePage() {
                 <IconTrendingUp className="w-5 h-5 text-[#5a6b4e]" />
                 <h2 className="text-base font-semibold text-[#2a2a2a]">即時房市行情</h2>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 flex-wrap">
                 <div className="relative">
                   <select value={city} onChange={(e) => setCity(e.target.value)}
                     className={selectClass}>
@@ -754,7 +835,26 @@ export default function HomePage() {
 
               {/* ── Trend Charts ── */}
               <div className="px-5 sm:px-6 py-4">
-                <div className="text-sm font-semibold text-[#2a2a2a] mb-3">近月均價走勢</div>
+                <div className="flex items-center justify-between mb-3 gap-3 flex-wrap">
+                  <div className="text-sm font-semibold text-[#2a2a2a]">近月均價走勢</div>
+                  <div className="flex items-center gap-2">
+                    {['6m', '1y', 'custom'].map(p => (
+                      <button key={p} onClick={() => setDatePreset(p)}
+                        className={`text-xs px-2.5 py-1 rounded-sm border transition-colors ${datePreset === p ? 'bg-[#5a6b4e] text-white border-[#5a6b4e]' : 'border-[#e0ddd8] text-[#777] hover:border-[#c0bdb8]'}`}>
+                        {p === '6m' ? '近半年' : p === '1y' ? '近一年' : '自訂'}
+                      </button>
+                    ))}
+                    {datePreset === 'custom' && (
+                      <div className="flex items-center gap-1.5 ml-1">
+                        <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)}
+                          className="text-xs border border-[#e0ddd8] rounded-sm px-2 py-1 bg-white text-[#555]" />
+                        <span className="text-[#aaa] text-xs">~</span>
+                        <input type="month" value={endDate} onChange={(e) => setEndDate(e.target.value)}
+                          className="text-xs border border-[#e0ddd8] rounded-sm px-2 py-1 bg-white text-[#555]" />
+                      </div>
+                    )}
+                  </div>
+                </div>
                 <PriceTrendChart data={trends?.data || []} />
               </div>
 
