@@ -448,16 +448,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Date range for trend charts — default: last 12 months
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date(); d.setMonth(d.getMonth() - 11);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-  });
-  const [endDate, setEndDate] = useState(() => {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-  });
-
   const years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011];
 
   const allCitiesList = useMemo(() => {
@@ -479,12 +469,17 @@ export default function HomePage() {
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    const qs = `${cityParam}&start_date=${startDate}&end_date=${endDate}`;
+    // 近月走勢 = 近 12 個月，不需要使用者手動選
+    const endD = new Date();
+    const startD = new Date(); startD.setMonth(startD.getMonth() - 11);
+    const sd = `${startD.getFullYear()}-${String(startD.getMonth() + 1).padStart(2, '0')}`;
+    const ed = `${endD.getFullYear()}-${String(endD.getMonth() + 1).padStart(2, '0')}`;
+    const qs = `${cityParam}&start_date=${sd}&end_date=${ed}`;
     fetchTimeout(`${API}/api/stats/trends/monthly?${qs}`, 10000)
       .then(res => res.json())
       .then(data => setTrends(data))
       .catch(() => {});
-  }, [city, startDate, endDate]);
+  }, [city]);
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
@@ -764,14 +759,6 @@ export default function HomePage() {
                     {years.map(y => <option key={y} value={y}>{y}</option>)}
                   </select>
                   <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
-                </div>
-                {/* Date range for trend charts */}
-                <div className="flex items-center gap-1.5 ml-1 pl-3 border-l border-[#e0ddd8]">
-                  <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                    className="text-xs border border-[#e0ddd8] rounded-sm px-1.5 py-1 bg-white text-[#555]" title="起始月份" />
-                  <span className="text-[#aaa] text-xs">~</span>
-                  <input type="month" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-                    className="text-xs border border-[#e0ddd8] rounded-sm px-1.5 py-1 bg-white text-[#555]" title="結束月份" />
                 </div>
               </div>
             </div>
