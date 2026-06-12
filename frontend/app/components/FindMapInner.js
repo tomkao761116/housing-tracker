@@ -436,14 +436,13 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     });
 
     const popupContent = `
-      <div style="min-width: 200px; font-family: sans-serif;" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()">
+      <div style="min-width: 200px; font-family: sans-serif;">
         <div style="font-weight: bold; margin-bottom: 6px; font-size: 14px;">${trade.address || '—'}</div>
         ${trade.total_price ? `<div style="margin-bottom: 2px;">總價: ${Math.round(trade.total_price / 10000).toLocaleString()} 萬</div>` : ''}
         ${trade.unit_price_tping ? `<div style="margin-bottom: 2px;">單價: ${trade.unit_price_tping} 萬/坪</div>` : ''}
         ${trade.score_overall != null ? `<div style="margin-bottom: 6px;">生活圈評分: ${trade.score_overall} 分</div>` : ''}
         <button 
-          onclick="event.stopPropagation(); window.__showTradeDetail(${trade.id})"
-          onmousedown="event.stopPropagation()"
+          onclick="window.__showTradeDetail(${trade.id})"
           style="
             width: 100%;
             padding: 6px 12px;
@@ -467,9 +466,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       autoPan: true,
     });
 
-    marker.on('click', (e) => {
-      // 阻止事件冒泡到 cluster，避免 cluster 也觸發 zoomToBounds
-      if (e.originalEvent) e.originalEvent.stopPropagation();
+    marker.on('click', () => {
       if (onSelectRef.current) onSelectRef.current(trade.id);
       marker.openPopup();
     });
@@ -580,13 +577,14 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         maxZoom: 19,
       }).addTo(map);
 
-      const clusterGroup = L.markerClusterGroup({
+      // 建立 cluster group — 使用 new L.MarkerClusterGroup 確保選項不被覆蓋
+      const clusterOptions = {
         maxClusterRadius: 50,
-        maxZoom: 17, // zoom 到 17 以上就 spiderfy 展開
+        maxZoom: 17,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
-        spiderfyDistanceMultiplier: 1.5, // 加大 spiderfy 展開距離，避免重疊
+        spiderfyDistanceMultiplier: 1.5,
         iconCreateFunction: (cluster) => {
           const childCount = cluster.getChildCount();
           let size = 'small';
@@ -609,20 +607,43 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
               cursor: pointer;
             ">${childCount}</div>`,
             className: '',
-            iconSize: [size === 'large' ? 56 : size === 'medium' ? 46 : 36, size === 'large' ? 56 : size === 'medium' ? 46 : 36],
+            iconSize: L.point(size === 'large' ? 56 : size === 'medium' ? 46 : 36, size === 'large' ? 56 : size === 'medium' ? 46 : 36),
           });
         },
-      });
+      };
 
-      // 確保 cluster 點擊事件正確觸發（spiderfy 或 zoomToBounds）
+      // 嘗試兩種建構方式（相容性處理）
+      const ClusterGroupClass = L.MarkerClusterGroup || L.markerClusterGroup;
+      if (!ClusterGroupClass) {
+        console.error('[FindMap] MarkerClusterGroup not found on L');
+      }
+      
+      const clusterGroup = new ClusterGroupClass(clusterOptions);
+
+      // 驗證 options 是否正確設定
+      if (clusterGroup.options.zoomToBoundsOnClick !== true) {
+        console.warn('[FindMap] Cluster options may have been reset!', clusterGroup.options);
+        // 強制重新設定
+        clusterGroup.options.zoomToBoundsOnClick = true;
+        clusterGroup.options.spiderfyOnMaxZoom = true;
+        clusterGroup.options.maxClusterRadius = 50;
+        clusterGroup.options.maxZoom = 17;
+      }
+
+      // 綁定 cluster 點擊事件
       clusterGroup.on('clusterclick', (e) => {
         const cluster = e.cluster;
-        const childCount = cluster.getChildCount();
-        // 如果已經在最大縮放層級，強制 spiderfy
         if (map.getZoom() >= 16) {
           cluster.spiderfy();
         }
-        // 否則讓預設的 zoomToBounds 處理
+      });
+
+      // 綁單個 marker 點擊事件（從卡片點進來時的 popup）
+      clusterGroup.on('markerclick', (e) => {
+        const marker = e.marker;
+        if (marker.tradeId && onSelectRef.current) {
+          onSelectRef.current(marker.tradeId);
+        }
       });
 
       map.addLayer(clusterGroup);
