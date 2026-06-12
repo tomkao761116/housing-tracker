@@ -575,12 +575,18 @@ def highlights(
     if city_yoy:
         city_yoy.sort(key=lambda x: x["yoy_pct"])
         result["price_up_city"] = city_yoy[-1]   # highest increase
-        result["price_down_city"] = city_yoy[0]   # lowest (most negative)
+        if city_yoy[0]["yoy_pct"] < 0:            # only show "down" if actually negative
+            result["price_down_city"] = city_yoy[0]
+        else:
+            result["price_down_city"] = None      # no one dropped
 
     if dist_yoy:
         dist_yoy.sort(key=lambda x: x["yoy_pct"])
         result["price_up_district"] = dist_yoy[-1]
-        result["price_down_district"] = dist_yoy[0]
+        if dist_yoy[0]["yoy_pct"] < 0:
+            result["price_down_district"] = dist_yoy[0]
+        else:
+            result["price_down_district"] = None
 
     if cheapest_city_row:
         result["cheapest_city"] = {"city": cheapest_city_row[0], "avg_unit_price": cheapest_city_row[1]}
