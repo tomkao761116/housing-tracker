@@ -6,7 +6,7 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_, Integer, text
 from app.utils import compute_building_age
-from app.utils.cache import api_cache
+from app.cache import api_cache
 import math
 import time
 import hashlib

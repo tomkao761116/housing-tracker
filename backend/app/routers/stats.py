@@ -3,7 +3,7 @@ from fastapi import APIRouter, Query, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.main import get_db
-from app.utils.cache import api_cache
+from app.cache import api_cache
 import hashlib
 
 router = APIRouter()
