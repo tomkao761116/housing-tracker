@@ -23,7 +23,7 @@ def normalize_unit_price(val):
     """Convert raw unit_price_tping to 萬/坪 (old data may be in 元/坪)"""
     if val is None:
         return None
-    return round(val / 10000, 1) if val > 10000 else round(val, 1)
+    return round(val / 10000, 2) if val > 10000 else round(val, 2)
 
 
 @router.get("/districts")
@@ -51,7 +51,7 @@ def district_stats(
         SELECT 
             district,
             sum(cnt)::int as cnt,
-            round(avg(avg_unit_price)::numeric, 1) as avg_unit_price,
+            round(avg(avg_unit_price)::numeric, 2) as avg_unit_price,
             round(avg(avg_total_price)::numeric, 0) as avg_total_price
         FROM mv_yearly_stats
         WHERE {where}
@@ -110,7 +110,7 @@ def district_stats_lightweight(
             SELECT 
                 district,
                 count(*)::int as cnt,
-                round(avg(unit_price_tping / 10000)::numeric, 1) as avg_unit_price,
+                round(avg(unit_price_tping / 10000)::numeric, 2) as avg_unit_price,
                 round(avg(total_price / 10000)::numeric, 0) as avg_total_price
             FROM trades
             WHERE {where} AND trade_date IS NOT NULL
@@ -122,7 +122,7 @@ def district_stats_lightweight(
             SELECT 
                 district,
                 sum(cnt)::int as cnt,
-                round(avg(avg_unit_price)::numeric, 1) as avg_unit_price,
+                round(avg(avg_unit_price)::numeric, 2) as avg_unit_price,
                 round(avg(avg_total_price)::numeric, 0) as avg_total_price
             FROM mv_yearly_stats
             WHERE {where}
@@ -207,7 +207,7 @@ def monthly_trend(
         SELECT 
             month,
             sum(cnt)::int as count,
-            round(avg(avg_unit_price)::numeric, 1) as avg_unit_price,
+            round(avg(avg_unit_price)::numeric, 2) as avg_unit_price,
             round(avg(avg_total_price)::numeric, 0) as avg_total_price
         FROM mv_monthly_stats
         WHERE {where}
@@ -262,7 +262,7 @@ def building_type_distribution(
             SELECT 
                 btype as type,
                 count(*)::int as cnt,
-                round(avg(unit_price_tping / 10000)::numeric, 1) as avg_unit_price
+                round(avg(unit_price_tping / 10000)::numeric, 2) as avg_unit_price
             FROM trades
             WHERE {where} AND trade_date IS NOT NULL AND btype IS NOT NULL
             GROUP BY btype
@@ -274,7 +274,7 @@ def building_type_distribution(
             SELECT 
                 btype as type,
                 sum(cnt)::int as cnt,
-                round(avg(avg_unit_price)::numeric, 1) as avg_unit_price
+                round(avg(avg_unit_price)::numeric, 2) as avg_unit_price
             FROM mv_building_type_stats
             WHERE {where}
             GROUP BY btype
@@ -370,7 +370,7 @@ def price_distribution(
     result = {
         "city": city,
         "data": [
-            {"label": lbl, "value": round(result_dict.get(lbl, 0) / total * 100)}
+            {"label": lbl, "value": round(result_dict.get(lbl, 0) / total * 100, 2)}
             for lbl in labels_order
         ],
     }
@@ -433,7 +433,7 @@ def building_age_distribution(
             sum(CASE WHEN age >= 16 AND age < 21 THEN 1 ELSE 0 END)::int as c4,
             sum(CASE WHEN age >= 21 AND age < 31 THEN 1 ELSE 0 END)::int as c5,
             sum(CASE WHEN age >= 31 THEN 1 ELSE 0 END)::int as c6,
-            round(avg(age)::numeric, 1) as avg_age
+            round(avg(age)::numeric, 2) as avg_age
         FROM ages WHERE age IS NOT NULL
     """
     row = db.execute(text(sql), params).fetchone()
@@ -447,7 +447,7 @@ def building_age_distribution(
         "total_trades": total,
         "avg_building_age": avg_age,
         "data": [
-            {"label": labels[i], "count": counts[i], "percentage": round(counts[i] / total * 100, 1) if total > 0 else 0}
+            {"label": labels[i], "count": counts[i], "percentage": round(counts[i] / total * 100, 2) if total > 0 else 0}
             for i in range(6)
         ],
     }
@@ -470,7 +470,7 @@ def cities_overview(
         SELECT 
             city,
             sum(cnt)::int as cnt,
-            round(avg(avg_unit_price)::numeric, 1) as avg_unit_price,
+            round(avg(avg_unit_price)::numeric, 2) as avg_unit_price,
             round(avg(avg_total_price)::numeric, 0) as avg_total_price
         FROM mv_yearly_stats
         WHERE year = {year}
@@ -551,17 +551,17 @@ def highlights(
     # City-level YoY change (weighted by transaction count)
     city_yoy_sql = f"""
         WITH cur AS (
-            SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+            SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price
             FROM {table} WHERE {cur_range}
             GROUP BY city
         ),
         prv AS (
-            SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+            SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price
             FROM {table} WHERE {prev_range}
             GROUP BY city
         )
         SELECT c.city, c.avg_unit_price, p.avg_unit_price as prev_price,
-               round(((c.avg_unit_price - p.avg_unit_price) / p.avg_unit_price * 100)::numeric, 1) as yoy_pct
+               round(((c.avg_unit_price - p.avg_unit_price) / p.avg_unit_price * 100)::numeric, 2) as yoy_pct
         FROM cur c JOIN prv p ON c.city = p.city
         WHERE p.avg_unit_price > 0
     """
@@ -570,19 +570,19 @@ def highlights(
     # District-level YoY change (weighted by transaction count, min 3 transactions)
     dist_yoy_sql = f"""
         WITH cur AS (
-            SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price, sum(cnt)::int as total_cnt
+            SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price, sum(cnt)::int as total_cnt
             FROM {table} WHERE {cur_range}
             GROUP BY district, city
             HAVING sum(cnt) >= 3
         ),
         prv AS (
-            SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price, sum(cnt)::int as total_cnt
+            SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price, sum(cnt)::int as total_cnt
             FROM {table} WHERE {prev_range}
             GROUP BY district, city
             HAVING sum(cnt) >= 3
         )
         SELECT c.district, c.city, c.avg_unit_price, p.avg_unit_price as prev_price,
-               round(((c.avg_unit_price - p.avg_unit_price) / p.avg_unit_price * 100)::numeric, 1) as yoy_pct,
+               round(((c.avg_unit_price - p.avg_unit_price) / p.avg_unit_price * 100)::numeric, 2) as yoy_pct,
                c.total_cnt as cur_cnt, p.total_cnt as prev_cnt
         FROM cur c JOIN prv p ON c.district = p.district AND c.city = p.city
         WHERE p.avg_unit_price > 0
@@ -591,7 +591,7 @@ def highlights(
 
     # Cheapest city & district (current period, weighted)
     cheapest_city_sql = f"""
-        SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+        SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price
         FROM {table} WHERE {cur_range}
         GROUP BY city
         ORDER BY avg_unit_price ASC
@@ -600,7 +600,7 @@ def highlights(
     cheapest_city_row = db.execute(text(cheapest_city_sql)).fetchone()
 
     cheapest_dist_sql = f"""
-        SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+        SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price
         FROM {table} WHERE {cur_range}
         GROUP BY district, city
         HAVING sum(cnt) >= 3
@@ -611,7 +611,7 @@ def highlights(
 
     # Most expensive city & district (current period, weighted)
     most_expensive_city_sql = f"""
-        SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+        SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price
         FROM {table} WHERE {cur_range}
         GROUP BY city
         ORDER BY avg_unit_price DESC
@@ -620,7 +620,7 @@ def highlights(
     most_expensive_city_row = db.execute(text(most_expensive_city_sql)).fetchone()
 
     most_expensive_dist_sql = f"""
-        SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
+        SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 2) as avg_unit_price
         FROM {table} WHERE {cur_range}
         GROUP BY district, city
         HAVING sum(cnt) >= 3

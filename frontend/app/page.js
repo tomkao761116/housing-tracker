@@ -40,7 +40,7 @@ function IconTag({ className = "w-5 h-5" }) {
 /* ─── Format Helpers ─── */
 function formatPrice(val) {
   if (val == null || isNaN(val)) return '-';
-  return Number(val).toFixed(1) + ' 萬/坪';
+  return Number(val).toFixed(2) + ' 萬/坪';
 }
 function formatNum(val) {
   if (val == null) return '-';
@@ -161,7 +161,7 @@ function PriceTrendChart({ data, height = 200 }) {
               fill="#2a2a2a" opacity={0.9} />
             <text x={xScale(hoveredPt.i)} y={yScale(hoveredPt.v) - 16} textAnchor="middle"
               fontSize={11} fill="white" fontWeight="600">
-              {hoveredPt.v.toFixed(1)} 萬/坪
+              {hoveredPt.v.toFixed(2)} 萬/坪
             </text>
           </g>
         )}
@@ -532,7 +532,7 @@ export default function HomePage() {
   const yoyChange = trends?.data?.length > 12 ? (() => {
     const current = trends.data[trends.data.length - 1]?.avg_unit_price;
     const lastYear = trends.data[trends.data.length - 13]?.avg_unit_price;
-    if (current && lastYear) return ((current - lastYear) / lastYear * 100).toFixed(1);
+    if (current && lastYear) return ((current - lastYear) / lastYear * 100).toFixed(2);
     return null;
   })() : null;
 
@@ -551,7 +551,7 @@ export default function HomePage() {
         label: '縣市漲最多',
         val: d.price_up_city.city,
         sub: `${d.price_up_city.yoy_pct > 0 ? '+' : ''}${d.price_up_city.yoy_pct}%`,
-        price: `${d.price_up_city.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.price_up_city.avg_unit_price.toFixed(2)} 萬/坪`,
         accent: true,
       });
     }
@@ -560,7 +560,7 @@ export default function HomePage() {
         label: '縣市跌最多',
         val: d.price_down_city.city,
         sub: `${d.price_down_city.yoy_pct > 0 ? '+' : ''}${d.price_down_city.yoy_pct}%`,
-        price: `${d.price_down_city.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.price_down_city.avg_unit_price.toFixed(2)} 萬/坪`,
         down: true,
       });
     }
@@ -569,7 +569,7 @@ export default function HomePage() {
         label: '最貴縣市',
         val: d.most_expensive_city.city,
         sub: '最高',
-        price: `${d.most_expensive_city.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.most_expensive_city.avg_unit_price.toFixed(2)} 萬/坪`,
         expensive: true,
       });
     }
@@ -578,7 +578,7 @@ export default function HomePage() {
         label: '最便宜縣市',
         val: d.cheapest_city.city,
         sub: '最低',
-        price: `${d.cheapest_city.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.cheapest_city.avg_unit_price.toFixed(2)} 萬/坪`,
       });
     }
 
@@ -589,7 +589,7 @@ export default function HomePage() {
         val: d.price_up_district.district,
         subVal: d.price_up_district.city,
         sub: `${d.price_up_district.yoy_pct > 0 ? '+' : ''}${d.price_up_district.yoy_pct}%`,
-        price: `${d.price_up_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.price_up_district.avg_unit_price.toFixed(2)} 萬/坪`,
         accent: true,
       });
     }
@@ -599,7 +599,7 @@ export default function HomePage() {
         val: d.price_down_district.district,
         subVal: d.price_down_district.city,
         sub: `${d.price_down_district.yoy_pct > 0 ? '+' : ''}${d.price_down_district.yoy_pct}%`,
-        price: `${d.price_down_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.price_down_district.avg_unit_price.toFixed(2)} 萬/坪`,
         down: true,
       });
     }
@@ -609,7 +609,7 @@ export default function HomePage() {
         val: d.most_expensive_district.district,
         subVal: d.most_expensive_district.city,
         sub: '最高',
-        price: `${d.most_expensive_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.most_expensive_district.avg_unit_price.toFixed(2)} 萬/坪`,
         expensive: true,
       });
     }
@@ -619,7 +619,7 @@ export default function HomePage() {
         val: d.cheapest_district.district,
         subVal: d.cheapest_district.city,
         sub: '最低',
-        price: `${d.cheapest_district.avg_unit_price.toFixed(1)} 萬/坪`,
+        price: `${d.cheapest_district.avg_unit_price.toFixed(2)} 萬/坪`,
       });
     }
 
@@ -790,7 +790,7 @@ export default function HomePage() {
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {[
                     { icon: <IconHome className="w-4 h-4" />, label: '總成交量', value: formatNum(totalTx), change: '筆', type: '' },
-                    { icon: <IconTrendingUp className="w-4 h-4" />, label: '平均單價', value: `${avgUnitPrice.toFixed(1)} 萬/坪`, change: yoyChange ? `${yoyChange > 0 ? '+' : ''}${yoyChange}% YoY` : '', type: '' },
+                    { icon: <IconTrendingUp className="w-4 h-4" />, label: '平均單價', value: `${avgUnitPrice.toFixed(2)} 萬/坪`, change: yoyChange ? `${yoyChange > 0 ? '+' : ''}${yoyChange}% YoY` : '', type: '' },
                     { icon: <IconMapPin className="w-4 h-4" />, label: '涵蓋區域', value: `${districts?.data?.length || 0}`, change: '個行政區', type: 'kpi-info' },
                     { icon: <IconBuilding className="w-4 h-4" />, label: '平均總價', value: formatTotal(districts?.data?.reduce((s, r) => s + ((r.avg_total_price || 0) * (r.count || 0)), 0) / totalTx), change: '', type: '' },
                   ].map((kpi, i) => (
@@ -832,7 +832,7 @@ export default function HomePage() {
                       valueKey="avg_unit_price"
                       labelKey="district"
                       color="#5a6b4e"
-                      valueFormat={(v) => v.toFixed(1) + ' 萬/坪'}
+                      valueFormat={(v) => v.toFixed(2) + ' 萬/坪'}
                     />
                   </div>
                   <div>
