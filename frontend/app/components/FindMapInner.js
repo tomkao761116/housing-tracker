@@ -522,7 +522,18 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     let cancelled = false;
 
     async function init() {
-      if (!mapRef.current || mapInstanceRef.current) return;
+      if (!mapRef.current) return;
+
+      // Strict Mode 防護：如果已有有效實例，直接使用
+      if (mapInstanceRef.current && mapInstanceRef.current._container === mapRef.current) {
+        return;
+      }
+
+      // 清理舊實例（Strict Mode 可能留下殘留）
+      if (mapInstanceRef.current) {
+        try { mapInstanceRef.current.remove(); } catch(e) {}
+        mapInstanceRef.current = null;
+      }
 
       // 動態載入 Leaflet 及其插件
       const LModule = await import('leaflet');
@@ -531,9 +542,12 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       await import('leaflet-draw');
 
       // await 回來後重新檢查 — Strict Mode 下可能有競態
-      if (cancelled || !mapRef.current || mapInstanceRef.current) return;
+      if (cancelled || !mapRef.current) return;
 
-      // 確保容器乾淨 — 清除 Leaflet 殘留標記
+      // 確保容器乾淨 — 清除 Leaflet 殘留 DOM
+      while (mapRef.current.firstChild) {
+        mapRef.current.removeChild(mapRef.current.firstChild);
+      }
       delete mapRef.current._leaflet_id;
       delete mapRef.current._leaflet_disable;
 
