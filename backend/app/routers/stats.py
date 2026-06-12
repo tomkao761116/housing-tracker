@@ -423,7 +423,7 @@ def building_age_distribution(
                         EXTRACT(YEAR FROM NOW()) - (1911 + CAST(SUBSTRING(build_complete_date, 1, 2) AS INT) + 100)
                     ELSE NULL
                 END as age
-            FROM trades WHERE {where} AND build_complete_date IS NOT NULL
+            FROM trades WHERE {where} AND build_complete_date IS NOT NULL AND build_complete_date ~ '^[0-9]+$'
         )
         SELECT 
             count(*)::int as total_with_age,
