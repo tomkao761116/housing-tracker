@@ -514,11 +514,11 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    fetchTimeout(`${API}/api/stats/highlights?year=${currentYear}`, 8000)
+    fetchTimeout(`${API}/api/stats/highlights?start_date=${startDate}&end_date=${endDate}`, 8000)
       .then(res => res.json())
       .then(data => setHighlights(data))
       .catch(() => {});
-  }, []);
+  }, [startDate, endDate]);
 
   const totalTx = districts?.data?.reduce((s, r) => s + (r.count || 0), 0) || 0;
   const weightedAvg = districts?.data?.reduce((s, r) => s + ((r.avg_unit_price || 0) * (r.count || 0)), 0) || 0;

@@ -428,22 +428,70 @@ def cities_overview(
 
 @router.get("/highlights")
 def highlights(
-    year: int = Query(2025, ge=2011, le=2026),
+    year: int = Query(None, ge=2011, le=2026),
+    start_date: str = Query(None),
+    end_date: str = Query(None),
     db: Session = Depends(get_db)
 ):
-    """首頁亮點卡片：年增/年減最多、最便宜 的縣市與行政區"""
-    prev_year = year - 1
+    """首頁亮點卡片：支持年度或日期區間"""
+    if start_date and end_date:
+        # Calculate previous period (same length, shifted back)
+        s_parts = start_date.split('-')
+        e_parts = end_date.split('-')
+        s_y, s_m = int(s_parts[0]), int(s_parts[1])
+        e_y, e_m = int(e_parts[0]), int(e_parts[1])
+        
+        # Total months in range
+        total_months = (e_y - s_y) * 12 + (e_m - s_m) + 1
+        
+        # Previous period: shift back by total_months
+        prev_end_m = e_m
+        prev_end_y = e_y
+        for _ in range(total_months):
+            prev_end_m -= 1
+            if prev_end_m < 1:
+                prev_end_m = 12
+                prev_end_y -= 1
+        
+        prev_start_m = s_m
+        prev_start_y = s_y
+        for _ in range(total_months):
+            prev_start_m -= 1
+            if prev_start_m < 1:
+                prev_start_m = 12
+                prev_start_y -= 1
+        
+        cur_range = f"month >= '{start_date}' AND month < '{end_date}-{_next_month_day(end_date)}'"
+        prev_end_str = f"{prev_end_y}-{prev_end_m:02d}"
+        prev_range = f"month >= '{prev_start_y}-{prev_start_m:02d}' AND month < '{prev_end_str}-{_next_month_day(prev_end_str)}'"
+        
+        table = "mv_monthly_stats"
+        date_col = "month"
+    elif year:
+        prev_year = year - 1
+        cur_range = f"year = {year}"
+        prev_range = f"year = {prev_year}"
+        table = "mv_yearly_stats"
+        date_col = "year"
+    else:
+        import datetime
+        current_year = datetime.datetime.now().year
+        prev_year = current_year - 1
+        cur_range = f"year = {current_year}"
+        prev_range = f"year = {prev_year}"
+        table = "mv_yearly_stats"
+        date_col = "year"
 
     # City-level YoY change (weighted by transaction count)
     city_yoy_sql = f"""
         WITH cur AS (
             SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
-            FROM mv_yearly_stats WHERE year = {year}
+            FROM {table} WHERE {cur_range}
             GROUP BY city
         ),
         prv AS (
             SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
-            FROM mv_yearly_stats WHERE year = {prev_year}
+            FROM {table} WHERE {prev_range}
             GROUP BY city
         )
         SELECT c.city, c.avg_unit_price, p.avg_unit_price as prev_price,
@@ -457,13 +505,13 @@ def highlights(
     dist_yoy_sql = f"""
         WITH cur AS (
             SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price, sum(cnt)::int as total_cnt
-            FROM mv_yearly_stats WHERE year = {year}
+            FROM {table} WHERE {cur_range}
             GROUP BY district, city
             HAVING sum(cnt) >= 3
         ),
         prv AS (
             SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price, sum(cnt)::int as total_cnt
-            FROM mv_yearly_stats WHERE year = {prev_year}
+            FROM {table} WHERE {prev_range}
             GROUP BY district, city
             HAVING sum(cnt) >= 3
         )
@@ -475,10 +523,10 @@ def highlights(
     """
     dist_yoy_rows = db.execute(text(dist_yoy_sql)).fetchall()
 
-    # Cheapest city & district (current year, weighted)
+    # Cheapest city & district (current period, weighted)
     cheapest_city_sql = f"""
         SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
-        FROM mv_yearly_stats WHERE year = {year}
+        FROM {table} WHERE {cur_range}
         GROUP BY city
         ORDER BY avg_unit_price ASC
         LIMIT 1
@@ -487,7 +535,7 @@ def highlights(
 
     cheapest_dist_sql = f"""
         SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
-        FROM mv_yearly_stats WHERE year = {year}
+        FROM {table} WHERE {cur_range}
         GROUP BY district, city
         HAVING sum(cnt) >= 3
         ORDER BY avg_unit_price ASC
@@ -495,10 +543,10 @@ def highlights(
     """
     cheapest_dist_row = db.execute(text(cheapest_dist_sql)).fetchone()
 
-    # Most expensive city & district (current year, weighted)
+    # Most expensive city & district (current period, weighted)
     most_expensive_city_sql = f"""
         SELECT city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
-        FROM mv_yearly_stats WHERE year = {year}
+        FROM {table} WHERE {cur_range}
         GROUP BY city
         ORDER BY avg_unit_price DESC
         LIMIT 1
@@ -507,7 +555,7 @@ def highlights(
 
     most_expensive_dist_sql = f"""
         SELECT district, city, round(sum(avg_unit_price * cnt) / sum(cnt)::numeric, 1) as avg_unit_price
-        FROM mv_yearly_stats WHERE year = {year}
+        FROM {table} WHERE {cur_range}
         GROUP BY district, city
         HAVING sum(cnt) >= 3
         ORDER BY avg_unit_price DESC
@@ -546,4 +594,4 @@ def highlights(
     if most_expensive_dist_row:
         result["most_expensive_district"] = {"district": most_expensive_dist_row[0], "city": most_expensive_dist_row[1], "avg_unit_price": most_expensive_dist_row[2]}
 
-    return {"year": year, "prev_year": prev_year, "data": result}
+    return {"data": result}
