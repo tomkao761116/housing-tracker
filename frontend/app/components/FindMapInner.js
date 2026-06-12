@@ -587,27 +587,30 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         spiderfyDistanceMultiplier: 1.5,
         iconCreateFunction: (cluster) => {
           const childCount = cluster.getChildCount();
-          let size = 'small';
-          if (childCount > 100) size = 'large';
-          else if (childCount > 30) size = 'medium';
+          let diameter = 36;
+          let fontSize = 13;
+          if (childCount > 100) { diameter = 56; fontSize = 16; }
+          else if (childCount > 30) { diameter = 46; fontSize = 14; }
           
           return L.divIcon({
             html: `<div style="
               background: linear-gradient(135deg, #5a6b4e, #4a5d3e);
               color: white;
               border-radius: 50%;
-              width: ${size === 'large' ? 56 : size === 'medium' ? 46 : 36}px;
-              height: ${size === 'large' ? 56 : size === 'medium' ? 46 : 36}px;
+              width: ${diameter}px;
+              height: ${diameter}px;
               display: flex;
               align-items: center;
               justify-content: center;
               font-weight: bold;
-              font-size: ${size === 'large' ? 16 : 13}px;
+              font-size: ${fontSize}px;
               box-shadow: 0 2px 8px rgba(0,0,0,0.2);
               cursor: pointer;
+              pointer-events: auto;
             ">${childCount}</div>`,
-            className: '',
-            iconSize: L.point(size === 'large' ? 56 : size === 'medium' ? 46 : 36, size === 'large' ? 56 : size === 'medium' ? 46 : 36),
+            className: 'leaflet-marker-icon housing-cluster',
+            iconSize: L.point(diameter, diameter),
+            iconAnchor: L.point(diameter / 2, diameter / 2),
           });
         },
       };
@@ -630,21 +633,22 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         clusterGroup.options.maxZoom = 17;
       }
 
-      // 綁定 cluster 點擊事件
+      // 綁定 cluster 點擊事件（zoomToBoundsOnClick 已啟用，此為額外除錯）
       clusterGroup.on('clusterclick', (e) => {
-        const cluster = e.cluster;
-        if (map.getZoom() >= 16) {
-          cluster.spiderfy();
-        }
+        console.log('[FindMap] Cluster clicked:', e.cluster.getChildCount(), 'zoom:', map.getZoom());
+        // zoomToBoundsOnClick: true 會自動處理，這裡只記錄
       });
 
-      // 綁單個 marker 點擊事件（從卡片點進來時的 popup）
+      // 綁單個 marker 點擊事件
       clusterGroup.on('markerclick', (e) => {
         const marker = e.marker;
         if (marker.tradeId && onSelectRef.current) {
           onSelectRef.current(marker.tradeId);
         }
       });
+
+      // 驗證：確保 cluster group 已正確添加到 map
+      console.log('[FindMap] Cluster group added to map, layers:', clusterGroup.getLayers().length);
 
       map.addLayer(clusterGroup);
       mapInstanceRef.current = map;
@@ -756,24 +760,35 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
   useEffect(() => {
     if (!selectedId || !mapInstanceRef.current) return;
 
+    const map = mapInstanceRef.current;
     const marker = markerByTradeId.current.get(selectedId);
+    
     if (marker) {
       const latlng = marker.getLatLng();
+      const targetZoom = Math.max(map.getZoom(), 16);
       
-      // 飛到 zoom 16+ 才能看到個別點位
-      const targetZoom = Math.max(mapInstanceRef.current.getZoom(), 16);
+      map.flyTo(latlng, targetZoom, { duration: 0.8, noMoveStart: true });
       
-      mapInstanceRef.current.flyTo(latlng, targetZoom, {
-        duration: 0.8,
-        noMoveStart: true,
-      });
-      
-      // 等 flyTo 完成後開啟 popup
       setTimeout(() => {
         if (marker.tradeId === selectedId) {
           marker.openPopup();
         }
       }, 900);
+    } else {
+      // Fallback: 從 dataCacheRef 找座標直接 flyTo
+      const trade = dataCacheRef.current[selectedId];
+      if (trade && trade.lat != null && trade.lon != null) {
+        console.log('[FindMap] Fallback flyTo for trade', selectedId, trade.address);
+        map.flyTo([trade.lat, trade.lon], 16, { duration: 0.8, noMoveStart: true });
+      } else {
+        // Last resort: 從 tradesRef 找
+        const currentTrades = tradesRef.current;
+        const t = currentTrades?.find(tr => tr.id === selectedId);
+        if (t && t.lat != null && t.lon != null) {
+          console.log('[FindMap] TradesRef fallback flyTo for trade', selectedId);
+          map.flyTo([t.lat, t.lon], 16, { duration: 0.8, noMoveStart: true });
+        }
+      }
     }
   }, [selectedId]);
 
