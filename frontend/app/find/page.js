@@ -133,76 +133,93 @@ export default function FindPage() {
 
   useEffect(() => { setDistrict(''); }, [city]);
 
-  // ── Fetch trades ──
-  const fetchTrades = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('page', page.toString());
-      params.set('page_size', PAGE_SIZE.toString());
-      params.set('sort_by', sortBy);
-      params.set('sort_order', sortOrder);
-      if (city) params.set('city', city);
-      if (district) params.set('district', district);
-      if (keyword) params.set('keyword', keyword);
-      if (priceFilter) {
-        const parts = priceFilter.split('-');
-        if (parts.length === 2) {
-          if (parts[0]) params.set('min_total_price', parts[0]);
-          if (parts[1]) params.set('max_total_price', parts[1]);
-        }
-      }
-      if (areaFilter) {
-        // Handle formats: "10-15", "60-", "-10"
-        const parts = areaFilter.split('-');
-        if (parts.length === 2) {
-          const min = parts[0] || '';
-          const max = parts[1] || '';
-          if (min) params.set('min_area_tping', min);
-          if (max) params.set('max_area_tping', max);
-        } else if (parts.length === 1 && parts[0].startsWith('-')) {
-          // e.g. "-10" means under 10
-          params.set('max_area_tping', parts[0].slice(1));
-        } else {
-          params.set('min_area_tping', parts[0] || '');
-        }
-      }
-      if (unitPriceFilter) {
-        const parts = unitPriceFilter.split('-');
-        if (parts.length === 2) {
-          if (parts[0]) params.set('min_unit_price', parts[0]);
-          if (parts[1]) params.set('max_unit_price', parts[1]);
-        }
-      }
-      if (floorFilter) {
-        const parts = floorFilter.split('-');
-        if (parts.length === 2) {
-          if (parts[0]) params.set('min_floor', parts[0]);
-          if (parts[1]) params.set('max_floor', parts[1]);
-        }
-      }
-      if (rooms > 0) params.set('min_rooms', rooms.toString());
-      if (livingRooms > 0) params.set('min_living_rooms', livingRooms.toString());
-      if (bathrooms > 0) params.set('min_bathrooms', bathrooms.toString());
-      if (buildingType) params.set('building_type', buildingType);
-      if (hasElevator) params.set('has_elevator', 'true');
-      if (season) params.set('season', season);
-      if (minScoreOverall) params.set('min_score_overall', minScoreOverall);
+  // ── Fetch trades with debounce ──
+  const fetchTradesRef = useRef(null);
+  const DEBOUNCE_MS = 300;
 
-      const res = await fetch(`${API}/api/find?${params}`);
-      const data = await res.json();
-      setTrades(data.items || []);
-      setTotal(data.total || 0);
-      setInitialLoad(false);
-    } catch (err) {
-      console.error(err);
-      setInitialLoad(false);
-    } finally {
-      setLoading(false);
+  const fetchTrades = useCallback(async () => {
+    // Clear any pending debounced call
+    if (fetchTradesRef.current) {
+      clearTimeout(fetchTradesRef.current);
     }
-  }, [page, sortBy, sortOrder, city, district, keyword, priceFilter, areaFilter, unitPriceFilter, floorFilter, rooms, livingRooms, bathrooms, buildingType, hasElevator, season, minScoreOverall]);
+
+    fetchTradesRef.current = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        params.set('page', page.toString());
+        params.set('page_size', PAGE_SIZE.toString());
+        params.set('sort_by', sortBy);
+        params.set('sort_order', sortOrder);
+        if (city) params.set('city', city);
+        if (district) params.set('district', district);
+        if (keyword) params.set('keyword', keyword);
+        if (priceFilter) {
+          const parts = priceFilter.split('-');
+          if (parts.length === 2) {
+            if (parts[0]) params.set('min_total_price', parts[0]);
+            if (parts[1]) params.set('max_total_price', parts[1]);
+          }
+        }
+        if (areaFilter) {
+          const parts = areaFilter.split('-');
+          if (parts.length === 2) {
+            const min = parts[0] || '';
+            const max = parts[1] || '';
+            if (min) params.set('min_area_tping', min);
+            if (max) params.set('max_area_tping', max);
+          } else if (parts.length === 1 && parts[0].startsWith('-')) {
+            params.set('max_area_tping', parts[0].slice(1));
+          } else {
+            params.set('min_area_tping', parts[0] || '');
+          }
+        }
+        if (unitPriceFilter) {
+          const parts = unitPriceFilter.split('-');
+          if (parts.length === 2) {
+            if (parts[0]) params.set('min_unit_price', parts[0]);
+            if (parts[1]) params.set('max_unit_price', parts[1]);
+          }
+        }
+        if (floorFilter) {
+          const parts = floorFilter.split('-');
+          if (parts.length === 2) {
+            if (parts[0]) params.set('min_floor', parts[0]);
+            if (parts[1]) params.set('max_floor', parts[1]);
+          }
+        }
+        if (rooms > 0) params.set('min_rooms', rooms.toString());
+        if (livingRooms > 0) params.set('min_living_rooms', livingRooms.toString());
+        if (bathrooms > 0) params.set('min_bathrooms', bathrooms.toString());
+        if (buildingType) params.set('building_type', buildingType);
+        if (hasElevator) params.set('has_elevator', 'true');
+        if (season) params.set('season', season);
+        if (minScoreOverall) params.set('min_score_overall', minScoreOverall);
+
+        const res = await fetch(`${API}/api/find?${params}`);
+        const data = await res.json();
+        setTrades(data.items || []);
+        setTotal(data.total || 0);
+        setInitialLoad(false);
+      } catch (err) {
+        console.error(err);
+        setInitialLoad(false);
+      } finally {
+        setLoading(false);
+      }
+    }, initialLoad ? 0 : DEBOUNCE_MS); // no debounce on initial load
+  }, [page, sortBy, sortOrder, city, district, keyword, priceFilter, areaFilter, unitPriceFilter, floorFilter, rooms, livingRooms, bathrooms, buildingType, hasElevator, season, minScoreOverall, initialLoad]);
 
   useEffect(() => { fetchTrades(); }, [fetchTrades]);
+
+  // Cleanup debounce on unmount
+  useEffect(() => {
+    return () => {
+      if (fetchTradesRef.current) {
+        clearTimeout(fetchTradesRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => { setPage(1); }, [city, district, keyword, priceFilter, areaFilter, unitPriceFilter, floorFilter, rooms, livingRooms, bathrooms, buildingType, hasElevator, season, sortBy, sortOrder, minScoreOverall]);
 

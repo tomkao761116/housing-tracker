@@ -6,12 +6,24 @@ from typing import Optional, List
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_, or_, Integer, text
 from app.utils import compute_building_age
+from app.utils.cache import api_cache
 import math
 import time
+import hashlib
 
 from app.models.database import Trade, TradeAmenity
 
 router = APIRouter()
+
+
+def _make_cache_key(func_name: str, **kwargs) -> str:
+    """Build a deterministic cache key from function name and query params."""
+    parts = [func_name]
+    for k, v in sorted(kwargs.items()):
+        if v is not None:
+            parts.append(f"{k}={v}")
+    raw = "|".join(parts)
+    return hashlib.md5(raw.encode()).hexdigest()
 
 
 def get_db():
@@ -122,6 +134,27 @@ def find_homes(
     """
     一站式找房 API — 支援所有維度的篩選、排序和分頁
     """
+
+    # ── Cache lookup (3 min TTL for find results) ──
+    cache_key = _make_cache_key("find_homes",
+        city=city, district=district, region=region, keyword=keyword,
+        min_total_price=min_total_price, max_total_price=max_total_price,
+        min_unit_price=min_unit_price, max_unit_price=max_unit_price,
+        min_area_tping=min_area_tping, max_area_tping=max_area_tping,
+        min_age=min_age, max_age=max_age, building_type=building_type,
+        min_rooms=min_rooms, min_living_rooms=min_living_rooms,
+        min_bathrooms=min_bathrooms, has_elevator=has_elevator,
+        min_score_overall=min_score_overall, min_score_transit=min_score_transit,
+        min_score_education=min_score_education, min_score_medical=min_score_medical,
+        min_score_shopping=min_score_shopping, min_score_leisure=min_score_leisure,
+        min_score_dining=min_score_dining,
+        commute_city=commute_city, max_commute_time=max_commute_time,
+        sort_by=sort_by, sort_order=sort_order, page=page, page_size=page_size,
+    )
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     query = db.query(Trade)
 
     # ── 繁簡體縣市名稱對照（前端可能傳簡體）───
@@ -358,7 +391,7 @@ def find_homes(
             "price_range": [min(prices), max(prices)] if prices else None,
         }
 
-    return {
+    result = {
         "items": items,
         "page": page,
         "page_size": page_size,
@@ -366,6 +399,11 @@ def find_homes(
         "total_pages": total_pages,
         "stats": stats,
     }
+
+    # ── Cache the result (3 min TTL) ──
+    api_cache.set(cache_key, result, ttl=180)
+
+    return result
 
 
 @router.get("/find/map-points")

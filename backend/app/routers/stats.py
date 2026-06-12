@@ -3,8 +3,20 @@ from fastapi import APIRouter, Query, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.main import get_db
+from app.utils.cache import api_cache
+import hashlib
 
 router = APIRouter()
+
+
+def _make_cache_key(func_name: str, **kwargs) -> str:
+    """Build a deterministic cache key from function name and query params."""
+    parts = [func_name]
+    for k, v in sorted(kwargs.items()):
+        if v is not None:
+            parts.append(f"{k}={v}")
+    raw = "|".join(parts)
+    return hashlib.md5(raw.encode()).hexdigest()
 
 
 def normalize_unit_price(val):
@@ -21,6 +33,11 @@ def district_stats(
     db: Session = Depends(get_db)
 ):
     """各區統計（交易量、平均單價、平均總價）— 使用物化視圖"""
+    cache_key = _make_cache_key("district_stats", city=city, year=year)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     conditions = [f"year = {year}"]
     params = {}
     if city:
@@ -50,7 +67,9 @@ def district_stats(
             "avg_unit_price": r[2],
             "avg_total_price": r[3],
         })
-    return {"city": city, "year": year, "data": data}
+    result = {"city": city, "year": year, "data": data}
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 @router.get("/districts/lightweight")
@@ -62,6 +81,11 @@ def district_stats_lightweight(
     db: Session = Depends(get_db)
 ):
     """輕量版各區統計 — 首頁儀表板用，支援日期區間"""
+    cache_key = _make_cache_key("district_stats_lightweight", city=city, year=year, start_date=start_date, end_date=end_date)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     # 優先用日期區間，否則用年份
     if start_date and end_date:
         conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
@@ -114,7 +138,9 @@ def district_stats_lightweight(
             "avg_unit_price": r[2],
             "avg_total_price": r[3],
         })
-    return {"city": city, "data": data}
+    result = {"city": city, "data": data}
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 def _next_month_day(date_str: str) -> str:
@@ -136,6 +162,11 @@ def monthly_trend(
     db: Session = Depends(get_db)
 ):
     """月度趨勢 — 使用物化視圖，支援年份或日期區間篩選"""
+    cache_key = _make_cache_key("monthly_trend", city=city, district=district, start_year=start_year, end_year=end_year, start_date=start_date, end_date=end_date)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     conditions = []
     params = {}
 
@@ -184,7 +215,7 @@ def monthly_trend(
         ORDER BY month
     """
     results = db.execute(text(sql), params)
-    return {
+    result = {
         "city": city,
         "district": district,
         "data": [
@@ -192,6 +223,8 @@ def monthly_trend(
             for r in results
         ],
     }
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 @router.get("/building_types")
@@ -203,6 +236,11 @@ def building_type_distribution(
     db: Session = Depends(get_db)
 ):
     """建物型態分佈 — 支援日期區間"""
+    cache_key = _make_cache_key("building_types", city=city, year=year, start_date=start_date, end_date=end_date)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     if start_date and end_date:
         conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
     elif year:
@@ -244,13 +282,15 @@ def building_type_distribution(
             LIMIT 10
         """
     results = db.execute(text(sql), params)
-    return {
+    result = {
         "city": city,
         "data": [
             {"type": r[0], "count": r[1], "avg_unit_price": r[2]}
             for r in results
         ],
     }
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 @router.get("/price_distribution")
@@ -263,6 +303,11 @@ def price_distribution(
     db: Session = Depends(get_db)
 ):
     """總價區間分佈 — 支援日期區間"""
+    cache_key = _make_cache_key("price_distribution", city=city, district=district, year=year, start_date=start_date, end_date=end_date)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     if start_date and end_date:
         conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
     elif year:
@@ -322,13 +367,15 @@ def price_distribution(
     labels_order = ["<300萬", "300-500萬", "500-800萬", "800萬-1000萬", "1000-1500萬", "1500-2000萬", ">2000萬"]
     result_dict = {r[0]: r[1] for r in results}
     
-    return {
+    result = {
         "city": city,
         "data": [
             {"label": lbl, "value": round(result_dict.get(lbl, 0) / total * 100)}
             for lbl in labels_order
         ],
     }
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 @router.get("/building_age_distribution")
@@ -341,6 +388,11 @@ def building_age_distribution(
     db: Session = Depends(get_db)
 ):
     """屋齡分佈統計 — 支援日期區間"""
+    cache_key = _make_cache_key("building_age", city=city, district=district, year=year, start_date=start_date, end_date=end_date)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     if start_date and end_date:
         conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
     elif year:
@@ -390,7 +442,7 @@ def building_age_distribution(
     avg_age = row[7]
     labels = ["5年以內", "6-10年", "11-15年", "16-20年", "21-30年", "30年以上"]
 
-    return {
+    result = {
         "city": city, "district": district,
         "total_trades": total,
         "avg_building_age": avg_age,
@@ -399,6 +451,8 @@ def building_age_distribution(
             for i in range(6)
         ],
     }
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 @router.get("/cities/overview")
@@ -407,6 +461,11 @@ def cities_overview(
     db: Session = Depends(get_db)
 ):
     """全台各縣市總覽 — 使用物化視圖"""
+    cache_key = _make_cache_key("cities_overview", year=year)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     sql = f"""
         SELECT 
             city,
@@ -423,7 +482,9 @@ def cities_overview(
         {"city": r[0], "count": r[1], "avg_unit_price": r[2], "avg_total_price": r[3]}
         for r in results
     ]
-    return {"year": year, "data": data}
+    result = {"year": year, "data": data}
+    api_cache.set(cache_key, result, ttl=300)
+    return result
 
 
 @router.get("/highlights")
@@ -434,6 +495,11 @@ def highlights(
     db: Session = Depends(get_db)
 ):
     """首頁亮點卡片：支持年度或日期區間"""
+    cache_key = _make_cache_key("highlights", year=year, start_date=start_date, end_date=end_date)
+    cached = api_cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     if start_date and end_date:
         # Calculate previous period (same length, shifted back)
         s_parts = start_date.split('-')
@@ -600,4 +666,6 @@ def highlights(
     if most_expensive_dist_row:
         result["most_expensive_district"] = {"district": most_expensive_dist_row[0], "city": most_expensive_dist_row[1], "avg_unit_price": most_expensive_dist_row[2]}
 
-    return {"data": result}
+    final_result = {"data": result}
+    api_cache.set(cache_key, final_result, ttl=300)
+    return final_result
