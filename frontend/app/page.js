@@ -781,7 +781,7 @@ export default function HomePage() {
                   </select>
                   <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
                 </div>
-                {/* Date range for trends */}
+                {/* Date range for trend charts */}
                 <div className="flex items-center gap-1.5 ml-1 pl-3 border-l border-[#e0ddd8]">
                   {['6m', '1y'].map(p => (
                     <button key={p} onClick={() => setDatePreset(p)}
