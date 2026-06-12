@@ -324,7 +324,7 @@ function DonutChart({ data, size = 160 }) {
           <div key={i} className="flex items-center gap-2.5">
             <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
             <span className="text-sm text-stone-600">{d.label}</span>
-            <span className="text-sm font-semibold text-stone-800 ml-auto">{d.percentage}%</span>
+            <span className="text-sm font-semibold text-stone-800 ml-auto">{d.percentage.toFixed(2)}%</span>
           </div>
         ))}
       </div>
@@ -416,7 +416,7 @@ function AgeDistChart({ data, avgAge, height = 170 }) {
               />
               {d.percentage >= 3 && (
                 <text x={xScale(i) + barW / 2} y={yScale(d.percentage) - 8} textAnchor="middle" fontSize={12} fill="#57534e" fontWeight="600">
-                  {d.percentage}%
+                  {d.percentage.toFixed(2)}%
                 </text>
               )}
               <text x={xScale(i) + barW / 2} y={height - 8} textAnchor="middle" fontSize={12} fill="#57534e" fontWeight="500">
@@ -550,7 +550,7 @@ export default function HomePage() {
       stats.push({
         label: '縣市漲最多',
         val: d.price_up_city.city,
-        sub: `${d.price_up_city.yoy_pct > 0 ? '+' : ''}${d.price_up_city.yoy_pct}%`,
+        sub: `${d.price_up_city.yoy_pct > 0 ? '+' : ''}${Number(d.price_up_city.yoy_pct).toFixed(2)}%`,
         price: `${d.price_up_city.avg_unit_price.toFixed(2)} 萬/坪`,
         accent: true,
       });
@@ -559,7 +559,7 @@ export default function HomePage() {
       stats.push({
         label: '縣市跌最多',
         val: d.price_down_city.city,
-        sub: `${d.price_down_city.yoy_pct > 0 ? '+' : ''}${d.price_down_city.yoy_pct}%`,
+        sub: `${d.price_down_city.yoy_pct > 0 ? '+' : ''}${Number(d.price_down_city.yoy_pct).toFixed(2)}%`,
         price: `${d.price_down_city.avg_unit_price.toFixed(2)} 萬/坪`,
         down: true,
       });
@@ -588,7 +588,7 @@ export default function HomePage() {
         label: '行政區漲最多',
         val: d.price_up_district.district,
         subVal: d.price_up_district.city,
-        sub: `${d.price_up_district.yoy_pct > 0 ? '+' : ''}${d.price_up_district.yoy_pct}%`,
+        sub: `${d.price_up_district.yoy_pct > 0 ? '+' : ''}${Number(d.price_up_district.yoy_pct).toFixed(2)}%`,
         price: `${d.price_up_district.avg_unit_price.toFixed(2)} 萬/坪`,
         accent: true,
       });
@@ -598,7 +598,7 @@ export default function HomePage() {
         label: '行政區跌最多',
         val: d.price_down_district.district,
         subVal: d.price_down_district.city,
-        sub: `${d.price_down_district.yoy_pct > 0 ? '+' : ''}${d.price_down_district.yoy_pct}%`,
+        sub: `${d.price_down_district.yoy_pct > 0 ? '+' : ''}${Number(d.price_down_district.yoy_pct).toFixed(2)}%`,
         price: `${d.price_down_district.avg_unit_price.toFixed(2)} 萬/坪`,
         down: true,
       });
