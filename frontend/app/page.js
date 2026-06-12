@@ -436,7 +436,6 @@ function AgeDistChart({ data, avgAge, height = 170 }) {
    ═══════════════════════════════════════════ */
 export default function HomePage() {
   const [city, setCity] = useState('所有縣市');
-  const [year, setYear] = useState(2025);
   const [districts, setDistricts] = useState(null);
   const [trends, setTrends] = useState(null);
   const [buildingTypes, setBuildingTypes] = useState(null);
@@ -444,21 +443,18 @@ export default function HomePage() {
   const [ageDist, setAgeDist] = useState(null);
   const [citiesOverview, setCitiesOverview] = useState(null);
   const [highlights, setHighlights] = useState(null);
-  const [highlightYear, setHighlightYear] = useState(2025);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Date range for trend charts — default: last 12 months
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date(); d.setMonth(d.getMonth() - 11);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-  });
+  // Global date range — default: current year to now
+  const currentYear = new Date().getFullYear();
+  const [startDate, setStartDate] = useState(`${currentYear}-01`);
   const [endDate, setEndDate] = useState(() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
   });
 
-  const years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013, 2012, 2011];
+  const years = Array.from({length: 15}, (_, i) => currentYear - i);
 
   const allCitiesList = useMemo(() => {
     if (citiesOverview?.data) {
@@ -471,11 +467,11 @@ export default function HomePage() {
     setLoading(true);
     setError(null);
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    fetchTimeout(`${API}/api/stats/districts/lightweight?${cityParam}&year=${year}`, 10000)
+    fetchTimeout(`${API}/api/stats/districts/lightweight?${cityParam}&start_date=${startDate}&end_date=${endDate}`, 10000)
       .then(res => res.json())
       .then(data => { setDistricts(data); setLoading(false); })
       .catch(() => { setLoading(false); setError('timeout'); });
-  }, [city, year]);
+  }, [city, startDate, endDate]);
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
@@ -488,41 +484,41 @@ export default function HomePage() {
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    fetchTimeout(`${API}/api/stats/building_types?${cityParam}&year=${year}`, 8000)
+    fetchTimeout(`${API}/api/stats/building_types?${cityParam}&start_date=${startDate}&end_date=${endDate}`, 8000)
       .then(res => res.json())
       .then(data => setBuildingTypes(data))
       .catch(() => {});
-  }, [city, year]);
+  }, [city, startDate, endDate]);
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    fetchTimeout(`${API}/api/stats/price_distribution?${cityParam}&year=${year}`, 8000)
+    fetchTimeout(`${API}/api/stats/price_distribution?${cityParam}&start_date=${startDate}&end_date=${endDate}`, 8000)
       .then(res => res.json())
       .then(data => setPriceDist(data))
       .catch(() => {});
-  }, [city, year]);
+  }, [city, startDate, endDate]);
 
   useEffect(() => {
     const cityParam = city === '所有縣市' ? '' : `city=${encodeURIComponent(city)}`;
-    fetchTimeout(`${API}/api/stats/building_age_distribution?${cityParam}&year=${year}`, 8000)
+    fetchTimeout(`${API}/api/stats/building_age_distribution?${cityParam}&start_date=${startDate}&end_date=${endDate}`, 8000)
       .then(res => res.json())
       .then(data => setAgeDist(data))
       .catch(() => {});
-  }, [city, year]);
+  }, [city, startDate, endDate]);
 
   useEffect(() => {
-    fetchTimeout(`${API}/api/stats/cities/overview?year=${year}`, 8000)
+    fetchTimeout(`${API}/api/stats/cities/overview?year=${currentYear}`, 8000)
       .then(res => res.json())
       .then(data => setCitiesOverview(data))
       .catch(() => {});
-  }, [year]);
+  }, []);
 
   useEffect(() => {
-    fetchTimeout(`${API}/api/stats/highlights?year=${highlightYear}`, 8000)
+    fetchTimeout(`${API}/api/stats/highlights?year=${currentYear}`, 8000)
       .then(res => res.json())
       .then(data => setHighlights(data))
       .catch(() => {});
-  }, [highlightYear]);
+  }, []);
 
   const totalTx = districts?.data?.reduce((s, r) => s + (r.count || 0), 0) || 0;
   const weightedAvg = districts?.data?.reduce((s, r) => s + ((r.avg_unit_price || 0) * (r.count || 0)), 0) || 0;
@@ -671,14 +667,14 @@ export default function HomePage() {
             <div className="flex-1 h-px bg-[#e0ddd8]" />
           </div>
 
-          {/* ── Year Selector for Highlights (centered) ── */}
+          {/* ── Global Date Range Selector (centered) ── */}
           <div className="flex justify-center mb-6">
-            <div className="relative">
-              <select value={highlightYear} onChange={(e) => setHighlightYear(parseInt(e.target.value))}
-                className={selectClass}>
-                {years.map(y => <option key={y} value={y}>{y}</option>)}
-              </select>
-              <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
+            <div className="flex items-center gap-2">
+              <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)}
+                className="text-sm border border-[#ddd8d2] rounded-sm px-3 py-2 bg-white text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#5a6b4e]/30 focus:border-[#5a6b4e]" />
+              <span className="text-[#aaa] text-sm">~</span>
+              <input type="month" value={endDate} onChange={(e) => setEndDate(e.target.value)}
+                className="text-sm border border-[#ddd8d2] rounded-sm px-3 py-2 bg-white text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#5a6b4e]/30 focus:border-[#5a6b4e]" />
             </div>
           </div>
 
@@ -737,7 +733,7 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════
-          即時房市儀表板
+          近期房市儀表板
           White card, rounded corners, subtle shadow
           ══════════════════════════════════════ */}
       <section className="max-w-5xl mx-auto pb-16">
@@ -748,7 +744,7 @@ export default function HomePage() {
             <div className="flex items-center justify-between gap-3 flex-wrap">
               <div className="flex items-center gap-2">
                 <IconTrendingUp className="w-5 h-5 text-[#5a6b4e]" />
-                <h2 className="text-base font-semibold text-[#2a2a2a]">即時房市行情</h2>
+                <h2 className="text-base font-semibold text-[#2a2a2a]">近期房市行情</h2>
               </div>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="relative">
@@ -758,26 +754,9 @@ export default function HomePage() {
                   </select>
                   <IconMapPin className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
                 </div>
-                <div className="relative">
-                  <select value={year} onChange={(e) => setYear(parseInt(e.target.value))}
-                    className={`${selectClass} w-20`}>
-                    {years.map(y => <option key={y} value={y}>{y}</option>)}
-                  </select>
-                  <IconCalendar className="w-3.5 h-3.5 absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 pointer-events-none" />
-                </div>
               </div>
             </div>
-            <p className="text-xs text-[#777] mt-2">{displayCity} · {year}年成交數據</p>
-          </div>
-
-          {/* ── Date range for trend charts (placed above trends section) ── */}
-          <div className="px-5 sm:px-6 pt-3 pb-1 flex items-center gap-2">
-            <span className="text-xs text-[#999]">走勢區間：</span>
-            <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-              className="text-xs border border-[#e0ddd8] rounded-sm px-2 py-1 bg-white text-[#555]" />
-            <span className="text-[#aaa] text-xs">~</span>
-            <input type="month" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-              className="text-xs border border-[#e0ddd8] rounded-sm px-2 py-1 bg-white text-[#555]" />
+            <p className="text-xs text-[#777] mt-2">{displayCity} · {startDate} ~ {endDate} 成交數據</p>
           </div>
 
           {loading ? (
@@ -797,7 +776,7 @@ export default function HomePage() {
             </div>
           ) : districts?.data?.length === 0 ? (
             <div className="p-8 text-center">
-              <div className="text-sm text-[#777]">{displayCity} {year}年暫無成交統計資料</div>
+              <div className="text-sm text-[#777]">{displayCity} {startDate} ~ {endDate} 暫無成交統計資料</div>
               <Link href="/find" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border border-[#5a6b4e] text-[#5a6b4e] text-sm font-medium rounded-sm hover:bg-[#5a6b4e] hover:text-white transition-colors">
                 <IconSearch className="w-4 h-4" />
                 前往找房

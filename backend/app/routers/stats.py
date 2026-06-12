@@ -56,11 +56,23 @@ def district_stats(
 @router.get("/districts/lightweight")
 def district_stats_lightweight(
     city: str = Query(None),
-    year: int = Query(2025, ge=2011, le=2026),
+    year: int = Query(None, ge=2011, le=2026),
+    start_date: str = Query(None),  # YYYY-MM
+    end_date: str = Query(None),    # YYYY-MM
     db: Session = Depends(get_db)
 ):
-    """輕量版各區統計 — 首頁儀表板用，使用物化視圖"""
-    conditions = [f"year = {year}"]
+    """輕量版各區統計 — 首頁儀表板用，支援日期區間"""
+    # 優先用日期區間，否則用年份
+    if start_date and end_date:
+        conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
+    elif year:
+        conditions = [f"year = {year}"]
+    else:
+        # 預設今年
+        import datetime
+        current_year = datetime.datetime.now().year
+        conditions = [f"year = {current_year}"]
+    
     params = {}
     if city:
         conditions.append("city = :city")
@@ -68,17 +80,31 @@ def district_stats_lightweight(
 
     where = ' AND '.join(conditions)
 
-    sql = f"""
-        SELECT 
-            district,
-            sum(cnt)::int as cnt,
-            round(avg(avg_unit_price)::numeric, 1) as avg_unit_price,
-            round(avg(avg_total_price)::numeric, 0) as avg_total_price
-        FROM mv_yearly_stats
-        WHERE {where}
-        GROUP BY district
-        ORDER BY avg_unit_price DESC
-    """
+    if start_date and end_date:
+        # 直接用 trades 表聚合
+        sql = f"""
+            SELECT 
+                district,
+                count(*)::int as cnt,
+                round(avg(unit_price_tping / 10000)::numeric, 1) as avg_unit_price,
+                round(avg(total_price / 10000)::numeric, 0) as avg_total_price
+            FROM trades
+            WHERE {where} AND trade_date IS NOT NULL
+            GROUP BY district
+            ORDER BY avg_unit_price DESC
+        """
+    else:
+        sql = f"""
+            SELECT 
+                district,
+                sum(cnt)::int as cnt,
+                round(avg(avg_unit_price)::numeric, 1) as avg_unit_price,
+                round(avg(avg_total_price)::numeric, 0) as avg_total_price
+            FROM mv_yearly_stats
+            WHERE {where}
+            GROUP BY district
+            ORDER BY avg_unit_price DESC
+        """
     results = db.execute(text(sql), params)
     data = []
     for r in results:
@@ -88,7 +114,15 @@ def district_stats_lightweight(
             "avg_unit_price": r[2],
             "avg_total_price": r[3],
         })
-    return {"city": city, "year": year, "data": data}
+    return {"city": city, "data": data}
+
+
+def _next_month_day(date_str: str) -> str:
+    """Given YYYY-MM, return first day of next month as DD string"""
+    y, m = map(int, date_str.split('-'))
+    if m == 12:
+        return '01'
+    return '01'
 
 
 @router.get("/trends/monthly")
@@ -163,11 +197,21 @@ def monthly_trend(
 @router.get("/building_types")
 def building_type_distribution(
     city: str = Query(None),
-    year: int = Query(2025),
+    year: int = Query(None, ge=2011, le=2026),
+    start_date: str = Query(None),
+    end_date: str = Query(None),
     db: Session = Depends(get_db)
 ):
-    """建物型態分佈 — 使用物化視圖"""
-    conditions = [f"year = {year}"]
+    """建物型態分佈 — 支援日期區間"""
+    if start_date and end_date:
+        conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
+    elif year:
+        conditions = [f"year = {year}"]
+    else:
+        import datetime
+        current_year = datetime.datetime.now().year
+        conditions = [f"year = {current_year}"]
+    
     params = {}
     if city:
         conditions.append("city = :city")
@@ -175,21 +219,33 @@ def building_type_distribution(
 
     where = ' AND '.join(conditions)
 
-    sql = f"""
-        SELECT 
-            btype as type,
-            sum(cnt)::int as count,
-            round(avg(avg_unit_price)::numeric, 1) as avg_unit_price
-        FROM mv_building_type_stats
-        WHERE {where}
-        GROUP BY btype
-        ORDER BY count DESC
-        LIMIT 10
-    """
+    if start_date and end_date:
+        sql = f"""
+            SELECT 
+                btype as type,
+                count(*)::int as cnt,
+                round(avg(unit_price_tping / 10000)::numeric, 1) as avg_unit_price
+            FROM trades
+            WHERE {where} AND trade_date IS NOT NULL AND btype IS NOT NULL
+            GROUP BY btype
+            ORDER BY cnt DESC
+            LIMIT 10
+        """
+    else:
+        sql = f"""
+            SELECT 
+                btype as type,
+                sum(cnt)::int as cnt,
+                round(avg(avg_unit_price)::numeric, 1) as avg_unit_price
+            FROM mv_building_type_stats
+            WHERE {where}
+            GROUP BY btype
+            ORDER BY cnt DESC
+            LIMIT 10
+        """
     results = db.execute(text(sql), params)
     return {
         "city": city,
-        "year": year,
         "data": [
             {"type": r[0], "count": r[1], "avg_unit_price": r[2]}
             for r in results
@@ -201,11 +257,21 @@ def building_type_distribution(
 def price_distribution(
     city: str = Query(None),
     district: str = Query(None),
-    year: int = Query(2025),
+    year: int = Query(None, ge=2011, le=2026),
+    start_date: str = Query(None),
+    end_date: str = Query(None),
     db: Session = Depends(get_db)
 ):
-    """總價區間分佈 — 使用物化視圖"""
-    conditions = [f"year = {year}"]
+    """總價區間分佈 — 支援日期區間"""
+    if start_date and end_date:
+        conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
+    elif year:
+        conditions = [f"year = {year}"]
+    else:
+        import datetime
+        current_year = datetime.datetime.now().year
+        conditions = [f"year = {current_year}"]
+    
     params = {}
     if city:
         conditions.append("city = :city")
@@ -213,24 +279,43 @@ def price_distribution(
 
     where = ' AND '.join(conditions)
 
-    sql = f"""
-        SELECT 
-            label,
-            count(*)::int as cnt
-        FROM mv_price_dist_stats
-        WHERE {where}
-        GROUP BY label
-        ORDER BY 
-            CASE label
-                WHEN '<300萬' THEN 1
-                WHEN '300-500萬' THEN 2
-                WHEN '500-800萬' THEN 3
-                WHEN '800萬-1000萬' THEN 4
-                WHEN '1000-1500萬' THEN 5
-                WHEN '1500-2000萬' THEN 6
-                WHEN '>2000萬' THEN 7
-            END
-    """
+    if start_date and end_date:
+        sql = f"""
+            SELECT 
+                CASE 
+                    WHEN total_price < 3000000 THEN '<300萬'
+                    WHEN total_price < 5000000 THEN '300-500萬'
+                    WHEN total_price < 8000000 THEN '500-800萬'
+                    WHEN total_price < 10000000 THEN '800萬-1000萬'
+                    WHEN total_price < 15000000 THEN '1000-1500萬'
+                    WHEN total_price < 20000000 THEN '1500-2000萬'
+                    ELSE '>2000萬'
+                END as label,
+                count(*)::int as cnt
+            FROM trades
+            WHERE {where} AND trade_date IS NOT NULL AND total_price IS NOT NULL
+            GROUP BY label
+            ORDER BY label
+        """
+    else:
+        sql = f"""
+            SELECT 
+                label,
+                count(*)::int as cnt
+            FROM mv_price_dist_stats
+            WHERE {where}
+            GROUP BY label
+            ORDER BY 
+                CASE label
+                    WHEN '<300萬' THEN 1
+                    WHEN '300-500萬' THEN 2
+                    WHEN '500-800萬' THEN 3
+                    WHEN '800萬-1000萬' THEN 4
+                    WHEN '1000-1500萬' THEN 5
+                    WHEN '1500-2000萬' THEN 6
+                    WHEN '>2000萬' THEN 7
+                END
+        """
     results = db.execute(text(sql), params).fetchall()
     total = sum(r[1] for r in results) or 1
     
@@ -239,8 +324,6 @@ def price_distribution(
     
     return {
         "city": city,
-        "district": district,
-        "year": year,
         "data": [
             {"label": lbl, "value": round(result_dict.get(lbl, 0) / total * 100)}
             for lbl in labels_order
@@ -252,13 +335,22 @@ def price_distribution(
 def building_age_distribution(
     city: str = Query(None),
     district: str = Query(None),
-    year: int = Query(2025),
+    year: int = Query(None, ge=2011, le=2026),
+    start_date: str = Query(None),
+    end_date: str = Query(None),
     db: Session = Depends(get_db)
 ):
-    """屋齡分佈統計 — 僅統計房屋交易"""
-    start_date = f"{year}-01-01"
-    end_date = f"{year+1}-01-01"
-    conditions = [f"trade_date >= '{start_date}'", f"trade_date < '{end_date}'", "building_area IS NOT NULL"]
+    """屋齡分佈統計 — 支援日期區間"""
+    if start_date and end_date:
+        conditions = [f"trade_date >= '{start_date}-01'", f"trade_date < '{end_date}-{_next_month_day(end_date)}'"]
+    elif year:
+        conditions = [f"trade_date >= '{year}-01-01'", f"trade_date < '{year+1}-01-01'"]
+    else:
+        import datetime
+        current_year = datetime.datetime.now().year
+        conditions = [f"trade_date >= '{current_year}-01-01'", f"trade_date < '{current_year+1}-01-01'"]
+    
+    conditions.append("building_area IS NOT NULL")
     params = {}
     if city:
         conditions.append("city = :city")
@@ -299,7 +391,7 @@ def building_age_distribution(
     labels = ["5年以內", "6-10年", "11-15年", "16-20年", "21-30年", "30年以上"]
 
     return {
-        "city": city, "district": district, "year": year,
+        "city": city, "district": district,
         "total_trades": total,
         "avg_building_age": avg_age,
         "data": [
