@@ -589,8 +589,9 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
           const childCount = cluster.getChildCount();
           let diameter = 36;
           let fontSize = 13;
-          if (childCount > 100) { diameter = 56; fontSize = 16; }
-          else if (childCount > 30) { diameter = 46; fontSize = 14; }
+          let sizeClass = 'marker-cluster-small';
+          if (childCount > 100) { diameter = 56; fontSize = 16; sizeClass = 'marker-cluster-large'; }
+          else if (childCount > 30) { diameter = 46; fontSize = 14; sizeClass = 'marker-cluster-medium'; }
           
           return L.divIcon({
             html: `<div style="
@@ -606,9 +607,8 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
               font-size: ${fontSize}px;
               box-shadow: 0 2px 8px rgba(0,0,0,0.2);
               cursor: pointer;
-              pointer-events: auto;
             ">${childCount}</div>`,
-            className: 'leaflet-marker-icon housing-cluster',
+            className: `${sizeClass} marker-cluster housing-cluster`,
             iconSize: L.point(diameter, diameter),
             iconAnchor: L.point(diameter / 2, diameter / 2),
           });
