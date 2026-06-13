@@ -260,24 +260,24 @@ def building_type_distribution(
     if start_date and end_date:
         sql = f"""
             SELECT 
-                btype as type,
+                building_type as type,
                 count(*)::int as cnt,
                 round(avg(unit_price_tping / 10000)::numeric, 2) as avg_unit_price
             FROM trades
-            WHERE {where} AND trade_date IS NOT NULL AND btype IS NOT NULL
-            GROUP BY btype
+            WHERE {where} AND trade_date IS NOT NULL AND building_type IS NOT NULL
+            GROUP BY building_type
             ORDER BY cnt DESC
             LIMIT 10
         """
     else:
         sql = f"""
             SELECT 
-                btype as type,
+                building_type as type,
                 sum(cnt)::int as cnt,
                 round(avg(avg_unit_price)::numeric, 2) as avg_unit_price
             FROM mv_building_type_stats
             WHERE {where}
-            GROUP BY btype
+            GROUP BY building_type
             ORDER BY cnt DESC
             LIMIT 10
         """
