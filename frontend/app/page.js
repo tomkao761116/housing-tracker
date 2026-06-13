@@ -643,9 +643,9 @@ export default function HomePage() {
             </span>
 
             <h1 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-normal text-[#2a2a2a] leading-[1.5] tracking-tight">
-              全台房屋成交紀錄
+              找到屬於自己的
               <br />
-              <em className="not-italic text-[#5a6b4e] font-normal">一查就懂</em>
+              <em className="not-italic text-[#5a6b4e] font-normal">那個角落</em>
             </h1>
 
             <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
@@ -653,7 +653,7 @@ export default function HomePage() {
             </p>
 
             <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
-              開始找房
+              看看哪裡適合你
               <IconArrowRight className="w-4 h-4" />
             </HouseButton>
           </div>
@@ -771,7 +771,7 @@ export default function HomePage() {
               <div className="text-sm text-[#777]">即時數據正在維護中，請稍後再試。</div>
               <Link href="/find" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border border-[#5a6b4e] text-[#5a6b4e] text-sm font-medium rounded-sm hover:bg-[#5a6b4e] hover:text-white transition-colors">
                 <IconSearch className="w-4 h-4" />
-                前往找房
+                前往成交足跡
               </Link>
             </div>
           ) : districts?.data?.length === 0 ? (
@@ -779,7 +779,7 @@ export default function HomePage() {
               <div className="text-sm text-[#777]">{displayCity} {startDate} ~ {endDate} 暫無成交統計資料</div>
               <Link href="/find" className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 border border-[#5a6b4e] text-[#5a6b4e] text-sm font-medium rounded-sm hover:bg-[#5a6b4e] hover:text-white transition-colors">
                 <IconSearch className="w-4 h-4" />
-                前往找房
+                前往成交足跡
               </Link>
             </div>
           ) : (

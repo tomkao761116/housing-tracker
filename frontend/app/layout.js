@@ -94,8 +94,8 @@ function IconMessageCircle({ className = "w-5 h-5" }) {
 
 const navLinks = [
   { href: '/', label: '首頁', icon: IconHouse },
-  { href: '/find', label: '找房', icon: IconCompass },
-  { href: '/evaluate', label: '地點評估', icon: IconMapPin },
+  { href: '/find', label: '成交足跡', icon: IconCompass },
+  { href: '/evaluate', label: '看看周邊', icon: IconMapPin },
 ];
 
 /* ─── Hamburger Button (SVG) ─── */
@@ -118,7 +118,7 @@ function useActivePath() {
   const [active, setActive] = useState('');
   useEffect(() => {
     setActive(window.location.pathname);
-    document.title = '房屋實價追蹤系統';
+    document.title = '宅跡 — 台灣房屋實價資料庫';
     const observer = new MutationObserver(() => {
       setActive(window.location.pathname);
     });
@@ -234,7 +234,7 @@ export default function RootLayout({ children }) {
               >
                 <IconHouse className="w-5 h-5 text-[#2a2a2a] group-hover:text-[#6b7c5e] transition-colors" />
                 <span className="text-sm font-normal text-[#2a2a2a] tracking-wide">
-                  房屋實價追蹤
+                  宅跡
                 </span>
               </Link>
 

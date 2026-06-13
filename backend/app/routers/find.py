@@ -265,6 +265,13 @@ def find_homes(
     }
     sort_col = valid_sorts.get(sort_by, Trade.trade_date)
 
+    # ── 建構排序表達式（NULLS LAST 避免空值排最前）───
+    from sqlalchemy import nullslast
+    if sort_order == 'desc':
+        order_expr = nullslast(sort_col.desc())
+    else:
+        order_expr = nullslast(sort_col.asc())
+
     # ── 快速總數（用 SQL COUNT）───
     total = query.count() or 0
 
@@ -285,7 +292,7 @@ def find_homes(
             # 通勤篩選需要載入有座標的記錄到記憶體
             offset = (page - 1) * page_size
             candidate_trades = query.filter(Trade.lat.isnot(None), Trade.lon.isnot(None))\
-                .order_by(sort_col.desc() if sort_order == 'desc' else sort_col.asc())\
+                .order_by(order_expr)\
                 .limit(page_size * 5).offset(offset).all()
 
             filtered = []
@@ -309,7 +316,7 @@ def find_homes(
         # ── 標準分頁：SQL ORDER BY + LIMIT/OFFSET（不用載入全部到記憶體）───
         offset = (page - 1) * page_size
         page_trades = query.order_by(
-            sort_col.desc() if sort_order == 'desc' else sort_col.asc()
+            order_expr
         ).limit(page_size).offset(offset).all()
 
     total_pages = (total + page_size - 1) // page_size if total > 0 else 0
