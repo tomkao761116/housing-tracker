@@ -649,7 +649,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
-              家的故事，從這裡開始
+              家的故事，從這裡開始 — 用真實的成交數據，找到適合自己的居住節奏
             </p>
 
             <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
@@ -670,31 +670,43 @@ export default function HomePage() {
           {/* ── Global Date Range Selector (centered, Japanese minimalist) ── */}
           <div className="flex justify-center mb-6">
             <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white border border-[#e8e4df] rounded-lg shadow-sm">
-              <label className="cursor-pointer group">
-                <span className="text-sm text-[#2a2a2a] font-normal group-hover:text-[#5a6b4e] transition-colors">
-                  {startDate.replace('-', '年')}月
-                </span>
-                <input
-                  type="month"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="absolute inset-0 w-0 h-0 opacity-0 cursor-pointer"
-                  aria-label="開始月份"
-                />
-              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  const inp = document.getElementById('start-month-input');
+                  if (inp) inp.showPicker && inp.showPicker();
+                }}
+                className="cursor-pointer text-sm text-[#2a2a2a] font-normal hover:text-[#5a6b4e] transition-colors bg-transparent border-none p-0"
+              >
+                {startDate.replace('-', '年')}月
+              </button>
+              <input
+                id="start-month-input"
+                type="month"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="sr-only"
+                aria-label="開始月份"
+              />
               <span className="text-[#ccc] text-xs">~</span>
-              <label className="cursor-pointer group">
-                <span className="text-sm text-[#2a2a2a] font-normal group-hover:text-[#5a6b4e] transition-colors">
-                  {endDate.replace('-', '年')}月
-                </span>
-                <input
-                  type="month"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="absolute inset-0 w-0 h-0 opacity-0 cursor-pointer"
-                  aria-label="結束月份"
-                />
-              </label>
+              <button
+                type="button"
+                onClick={() => {
+                  const inp = document.getElementById('end-month-input');
+                  if (inp) inp.showPicker && inp.showPicker();
+                }}
+                className="cursor-pointer text-sm text-[#2a2a2a] font-normal hover:text-[#5a6b4e] transition-colors bg-transparent border-none p-0"
+              >
+                {endDate.replace('-', '年')}月
+              </button>
+              <input
+                id="end-month-input"
+                type="month"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="sr-only"
+                aria-label="結束月份"
+              />
             </div>
           </div>
 
