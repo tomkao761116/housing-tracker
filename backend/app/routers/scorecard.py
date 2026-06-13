@@ -690,16 +690,6 @@ def get_scorecard(
     # ── Step 1: Try DB pre-computed scorecard first (fast path) ──
     db_result = _fetch_db_scorecard(lat, lon)
     if db_result:
-        if any(v != 1.0 for v in weights.values()):
-            total_w = sum(weights.values()) or 1.0
-            weighted_total = sum(
-                db_result["dimensions"][k]["score"] * weights[k]
-                for k in DIMENSIONS
-            )
-            db_result["overall_score"] = round(weighted_total / total_w)
-            db_result["weights"] = weights
-        db_result["radius"] = radius
-        
         # ── Populate POI data (DB fast path doesn't include POIs) ──
         all_pois = _fetch_all_pois_from_db(lat, lon, radius)
         if not all_pois or all(len(v) == 0 for v in all_pois.values()):
@@ -708,6 +698,34 @@ def get_scorecard(
                 all_pois = _fetch_all_pois_overpass(lat, lon)
             except Exception as e:
                 logger.warning(f"Overpass fallback failed: {e}")
+        
+        # Check if this location actually has any POIs
+        total_pois = sum(len(v) for v in (all_pois or {}).values()) if all_pois else 0
+        
+        if total_pois == 0:
+            # No POIs found — don't use nearby trade's scores, return zeros
+            logger.info(f"No POIs at ({lat}, {lon}) — returning zero scores instead of cached")
+            dimension_results = {}
+            for dim_key, dim_info in DIMENSIONS.items():
+                dimension_results[dim_key] = {
+                    "label": dim_info["label"],
+                    "icon": dim_info["icon"],
+                    "color": dim_info["color"],
+                    "weight": weights.get(dim_key, 1.0),
+                    "score": 0,
+                    "count": 0,
+                    "nearest": None,
+                    "pois": [],
+                }
+            return {
+                "source": "dynamic",
+                "location": {"lat": lat, "lon": lon},
+                "radius": radius,
+                "weights": weights,
+                "overall_score": 0,
+                "dimensions": dimension_results,
+                "suggestion": "此區域周邊生活機能較少，建議考量生活便利性。",
+            }
         
         if all_pois:
             for dim_key in DIMENSIONS:
