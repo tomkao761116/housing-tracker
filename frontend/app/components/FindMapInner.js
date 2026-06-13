@@ -1,15 +1,12 @@
 /**
- * 成交地圖元件 — 支援 MarkerCluster 聚類 + 框選篩選 + 圖例
+ * 成交地圖元件 — 重構版
  * 
- * 功能：
- * - 優先顯示當前列表頁面的交易點（與列表一致）
- * - MarkerCluster 聚類標記（解決大量點重疊）
- * - 點擊地圖標記 → 回傳 trade id 給父元件高亮列表
- * - 接收外部 selectedId → 在地圖上高亮對應標記
- * - 著色模式：score / price
- * - Popup 顯示地址 + 詳細資訊彈窗（與成交紀錄卡片一致）
- * - 框選篩選：畫矩形過濾範圍內成交
- * - 圖例顯示
+ * 核心功能：
+ * 1. MarkerCluster 聚類標記（大量點不卡頓）
+ * 2. 點擊 marker → 飛到該點 + 開啟 Popup + 顯示詳細 Modal + 高亮列表
+ * 3. 點擊列表卡片 → 地圖飛到對應 marker + 開啟 Popup + 顯示 Modal
+ * 4. 框選篩選：畫矩形過濾範圍內成交
+ * 5. 著色模式：score / price
  */
 'use client';
 
@@ -18,13 +15,12 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
-import { TrainFront, GraduationCap, HeartPulse, ShoppingCart, Trees, UtensilsCrossed, MapPin, Square } from 'lucide-react';
+import { TrainFront, GraduationCap, HeartPulse, ShoppingCart, Trees, UtensilsCrossed, Square, MapPin } from 'lucide-react';
 
 const DEFAULT_CENTER = [23.97, 120.96];
-const DEFAULT_ZOOM = 8; // Zoom into Taiwan proper (not whole Asia)
-const MIN_ZOOM = 8; // Never zoom out beyond this
+const DEFAULT_ZOOM = 8;
+const MIN_ZOOM = 8;
 
-// County/City bounds — [southWest, northEast] for fitBounds
 const CITY_BOUNDS = {
   '基隆市':   [[25.04, 121.49], [25.31, 121.70]],
   '臺北市':   [[24.99, 121.42], [25.21, 121.58]],
@@ -117,20 +113,15 @@ function parseChineseFloor(str) {
 
 function formatFloor(floor, totalFloors, buildingType) {
   if (floor == null) return '';
-
   const floorStr = String(floor).trim();
   const totalStr = String(totalFloors ?? '').trim();
-
   const isEntireBuilding = floorStr.includes('全');
-
   if ((buildingType?.includes('透天') || buildingType?.includes('別墅') || isEntireBuilding) && totalStr) {
     const num = parseFloorNum(totalStr) ?? parseChineseFloor(totalStr);
     return num != null ? `共${num}層` : totalStr;
   }
-
   const floorNum = parseFloorNum(floorStr) ?? parseChineseFloor(floorStr);
   const totalNum = parseFloorNum(totalStr) ?? parseChineseFloor(totalStr);
-
   if (totalNum != null && floorNum != null) return `${floorNum}F / ${totalNum}F`;
   if (floorNum != null) return `${floorNum}F`;
   return floorStr;
@@ -322,17 +313,20 @@ function TradeDetailModal({ trade, onClose }) {
   );
 }
 
-/* ─── Color helpers — 主視覺色系（高對比版）──────────────────── */
-// 生活圈評分：四色明顯可辨 — 從 design system 讀取
+/* ─── Color helpers ─────────────────────────────────── */
 const scoreColorsCache = (() => {
-  const s = getComputedStyle(document.documentElement);
-  return {
-    null: s.getPropertyValue('--score-null').trim() || '#999999',
-    excellent: s.getPropertyValue('--score-excellent').trim() || '#2d7a5f',
-    good: s.getPropertyValue('--score-good').trim() || '#4a5d8a',
-    average: s.getPropertyValue('--score-average').trim() || '#b8943a',
-    poor: s.getPropertyValue('--score-poor').trim() || '#a85555',
-  };
+  try {
+    const s = getComputedStyle(document.documentElement);
+    return {
+      null: s.getPropertyValue('--score-null').trim() || '#999999',
+      excellent: s.getPropertyValue('--score-excellent').trim() || '#2d7a5f',
+      good: s.getPropertyValue('--score-good').trim() || '#4a5d8a',
+      average: s.getPropertyValue('--score-average').trim() || '#b8943a',
+      poor: s.getPropertyValue('--score-poor').trim() || '#a85555',
+    };
+  } catch {
+    return { null: '#999', excellent: '#2d7a5f', good: '#4a5d8a', average: '#b8943a', poor: '#a85555' };
+  }
 })();
 
 function getScoreColor(score) {
@@ -343,7 +337,6 @@ function getScoreColor(score) {
   return scoreColorsCache.poor;
 }
 
-// 總價區間：高價偏紅、低價偏藍，使用柔和色調
 function getPriceColor(totalPrice) {
   const priceWan = totalPrice / 10000;
   if (priceWan > 200) return '#dc2626';
@@ -354,13 +347,11 @@ function getPriceColor(totalPrice) {
 }
 
 function getMarkerColor(trade, colorMode) {
-  if (colorMode === 'price') {
-    return getPriceColor(trade.total_price || 0);
-  }
+  if (colorMode === 'price') return getPriceColor(trade.total_price || 0);
   return getScoreColor(trade.score_overall || 0);
 }
 
-/* ─── Map Legend — 主視覺色系 ─────────────────────────── */
+/* ─── Map Legend ────────────────────────────────────── */
 function MapLegend({ colorMode }) {
   const scoreColors = [
     { min: 80, label: '80+ 優異', color: 'var(--score-excellent)' },
@@ -394,36 +385,38 @@ function MapLegend({ colorMode }) {
   );
 }
 
+/* ─── Main Component ────────────────────────────────── */
 export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMarkerHover, colorMode, filters, onBoxSelect }) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
-  const markersLayerRef = useRef(null);
-  const drawLayerRef = useRef(null);
-  const LRef = useRef(null); // Leaflet instance (dynamic import)
-  const dataCacheRef = useRef({});
-  const markerByTradeId = useRef(new Map());
+  const LRef = useRef(null);
+  
+  // 所有 trade 資料的快取 (id -> trade)
+  const allTradesCache = useRef(new Map());
+  // 所有 marker 的快取 (id -> marker)
+  const allMarkersCache = useRef(new Map());
+  
   const [detailTrade, setDetailTrade] = useState(null);
   const [boxCount, setBoxCount] = useState(null);
 
-  // ── Refs 穩定化 ──
-  const colorModeRef = useRef(colorMode);
-  const tradesRef = useRef(trades);
+  // Stable refs for callbacks inside Leaflet handlers
   const onSelectRef = useRef(onSelect);
   const onMarkerHoverRef = useRef(onMarkerHover);
   const onBoxSelectRef = useRef(onBoxSelect);
+  const colorModeRef = useRef(colorMode);
   const selectedIdRef = useRef(selectedId);
 
-  useEffect(() => { colorModeRef.current = colorMode; }, [colorMode]);
-  useEffect(() => { tradesRef.current = trades; }, [trades]);
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
   useEffect(() => { onMarkerHoverRef.current = onMarkerHover; }, [onMarkerHover]);
   useEffect(() => { onBoxSelectRef.current = onBoxSelect; }, [onBoxSelect]);
+  useEffect(() => { colorModeRef.current = colorMode; }, [colorMode]);
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
-  // ── 建立 marker ──
+  /* ── 建立單一 marker ── */
   const createMarker = useCallback((trade) => {
     const L = LRef.current;
     if (!L) return null;
+    
     const color = getMarkerColor(trade, colorModeRef.current);
     
     const marker = L.circleMarker([trade.lat, trade.lon], {
@@ -435,125 +428,91 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       fillOpacity: 0.75,
     });
 
-    const popupContent = `
-      <div style="min-width: 200px; font-family: sans-serif;">
-        <div style="font-weight: bold; margin-bottom: 6px; font-size: 14px;">${trade.address || '—'}</div>
-        ${trade.total_price ? `<div style="margin-bottom: 2px;">總價: ${Math.round(trade.total_price / 10000).toLocaleString()} 萬</div>` : ''}
-        ${trade.unit_price_tping ? `<div style="margin-bottom: 2px;">單價: ${trade.unit_price_tping} 萬/坪</div>` : ''}
-        ${trade.score_overall != null ? `<div style="margin-bottom: 6px;">生活圈評分: ${trade.score_overall} 分</div>` : ''}
-        <button 
-          onclick="window.__showTradeDetail(${trade.id})"
-          style="
-            width: 100%;
-            padding: 6px 12px;
-            background: #5a6b4e;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 500;
-          "
-        >
-          詳細資訊
-        </button>
+    // Popup 內容（簡單摘要）
+    const popupHtml = `
+      <div style="min-width:180px;font-family:sans-serif;line-height:1.5;">
+        <div style="font-weight:bold;margin-bottom:4px;">${trade.address || '—'}</div>
+        ${trade.total_price ? `<div>總價: ${Math.round(trade.total_price / 10000).toLocaleString()} 萬</div>` : ''}
+        ${trade.unit_price_tping ? `<div>單價: ${trade.unit_price_tping} 萬/坪</div>` : ''}
+        ${trade.score_overall != null ? `<div>生活圈: ${trade.score_overall} 分</div>` : ''}
       </div>
     `;
-    marker.bindPopup(popupContent, { 
-      maxWidth: 280, 
-      closeOnClick: false,
-      closeButton: true,
-      autoPan: true,
-    });
+    marker.bindPopup(popupHtml, { maxWidth: 280, closeOnClick: false, closeButton: true });
 
+    // 點擊 marker → 通知父元件 + 開 popup + 開 modal
     marker.on('click', () => {
-      if (onSelectRef.current) onSelectRef.current(trade.id);
+      const tid = trade.id;
+      // 通知父元件高亮列表
+      onSelectRef.current?.(tid);
+      // 開啟 popup
       marker.openPopup();
+      // 開啟詳細 modal
+      setDetailTrade(trade);
     });
 
+    // Hover 效果
     marker.on('mouseover', () => {
-      if (onMarkerHoverRef.current) onMarkerHoverRef.current(trade.id);
+      onMarkerHoverRef.current?.(trade.id);
       marker.setStyle({ radius: 8, fillOpacity: 1 });
     });
-
     marker.on('mouseout', () => {
-      if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
-      if (marker.tradeId !== selectedIdRef.current) {
+      onMarkerHoverRef.current?.(null);
+      if (trade.id !== selectedIdRef.current) {
         marker.setStyle({ radius: 6, fillOpacity: 0.75 });
       }
     });
 
-    marker.on('popupclose', () => {
-      if (marker.tradeId !== selectedIdRef.current) {
-        if (onMarkerHoverRef.current) onMarkerHoverRef.current(null);
-        marker.setStyle({ radius: 6, fillOpacity: 0.75 });
-      }
-    });
-
-    marker.tradeId = trade.id;
     return marker;
   }, []);
 
-  // ── 更新地圖上的點位 ──
+  /* ── 更新地圖上的所有 marker ── */
   const updateMarkers = useCallback(() => {
-    const cg = markersLayerRef.current;
+    const cg = mapInstanceRef.current?._clusterGroup;
     if (!cg) return;
 
     cg.clearLayers();
-    markerByTradeId.current.clear();
-    dataCacheRef.current = {};
+    allMarkersCache.current.clear();
+    allTradesCache.current.clear();
 
-    const currentTrades = tradesRef.current;
+    const currentTrades = trades;
     if (!currentTrades || currentTrades.length === 0) return;
 
-    const markers = currentTrades
+    currentTrades
       .filter(t => t.lat != null && t.lon != null)
-      .map(trade => {
-        dataCacheRef.current[trade.id] = trade;
+      .forEach(trade => {
+        allTradesCache.current.set(trade.id, trade);
         const marker = createMarker(trade);
         if (marker) {
-          markerByTradeId.current.set(trade.id, marker);
-          return marker;
+          allMarkersCache.current.set(trade.id, marker);
+          cg.addLayer(marker);
         }
-        return null;
-      })
-      .filter(Boolean);
+      });
+  }, [trades, createMarker]);
 
-    cg.addLayers(markers);
-  }, [createMarker]);
-
-  // ── 初始化地圖（動態載入 Leaflet） ──
+  /* ── 初始化地圖 ── */
   useEffect(() => {
     let cancelled = false;
 
     async function init() {
       if (!mapRef.current) return;
 
-      // Strict Mode 防護：如果已有有效實例，直接使用
+      // Strict Mode 防護
       if (mapInstanceRef.current && mapInstanceRef.current._container === mapRef.current) {
         return;
       }
-
-      // 清理舊實例（Strict Mode 可能留下殘留）
       if (mapInstanceRef.current) {
         try { mapInstanceRef.current.remove(); } catch(e) {}
         mapInstanceRef.current = null;
       }
 
-      // 動態載入 Leaflet 及其插件
+      // 動態載入 Leaflet
       const LModule = await import('leaflet');
       const L = LModule.default;
       const MCModule = await import('leaflet.markercluster');
       const DrawModule = await import('leaflet-draw');
 
-      // 確保 MarkerClusterGroup 正確掛載到 L
-      if (MCModule.default) {
-        L.MarkerClusterGroup = MCModule.default;
-      }
-      if (MCModule.MarkerClusterGroup) {
-        L.MarkerClusterGroup = MCModule.MarkerClusterGroup;
-      }
-      // leaflet-draw 同理
+      if (MCModule.default) L.MarkerClusterGroup = MCModule.default;
+      if (MCModule.MarkerClusterGroup) L.MarkerClusterGroup = MCModule.MarkerClusterGroup;
       for (const key of Object.keys(MCModule)) {
         if (!(key in L)) L[key] = MCModule[key];
       }
@@ -561,10 +520,9 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         if (!(key in L) && key.startsWith('FeatureGroup')) L[key] = DrawModule[key];
       }
 
-      // await 回來後重新檢查 — Strict Mode 下可能有競態
       if (cancelled || !mapRef.current) return;
 
-      // 確保容器乾淨 — 清除 Leaflet 殘留 DOM
+      // 清除容器殘留
       while (mapRef.current.firstChild) {
         mapRef.current.removeChild(mapRef.current.firstChild);
       }
@@ -573,7 +531,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
 
       LRef.current = L;
 
-      // 修正 Leaflet 圖示路徑問題
+      // 修正圖示路徑
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: '/leaflet/marker-icon-2x.png',
         iconUrl: '/leaflet/marker-icon.png',
@@ -592,16 +550,9 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         maxZoom: 19,
       }).addTo(map);
 
-      // 驗證 MarkerClusterGroup 是否存在
-      if (!L.MarkerClusterGroup) {
-        console.error('[FindMap] MarkerClusterGroup still not available on L after import!');
-        console.error('[FindMap] Available L keys:', Object.keys(L).filter(k => k.toLowerCase().includes('cluster') || k.toLowerCase().includes('marker')));
-      }
-
-      // 建立 cluster group — iconCreateFunction 是必须的，MarkerCluster 依賴它生成 divIcon
+      // 建立 cluster group
       const clusterGroup = new L.MarkerClusterGroup({
         maxClusterRadius: 50,
-        maxZoom: 17,
         spiderfyOnMaxZoom: true,
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
@@ -610,95 +561,66 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
           const childCount = cluster.getChildCount();
           let diameter = 40;
           let fontSize = 14;
-          let sizeClass = 'marker-cluster-small';
-          if (childCount > 100) { diameter = 58; fontSize = 16; sizeClass = 'marker-cluster-large'; }
-          else if (childCount > 30) { diameter = 48; fontSize = 15; sizeClass = 'marker-cluster-medium'; }
+          if (childCount > 100) { diameter = 58; fontSize = 16; }
+          else if (childCount > 30) { diameter = 48; fontSize = 15; }
 
           return L.divIcon({
-            html: `<div style="background:linear-gradient(135deg,#5a6b4e,#4a5d3e);color:#fff;border-radius:50%;width:${diameter}px;height:${diameter}px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:${fontSize}px;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;pointer-events:auto;">${childCount}</div>`,
-            className: `${sizeClass} marker-cluster housing-cluster`,
+            html: `<div style="background:linear-gradient(135deg,#5a6b4e,#4a5d3e);color:#fff;border-radius:50%;width:${diameter}px;height:${diameter}px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:${fontSize}px;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;">${childCount}</div>`,
+            className: 'marker-cluster housing-cluster',
             iconSize: L.point(diameter, diameter),
-            iconAnchor: L.point(diameter / 2, diameter / 2),
+            iconAnchor: [diameter / 2, diameter / 2],
           });
         },
       });
 
-      // 綁定 cluster 點擊事件
-      clusterGroup.on('clusterclick', (e) => {
-        console.log('[FindMap] Cluster clicked:', e.cluster.getChildCount(), 'zoom:', map.getZoom());
-      });
-
-      // 綁單個 marker 點擊事件
-      clusterGroup.on('markerclick', (e) => {
-        const marker = e.marker;
-        if (marker.tradeId && onSelectRef.current) {
-          onSelectRef.current(marker.tradeId);
-        }
-      });
-
-      // 驗證：確保 cluster group 已正確添加到 map
-      console.log('[FindMap] Cluster group added to map, layers:', clusterGroup.getLayers().length);
-
       map.addLayer(clusterGroup);
+      // 把 clusterGroup 掛到 mapInstance 上方便存取
       mapInstanceRef.current = map;
-      markersLayerRef.current = clusterGroup;
+      mapInstanceRef.current._clusterGroup = clusterGroup;
 
-      // ── Leaflet Draw 框選工具 ──
+      // Leaflet Draw 框選
       const drawLayer = new L.FeatureGroup();
       map.addLayer(drawLayer);
 
       const drawControl = new L.Control.Draw({
         draw: {
-          polyline: false,
-          circle: false,
-          circlemarker: false,
-          marker: false,
+          polyline: false, circle: false, circlemarker: false, marker: false, polygon: false,
           rectangle: {
-            shapeOptions: {
-              color: '#5a6b4e',
-              weight: 2,
-              fillOpacity: 0.1,
-              fillColor: '#5a6b4e',
-            },
+            shapeOptions: { color: '#5a6b4e', weight: 2, fillOpacity: 0.1, fillColor: '#5a6b4e' },
           },
-          polygon: false,
         },
-        edit: {
-          featureGroup: drawLayer,
-        },
+        edit: { featureGroup: drawLayer },
       });
       map.addControl(drawControl);
-      drawLayerRef.current = drawLayer;
 
-      // 框選完成事件
       map.on(L.Draw.Event.CREATED, (e) => {
-        const layer = e.layer;
         if (e.layerType === 'rectangle') {
-          const bounds = layer.getBounds();
-          drawLayer.addLayer(layer);
-
-          const currentTrades = tradesRef.current || [];
-          const inBounds = currentTrades.filter(t => {
-            return t.lat != null && t.lon != null && bounds.contains([t.lat, t.lon]);
+          const bounds = e.layer.getBounds();
+          drawLayer.addLayer(e.layer);
+          
+          // 從 allTradesCache 找框選範圍內的交易
+          const inBounds = [];
+          allTradesCache.current.forEach((trade) => {
+            if (bounds.contains([trade.lat, trade.lon])) {
+              inBounds.push(trade);
+            }
           });
-
+          
           setBoxCount(inBounds.length);
-
-          if (inBounds.length > 0 && onBoxSelectRef.current) {
-            onBoxSelectRef.current(inBounds);
+          if (inBounds.length > 0) {
+            onBoxSelectRef.current?.(inBounds);
           }
         }
       });
 
-      // 初始載入點位
+      // 初始載入
       updateMarkers();
 
-      // 自動縮放到適合範圍 — 僅在有縣市篩選時鎖到該縣市
+      // 自動縮放
       if (filters?.city && CITY_BOUNDS[filters.city]) {
         const [sw, ne] = CITY_BOUNDS[filters.city];
         map.fitBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
       }
-      // 無篩選時保持台灣中心 DEFAULT_CENTER + DEFAULT_ZOOM
     }
 
     init();
@@ -715,89 +637,65 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         mapInstanceRef.current = null;
       }
     };
-  }, []);
+  }, []); // 只跑一次
 
-  // ── 當 trades 改變時更新地圖 ──
+  /* ── trades 改變時更新 marker ── */
   useEffect(() => {
-    if (mapInstanceRef.current && LRef.current) {
+    if (mapInstanceRef.current) {
       updateMarkers();
-      
-      const currentTrades = tradesRef.current;
-      // 僅在有縣市篩選時鎖到該縣市範圍
       if (filters?.city && CITY_BOUNDS[filters.city]) {
         const [sw, ne] = CITY_BOUNDS[filters.city];
         mapInstanceRef.current.fitBounds([[sw[0], sw[1]], [ne[0], ne[1]]]);
       }
-      // 無篩選時保持台灣中心，不重新縮放
     }
   }, [trades, updateMarkers, filters]);
 
-  // ── 註冊全域函數供 Popup 按鈕呼叫 ──
-  useEffect(() => {
-    window.__showTradeDetail = (id) => {
-      const point = dataCacheRef.current[id];
-      if (point) {
-        setDetailTrade(point);
-      }
-    };
-    return () => {
-      delete window.__showTradeDetail;
-    };
-  }, []);
-
-  // ── 當 selectedId 改變時，飛到該點並開啟 Popup ──
+  /* ── selectedId 改變 → 飛到該點 + 開 popup + 開 modal ── */
   useEffect(() => {
     if (!selectedId || !mapInstanceRef.current) return;
 
     const map = mapInstanceRef.current;
-    const marker = markerByTradeId.current.get(selectedId);
-    
+    const marker = allMarkersCache.current.get(selectedId);
+    const trade = allTradesCache.current.get(selectedId);
+
     if (marker) {
       const latlng = marker.getLatLng();
       const targetZoom = Math.max(map.getZoom(), 16);
-      
       map.flyTo(latlng, targetZoom, { duration: 0.8, noMoveStart: true });
       
+      // flyTo 結束後開 popup
       setTimeout(() => {
-        if (marker.tradeId === selectedId) {
+        if (allMarkersCache.current.has(selectedId)) {
           marker.openPopup();
         }
       }, 900);
-    } else {
-      // Fallback: 從 dataCacheRef 找座標直接 flyTo
-      const trade = dataCacheRef.current[selectedId];
-      if (trade && trade.lat != null && trade.lon != null) {
-        console.log('[FindMap] Fallback flyTo for trade', selectedId, trade.address);
-        map.flyTo([trade.lat, trade.lon], 16, { duration: 0.8, noMoveStart: true });
-      } else {
-        // Last resort: 從 tradesRef 找
-        const currentTrades = tradesRef.current;
-        const t = currentTrades?.find(tr => tr.id === selectedId);
-        if (t && t.lat != null && t.lon != null) {
-          console.log('[FindMap] TradesRef fallback flyTo for trade', selectedId);
-          map.flyTo([t.lat, t.lon], 16, { duration: 0.8, noMoveStart: true });
-        }
-      }
+      
+      // 開 modal
+      if (trade) setDetailTrade(trade);
+    } else if (trade && trade.lat != null && trade.lon != null) {
+      // Fallback: trade 不在目前頁面的 marker 中，直接飛到座標
+      console.log('[FindMap] Fallback flyTo:', selectedId, trade.address);
+      map.flyTo([trade.lat, trade.lon], 16, { duration: 0.8, noMoveStart: true });
+      setDetailTrade(trade);
     }
   }, [selectedId]);
 
-  // ── 當 hoveredId 改變時，在地圖上同步高亮 ──
+  /* ── hoveredId 同步高亮 ── */
   useEffect(() => {
     if (!hoveredId) return;
-    const marker = markerByTradeId.current.get(hoveredId);
+    const marker = allMarkersCache.current.get(hoveredId);
     if (marker) {
       marker.setStyle({ radius: 9, fillOpacity: 1, weight: 3 });
     }
     return () => {
-      // Restore on unhover
-      const m = markerByTradeId.current.get(hoveredId);
+      const m = allMarkersCache.current.get(hoveredId);
       if (m && hoveredId !== selectedId) {
         m.setStyle({ radius: 6, fillOpacity: 0.75, weight: 2 });
       }
     };
   }, [hoveredId, selectedId]);
 
-  // ── 清除框選結果提示 ──
+  /* ── 框選結果提示自動消失 ── */
   useEffect(() => {
     if (boxCount !== null) {
       const timer = setTimeout(() => setBoxCount(null), 3000);
@@ -809,10 +707,8 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     <div className="relative">
       <div ref={mapRef} className="w-full h-[600px] rounded-xl border border-stone-200 overflow-hidden" />
       
-      {/* 圖例 */}
       <MapLegend colorMode={colorMode} />
 
-      {/* 框選結果提示 */}
       {boxCount !== null && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[500] bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium animate-pulse">
           框選範圍內 {boxCount} 筆成交紀錄
