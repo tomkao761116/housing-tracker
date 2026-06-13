@@ -107,6 +107,10 @@ export default function FindPage() {
   const [hoveredId, setHoveredId] = useState(null);
   const [boxActive, setBoxActive] = useState(false);
   const listRef = useRef(null);
+  
+  // 讓 FindMap 可以呼叫 resetView
+  const mapInstanceRef = useRef(null);
+  const setMapRef = (map) => { mapInstanceRef.current = map; };
 
   // ── Dropdown options ──
   const [cities, setCities] = useState([]);
@@ -570,7 +574,10 @@ export default function FindPage() {
                 <div className="flex items-center gap-2">
                   {selectedId && (
                     <button
-                      onClick={() => setSelectedId(null)}
+                      onClick={() => {
+                        setSelectedId(null);
+                        mapInstanceRef.current?.resetView();
+                      }}
                       className="rounded-full px-3 py-1.5 text-xs border border-[#e8e4df] text-[#777] hover:border-[#5a6b4e] hover:text-[#5a6b4e] transition-colors"
                     >
                       ✕ 清除選取
@@ -588,49 +595,19 @@ export default function FindPage() {
                 <FindMap
                   trades={trades}
                   selectedId={selectedId}
-                  onSelect={setSelectedId}
+                  onSelect={(id) => {
+                    setSelectedId(id === selectedId ? null : id);
+                  }}
                   hoveredId={hoveredId}
                   onMarkerHover={setHoveredId}
                   colorMode={mapColorMode}
-                  filters={{
-                    city,
-                    district,
-                    ...(() => {
-                      if (!priceFilter) return {};
-                      const [min, max] = priceFilter.split('-');
-                      return {
-                        minTotalPrice: min ? Number(min) : null,
-                        maxTotalPrice: max ? Number(max) : null,
-                      };
-                    })(),
-                    ...(() => {
-                      if (!unitPriceFilter) return {};
-                      const [min, max] = unitPriceFilter.split('-');
-                      return {
-                        minUnitPrice: min ? Number(min) : null,
-                        maxUnitPrice: max ? Number(max) : null,
-                      };
-                    })(),
-                    buildingType,
-                    hasElevator,
-                    // 面積需要從 areaFilter 解析
-                    ...(() => {
-                      if (!areaFilter) return {};
-                      if (areaFilter.startsWith('-')) {
-                        return { maxAreaTping: Number(areaFilter.slice(1)) };
-                      } else if (areaFilter.endsWith('-')) {
-                        return { minAreaTping: Number(areaFilter.slice(0, -1)) };
-                      } else {
-                        const [min, max] = areaFilter.split('-').map(Number);
-                        return { minAreaTping: min, maxAreaTping: max };
-                      }
-                    })(),
-                  }}
+                  filters={{ city, district }}
                   onBoxSelect={(boxedTrades) => {
                     setBoxActive(true);
                     setTrades(boxedTrades);
                     setTotal(boxedTrades.length);
                   }}
+                  onMapReady={(mapApi) => { mapInstanceRef.current = mapApi; }}
                 />
               </div>
             </div>
@@ -704,17 +681,19 @@ function TradeCard({ trade, isSelected, isExpanded, isHovered, onSelect, onToggl
   return (
     <div
       data-trade-id={trade.id}
-      className={`bg-white/80 backdrop-blur-sm rounded-sm shadow-sm border border-[#e8e4df] p-5 mb-3 transition-all cursor-pointer hover:border-[#d0cdc8] ${
-        isSelected ? 'border-[#5a6b4e] ring-1 ring-[#5a6b4e]/20' : ''
+      className={`bg-white/80 backdrop-blur-sm rounded-sm shadow-sm border p-5 mb-3 transition-all cursor-pointer ${
+        isSelected 
+          ? 'border-[#5a6b4e] ring-2 ring-[#5a6b4e]/20 bg-[#5a6b4e]/5' 
+          : 'border-[#e8e4df] hover:border-[#d0cdc8]'
       }`}
       onClick={onSelect}
       onMouseEnter={() => onHover?.(trade.id)}
       onMouseLeave={() => onHover?.(null)}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-            <h3 className="text-[#2a2a2a] font-medium truncate">{trade.address}</h3>
+            <h3 className={`font-medium truncate transition-colors ${isSelected ? 'text-[#5a6b4e]' : 'text-[#2a2a2a]'}`}>{trade.address}</h3>
             {trade.has_elevator && <span className="inline-block px-2 py-0.5 text-xs rounded bg-[#f5f4f0] text-[#777] whitespace-nowrap">電梯</span>}
             {trade.building_type && trade.building_type !== '其他' && <span className="inline-block px-2 py-0.5 text-xs rounded bg-[#f5f4f0] text-[#777] whitespace-nowrap">{trade.building_type}</span>}
           </div>
