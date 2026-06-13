@@ -649,7 +649,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
-              家的故事，從這裡開始 — 用真實的成交數據，找到適合自己的居住節奏
+              尋找一處，願意停下腳步，讓心安靜的地方
             </p>
 
             <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
@@ -683,6 +683,8 @@ export default function HomePage() {
               <input
                 id="start-month-input"
                 type="month"
+                min="2011-01"
+                max="2026-04"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 className="sr-only"
@@ -702,6 +704,8 @@ export default function HomePage() {
               <input
                 id="end-month-input"
                 type="month"
+                min="2011-01"
+                max="2026-04"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 className="sr-only"
