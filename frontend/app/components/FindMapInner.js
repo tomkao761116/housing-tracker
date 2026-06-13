@@ -543,8 +543,23 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       // 動態載入 Leaflet 及其插件
       const LModule = await import('leaflet');
       const L = LModule.default;
-      await import('leaflet.markercluster');
-      await import('leaflet-draw');
+      const MCModule = await import('leaflet.markercluster');
+      const DrawModule = await import('leaflet-draw');
+
+      // 確保 MarkerClusterGroup 正確掛載到 L
+      if (MCModule.default) {
+        L.MarkerClusterGroup = MCModule.default;
+      }
+      if (MCModule.MarkerClusterGroup) {
+        L.MarkerClusterGroup = MCModule.MarkerClusterGroup;
+      }
+      // leaflet-draw 同理
+      for (const key of Object.keys(MCModule)) {
+        if (!(key in L)) L[key] = MCModule[key];
+      }
+      for (const key of Object.keys(DrawModule)) {
+        if (!(key in L) && key.startsWith('FeatureGroup')) L[key] = DrawModule[key];
+      }
 
       // await 回來後重新檢查 — Strict Mode 下可能有競態
       if (cancelled || !mapRef.current) return;
@@ -577,8 +592,14 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         maxZoom: 19,
       }).addTo(map);
 
-      // 建立 cluster group — 使用 new L.MarkerClusterGroup 確保選項不被覆蓋
-      const clusterOptions = {
+      // 驗證 MarkerClusterGroup 是否存在
+      if (!L.MarkerClusterGroup) {
+        console.error('[FindMap] MarkerClusterGroup still not available on L after import!');
+        console.error('[FindMap] Available L keys:', Object.keys(L).filter(k => k.toLowerCase().includes('cluster') || k.toLowerCase().includes('marker')));
+      }
+
+      // 建立 cluster group — iconCreateFunction 是必须的，MarkerCluster 依賴它生成 divIcon
+      const clusterGroup = new L.MarkerClusterGroup({
         maxClusterRadius: 50,
         maxZoom: 17,
         spiderfyOnMaxZoom: true,
@@ -587,56 +608,24 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         spiderfyDistanceMultiplier: 1.5,
         iconCreateFunction: (cluster) => {
           const childCount = cluster.getChildCount();
-          let diameter = 36;
-          let fontSize = 13;
+          let diameter = 40;
+          let fontSize = 14;
           let sizeClass = 'marker-cluster-small';
-          if (childCount > 100) { diameter = 56; fontSize = 16; sizeClass = 'marker-cluster-large'; }
-          else if (childCount > 30) { diameter = 46; fontSize = 14; sizeClass = 'marker-cluster-medium'; }
-          
+          if (childCount > 100) { diameter = 58; fontSize = 16; sizeClass = 'marker-cluster-large'; }
+          else if (childCount > 30) { diameter = 48; fontSize = 15; sizeClass = 'marker-cluster-medium'; }
+
           return L.divIcon({
-            html: `<div style="
-              background: linear-gradient(135deg, #5a6b4e, #4a5d3e);
-              color: white;
-              border-radius: 50%;
-              width: ${diameter}px;
-              height: ${diameter}px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-weight: bold;
-              font-size: ${fontSize}px;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-              cursor: pointer;
-            ">${childCount}</div>`,
+            html: `<div style="background:linear-gradient(135deg,#5a6b4e,#4a5d3e);color:#fff;border-radius:50%;width:${diameter}px;height:${diameter}px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:${fontSize}px;box-shadow:0 2px 8px rgba(0,0,0,.2);cursor:pointer;pointer-events:auto;">${childCount}</div>`,
             className: `${sizeClass} marker-cluster housing-cluster`,
             iconSize: L.point(diameter, diameter),
             iconAnchor: L.point(diameter / 2, diameter / 2),
           });
         },
-      };
+      });
 
-      // 嘗試兩種建構方式（相容性處理）
-      const ClusterGroupClass = L.MarkerClusterGroup || L.markerClusterGroup;
-      if (!ClusterGroupClass) {
-        console.error('[FindMap] MarkerClusterGroup not found on L');
-      }
-      
-      const clusterGroup = new ClusterGroupClass(clusterOptions);
-
-      // 驗證 options 是否正確設定
-      if (clusterGroup.options.zoomToBoundsOnClick !== true) {
-        console.warn('[FindMap] Cluster options may have been reset!', clusterGroup.options);
-        // 強制重新設定
-        clusterGroup.options.zoomToBoundsOnClick = true;
-        clusterGroup.options.spiderfyOnMaxZoom = true;
-        clusterGroup.options.maxClusterRadius = 50;
-        clusterGroup.options.maxZoom = 17;
-      }
-
-      // 綁定 cluster 點擊事件（zoomToBoundsOnClick 已啟用，此為額外除錯）
+      // 綁定 cluster 點擊事件
       clusterGroup.on('clusterclick', (e) => {
         console.log('[FindMap] Cluster clicked:', e.cluster.getChildCount(), 'zoom:', map.getZoom());
-        // zoomToBoundsOnClick: true 會自動處理，這裡只記錄
       });
 
       // 綁單個 marker 點擊事件
