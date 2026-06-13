@@ -649,7 +649,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-4 text-sm sm:text-base text-[#777] max-w-lg leading-relaxed">
-              輸入城市、區域或地址，立即查看該地區的成交行情與生活機能評估。
+              家的故事，從這裡開始
             </p>
 
             <HouseButton as={Link} href="/find" className="mt-8 border border-[#5a6b4e] text-[#5a6b4e] hover:bg-[#5a6b4e] hover:text-white">
@@ -667,14 +667,34 @@ export default function HomePage() {
             <div className="flex-1 h-px bg-[#e0ddd8]" />
           </div>
 
-          {/* ── Global Date Range Selector (centered) ── */}
+          {/* ── Global Date Range Selector (centered, Japanese minimalist) ── */}
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-2">
-              <input type="month" value={startDate} onChange={(e) => setStartDate(e.target.value)}
-                className="text-sm border border-[#ddd8d2] rounded-sm px-3 py-2 bg-white text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#5a6b4e]/30 focus:border-[#5a6b4e]" />
-              <span className="text-[#aaa] text-sm">~</span>
-              <input type="month" value={endDate} onChange={(e) => setEndDate(e.target.value)}
-                className="text-sm border border-[#ddd8d2] rounded-sm px-3 py-2 bg-white text-stone-800 focus:outline-none focus:ring-1 focus:ring-[#5a6b4e]/30 focus:border-[#5a6b4e]" />
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white border border-[#e8e4df] rounded-lg shadow-sm">
+              <label className="cursor-pointer group">
+                <span className="text-sm text-[#2a2a2a] font-normal group-hover:text-[#5a6b4e] transition-colors">
+                  {startDate.replace('-', '年')}月
+                </span>
+                <input
+                  type="month"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="absolute inset-0 w-0 h-0 opacity-0 cursor-pointer"
+                  aria-label="開始月份"
+                />
+              </label>
+              <span className="text-[#ccc] text-xs">~</span>
+              <label className="cursor-pointer group">
+                <span className="text-sm text-[#2a2a2a] font-normal group-hover:text-[#5a6b4e] transition-colors">
+                  {endDate.replace('-', '年')}月
+                </span>
+                <input
+                  type="month"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="absolute inset-0 w-0 h-0 opacity-0 cursor-pointer"
+                  aria-label="結束月份"
+                />
+              </label>
             </div>
           </div>
 
