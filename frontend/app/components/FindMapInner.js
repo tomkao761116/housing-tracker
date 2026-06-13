@@ -175,6 +175,10 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
   
   // marker cache: id -> marker
   const allMarkersCache = useRef(new Map());
+  // selected highlight ring: L.circleMarker instance
+  const selectedRingRef = useRef(null);
+  // selected highlight layer group
+  const highlightLayerRef = useRef(null);
   
   const [boxCount, setBoxCount] = useState(null);
 
@@ -442,28 +446,62 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     }
   }, [trades, updateMarkers, filters]);
 
-  /* ── selectedId 改變 → flyTo + 高亮 marker ── */
+  /* ── selectedId 改變 → flyTo + 高亮 marker + 永久提示環 ── */
   useEffect(() => {
-    if (!selectedId || !mapInstanceRef.current) return;
-
     const map = mapInstanceRef.current;
+    if (!map) return;
+
+    // Remove previous highlight ring
+    if (selectedRingRef.current && highlightLayerRef.current) {
+      highlightLayerRef.current.removeLayer(selectedRingRef.current);
+      selectedRingRef.current = null;
+    }
+
+    if (!selectedId) return;
+
     const marker = allMarkersCache.current.get(selectedId);
+    let latlng = null;
 
     if (marker) {
-      const latlng = marker.getLatLng();
-      const targetZoom = Math.max(map.getZoom(), 16);
-      map.flyTo(latlng, targetZoom, { duration: 0.8, noMoveStart: true });
-      
-      // 高亮選中的 marker
+      latlng = marker.getLatLng();
       marker.setStyle({ radius: 9, fillOpacity: 1, weight: 3, color: '#5a6b4e' });
     } else {
-      // Fallback: 從 trades 找座標
       const trade = tradesRef.current.find(t => t.id === selectedId);
       if (trade && trade.lat != null && trade.lon != null) {
-        map.flyTo([trade.lat, trade.lon], 16, { duration: 0.8, noMoveStart: true });
+        latlng = [trade.lat, trade.lon];
       }
     }
-  }, [selectedId, trades]);
+
+    if (latlng) {
+      map.flyTo(latlng, Math.max(map.getZoom(), 16), { duration: 0.8, noMoveStart: true });
+
+      // Create persistent pulsing ring
+      const L = LRef.current;
+      if (L) {
+        if (!highlightLayerRef.current) {
+          highlightLayerRef.current = L.layerGroup().addTo(map);
+        }
+        const ring = L.circleMarker(latlng, {
+          radius: 16,
+          fillColor: 'transparent',
+          color: '#5a6b4e',
+          weight: 2.5,
+          opacity: 0.8,
+          className: 'selected-marker-ring',
+        });
+        highlightLayerRef.current.addLayer(ring);
+        selectedRingRef.current = ring;
+
+        // Pulse animation via CSS class on the DOM element
+        ring.on('add', () => {
+          const el = ring.getElement();
+          if (el) {
+            el.style.animation = 'markerPulse 1.5s ease-in-out infinite';
+          }
+        });
+      }
+    }
+  }, [selectedId]);
 
   /* ── hoveredId 同步高亮 ── */
   useEffect(() => {

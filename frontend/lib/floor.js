@@ -38,6 +38,14 @@ export function parseFloor(val) {
     const ones = tenMatch[2] ? NUM_MAP[tenMatch[2]] : 0;
     if (tens != null) return tens * 10 + ones;
   }
+
+  // Handle multiple floors separated by comma/ideographic comma: "十層，十一層"
+  // Take the first one for display
+  const multiPart = cleaned.split(/[,，、]/);
+  if (multiPart.length > 1) {
+    const firstParsed = parseFloor(multiPart[0].replace(/[層樓]/g, ''));
+    if (firstParsed != null) return firstParsed;
+  }
   
   return null;
 }
