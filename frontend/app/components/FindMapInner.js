@@ -284,10 +284,31 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         },
       });
 
-      // 防止 cluster 自動收合：直接覆寫 unspiderfy 方法
-      // 這樣無論使用者點哪裡、縮放或平移，展開後的 marker 都會保持展開
-      const _origUnspiderfy = clusterGroup.unspiderfy.bind(clusterGroup);
+      // 防止 cluster 自動收合：多層封鎖所有可能的收合路徑
+      // Layer 1: 覆寫 clusterGroup 的所有 unspiderfy 變體
       clusterGroup.unspiderfy = function () {};
+      
+      // Layer 2: 覆寫 L.MarkerClusterGroup.prototype.unspiderfy (防內部透過 prototype 呼叫)
+      const _ProtoUnspiderfy = L.MarkerClusterGroup.prototype.unspiderfy;
+      L.MarkerClusterGroup.prototype.unspiderfy = function () {};
+      
+      // Layer 3: 攔截地圖點擊，防止點擊空白處觸發收合
+      map.on('click', (e) => {
+        // 阻止 cluster group 收到點擊事件
+        e.originalEvent?.stopImmediatePropagation();
+      }, true); // capture phase
+      
+      // Layer 4: 攔截 spiderfied 後個別 cluster 的 unspiderfy
+      clusterGroup.on('spiderfied', (e) => {
+        const cluster = e.cluster;
+        if (cluster && typeof cluster.unspiderfy === 'function') {
+          cluster.unspiderfy = function () {};
+        }
+        // 也封鎖子 cluster
+        if (cluster.getAllChildMarkers) {
+          // 不需要額外操作，marker 本身沒有 unspiderfy
+        }
+      });
 
       map.addLayer(clusterGroup);
       mapInstanceRef.current = map;
