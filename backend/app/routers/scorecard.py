@@ -687,88 +687,57 @@ def get_scorecard(
         "dining": w_dining,
     }
 
-    # ── Step 1: Try DB pre-computed scorecard first (fast path) ──
-    db_result = _fetch_db_scorecard(lat, lon)
-    if db_result:
-        # ── Populate POI data (DB fast path doesn't include POIs) ──
-        all_pois = _fetch_all_pois_from_db(lat, lon, radius)
-        if not all_pois or all(len(v) == 0 for v in all_pois.values()):
-            # Fallback to Overpass if local cache is empty
-            try:
-                all_pois = _fetch_all_pois_overpass(lat, lon)
-            except Exception as e:
-                logger.warning(f"Overpass fallback failed: {e}")
+    # ── Fetch POIs from local DB cache ──
+    all_pois = _fetch_all_pois_from_db(lat, lon, radius)
+    if not all_pois or all(len(v) == 0 for v in all_pois.values()):
+        # Fallback to Overpass if local cache is empty
+        try:
+            all_pois = _fetch_all_pois_overpass(lat, lon)
+        except Exception as e:
+            logger.warning(f"Overpass fallback failed: {e}")
+    
+    # Build dimension results from actual POIs
+    dimension_results = {}
+    for dim_key, dim_info in DIMENSIONS.items():
+        pois = (all_pois or {}).get(dim_key, [])
+        filtered = [p for p in pois if p["distance"] <= radius]
         
-        # Check if this location actually has any POIs
-        total_pois = sum(len(v) for v in (all_pois or {}).values()) if all_pois else 0
+        nearest = min(filtered, key=lambda p: p["distance"]) if filtered else None
         
-        if total_pois == 0:
-            # No POIs found — don't use nearby trade's scores, return zeros
-            logger.info(f"No POIs at ({lat}, {lon}) — returning zero scores instead of cached")
-            dimension_results = {}
-            for dim_key, dim_info in DIMENSIONS.items():
-                dimension_results[dim_key] = {
-                    "label": dim_info["label"],
-                    "icon": dim_info["icon"],
-                    "color": dim_info["color"],
-                    "weight": weights.get(dim_key, 1.0),
-                    "score": 0,
-                    "count": 0,
-                    "nearest": None,
-                    "pois": [],
-                }
-            return {
-                "source": "dynamic",
-                "location": {"lat": lat, "lon": lon},
-                "radius": radius,
-                "weights": weights,
-                "overall_score": 0,
-                "dimensions": dimension_results,
-                "suggestion": "此區域周邊生活機能較少，建議考量生活便利性。",
-            }
+        dimension_score = _compute_dimension_score(
+            filtered, dim_info["max_count"], radius
+        )
         
-        if all_pois:
-            for dim_key in DIMENSIONS:
-                pois = all_pois.get(dim_key, [])
-                dim_info = DIMENSIONS[dim_key]
-                # Use user-provided radius as the search boundary
-                max_radius = radius
-                filtered = [p for p in pois if p["distance"] <= max_radius]
-                
-                nearest = min(filtered, key=lambda p: p["distance"]) if filtered else None
-                
-                # Recompute score based on actual POIs (DB pre-computed scores may not match)
-                dimension_score = _compute_dimension_score(
-                    filtered, dim_info["max_count"], max_radius
-                )
-                
-                db_result["dimensions"][dim_key].update({
-                    "score": dimension_score["score"],
-                    "count": dimension_score["count"],
-                    "nearest": nearest,
-                    "pois": filtered[:50],  # Return up to 50 POIs to match frontend display
-                })
-            
-            # Recompute overall score from updated dimension scores
-            if any(v != 1.0 for v in weights.values()):
-                total_w = sum(weights.values()) or 1.0
-                weighted_total = sum(
-                    db_result["dimensions"][k]["score"] * weights[k]
-                    for k in DIMENSIONS
-                )
-                db_result["overall_score"] = round(weighted_total / total_w)
-            else:
-                db_result["overall_score"] = round(
-                    sum(db_result["dimensions"][k]["score"] for k in DIMENSIONS) / len(DIMENSIONS)
-                )
-        
-        return db_result
-
-    # ── Step 2: Fallback to dynamic computation via Overpass ──
-    try:
-        result = compute_scorecard(lat, lon, radius, weights)
-        result["source"] = "dynamic"
-        return result
-    except Exception as e:
-        logger.error(f"Scorecard computation failed: {e}")
-        return {"error": f"評分計算失敗: {str(e)}"}
+        dimension_results[dim_key] = {
+            "score": dimension_score["score"],
+            "label": dim_info["label"],
+            "icon": dim_info["icon"],
+            "color": dim_info["color"],
+            "weight": weights.get(dim_key, 1.0),
+            "count": dimension_score["count"],
+            "nearest": nearest,
+            "pois": filtered[:50],
+        }
+    
+    # Compute overall score
+    if any(v != 1.0 for v in weights.values()):
+        total_w = sum(weights.values()) or 1.0
+        weighted_total = sum(
+            dimension_results[k]["score"] * weights[k]
+            for k in DIMENSIONS
+        )
+        overall_score = round(weighted_total / total_w)
+    else:
+        overall_score = round(
+            sum(dimension_results[k]["score"] for k in DIMENSIONS) / len(DIMENSIONS)
+        )
+    
+    return {
+        "source": "dynamic",
+        "location": {"lat": lat, "lon": lon},
+        "radius": radius,
+        "weights": weights,
+        "overall_score": overall_score,
+        "dimensions": dimension_results,
+        "suggestion": _generate_suggestion(dimension_results),
+    }
