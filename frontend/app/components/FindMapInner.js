@@ -284,24 +284,10 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         },
       });
 
-      // 防止 cluster 自動收合：展開後保持 spiderfy 狀態
-      let lastSpiderfiedCluster = null;
-      clusterGroup.on('spiderfied', (e) => {
-        lastSpiderfiedCluster = e.cluster;
-      });
-      clusterGroup.on('unspiderfied', (e) => {
-        // 阻止自動收合，重新展開
-        if (lastSpiderfiedCluster && lastSpiderfiedCluster !== e.cluster) {
-          setTimeout(() => {
-            try {
-              clusterGroup.spiderfy(lastSpiderfiedCluster.getLatLng());
-            } catch(err) {
-              // 如果座標已失效，清除記錄
-              lastSpiderfiedCluster = null;
-            }
-          }, 0);
-        }
-      });
+      // 防止 cluster 自動收合：直接覆寫 unspiderfy 方法
+      // 這樣無論使用者點哪裡、縮放或平移，展開後的 marker 都會保持展開
+      const _origUnspiderfy = clusterGroup.unspiderfy.bind(clusterGroup);
+      clusterGroup.unspiderfy = function () {};
 
       map.addLayer(clusterGroup);
       mapInstanceRef.current = map;
