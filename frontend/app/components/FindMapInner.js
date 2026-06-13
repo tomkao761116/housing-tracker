@@ -1,11 +1,10 @@
 /**
- * 成交地圖元件 — v3
+ * 成交地圖元件 — v4 (重構版)
  * 
- * 互動邏輯：
- * 1. 點擊 marker → flyTo + 通知父元件 onSelect（列表滾動+高亮）
- * 2. 收到 selectedId → flyTo（從列表點擊）
- * 3. 無 popup/modal，純視覺 focus
- * 4. cluster 展開後不自動收合
+ * 核心改動：
+ * 1. 同一座標的多筆交易 → 圓環排列，不需 spiderfy
+ * 2. marker hover → 顯示 tooltip（地址 + 總價）
+ * 3. 保留 cluster 僅用於遠距離縮放時的聚合
  */
 'use client';
 
@@ -19,6 +18,9 @@ import { Square } from 'lucide-react';
 const DEFAULT_CENTER = [23.97, 120.96];
 const DEFAULT_ZOOM = 8;
 const MIN_ZOOM = 8;
+
+// 同址 marker 圓環排列半徑 (度數，約 15m @ zoom 16)
+const CLUSTER_SPREAD_RADIUS = 0.00014;
 
 const CITY_BOUNDS = {
   '基隆市':   [[25.04, 121.49], [25.31, 121.70]],
@@ -117,6 +119,54 @@ function MapLegend({ colorMode }) {
   );
 }
 
+/* ─── Helper: group trades by coord & compute offsets ─ */
+function computeMarkerOffsets(trades) {
+  // Group by rounded coord (to avoid floating point issues)
+  const groups = new Map();
+  trades
+    .filter(t => t.lat != null && t.lon != null)
+    .forEach(trade => {
+      const key = `${Math.round(trade.lat * 100000)},${Math.round(trade.lon * 100000)}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(trade);
+    });
+
+  // For each group with multiple trades, assign circular offsets
+  const offsets = new Map(); // trade.id -> { latOffset, lonOffset }
+  groups.forEach((group) => {
+    if (group.length === 1) {
+      offsets.set(group[0].id, { lat: group[0].lat, lon: group[0].lon });
+      return;
+    }
+
+    const centerLat = group[0].lat;
+    const centerLon = group[0].lon;
+    const count = group.length;
+    const radius = count <= 6 ? CLUSTER_SPREAD_RADIUS : CLUSTER_SPREAD_RADIUS * 1.5;
+
+    group.forEach((trade, i) => {
+      const angle = (2 * Math.PI * i) / count - Math.PI / 2; // Start from top
+      offsets.set(trade.id, {
+        lat: centerLat + radius * Math.cos(angle),
+        lon: centerLon + radius * Math.sin(angle),
+      });
+    });
+  });
+
+  return offsets;
+}
+
+/* ─── Format price for tooltip ── */
+function formatTooltip(trade) {
+  const priceWan = trade.total_price ? Math.round(trade.total_price / 10000).toLocaleString() : '—';
+  const unitPrice = trade.unit_price_tping != null ? Number(trade.unit_price_tping).toFixed(1) : '—';
+  return `<div style="line-height:1.6">
+    <strong>${trade.address}</strong><br/>
+    <span style="color:#5a6b4e;font-weight:bold">${priceWan} 萬</span>
+    <span style="color:#999"> (${unitPrice}萬/坪)</span>
+  </div>`;
+}
+
 /* ─── Main Component ────────────────────────────────── */
 export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMarkerHover, colorMode, filters, onBoxSelect, onMapReady }) {
   const mapRef = useRef(null);
@@ -134,27 +184,38 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
   const onBoxSelectRef = useRef(onBoxSelect);
   const colorModeRef = useRef(colorMode);
   const selectedIdRef = useRef(selectedId);
+  const tradesRef = useRef(trades);
 
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
   useEffect(() => { onMarkerHoverRef.current = onMarkerHover; }, [onMarkerHover]);
   useEffect(() => { onBoxSelectRef.current = onBoxSelect; }, [onBoxSelect]);
   useEffect(() => { colorModeRef.current = colorMode; }, [colorMode]);
   useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
+  useEffect(() => { tradesRef.current = trades; }, [trades]);
 
   /* ── 建立單一 marker ── */
-  const createMarker = useCallback((trade) => {
+  const createMarker = useCallback((trade, displayLat, displayLon) => {
     const L = LRef.current;
     if (!L) return null;
     
     const color = getMarkerColor(trade, colorModeRef.current);
     
-    const marker = L.circleMarker([trade.lat, trade.lon], {
+    const marker = L.circleMarker([displayLat, displayLon], {
       radius: 6,
       fillColor: color,
       color: '#fff',
       weight: 2,
       opacity: 1,
       fillOpacity: 0.75,
+    });
+
+    // Tooltip: hover 顯示對應成交紀錄
+    const tooltipContent = formatTooltip(trade);
+    marker.bindTooltip(tooltipContent, {
+      sticky: true,
+      direction: 'top',
+      offset: [0, -10],
+      className: 'map-marker-tooltip',
     });
 
     // 點擊 marker → 通知父元件（由父元件驅動列表滾動+高亮）
@@ -185,19 +246,25 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
     cg.clearLayers();
     allMarkersCache.current.clear();
 
-    const currentTrades = trades;
+    const currentTrades = tradesRef.current;
     if (!currentTrades || currentTrades.length === 0) return;
+
+    // 計算同址 marker 的圓環偏移
+    const offsets = computeMarkerOffsets(currentTrades);
 
     currentTrades
       .filter(t => t.lat != null && t.lon != null)
       .forEach(trade => {
-        const marker = createMarker(trade);
+        const offset = offsets.get(trade.id);
+        if (!offset) return;
+        
+        const marker = createMarker(trade, offset.lat, offset.lon);
         if (marker) {
           allMarkersCache.current.set(trade.id, marker);
           cg.addLayer(marker);
         }
       });
-  }, [trades, createMarker]);
+  }, [createMarker]);
 
   /* ── 初始化地圖 ── */
   useEffect(() => {
@@ -260,14 +327,13 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
         maxZoom: 19,
       }).addTo(map);
 
-      // 建立 cluster group
+      // 建立 cluster group — 僅用於遠距離聚合，不 spiderfy
       const clusterGroup = new L.MarkerClusterGroup({
         maxClusterRadius: 50,
-        spiderfyOnMaxZoom: true,
+        spiderfyOnMaxZoom: false, // 關閉 spiderfy
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
-        spiderfyDistanceMultiplier: 1.5,
-        disableClusteringAtZoom: 17,
+        disableClusteringAtZoom: 16, // zoom 16 以上不再 cluster
         iconCreateFunction: (cluster) => {
           const childCount = cluster.getChildCount();
           let diameter = 40;
@@ -282,32 +348,6 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
             iconAnchor: [diameter / 2, diameter / 2],
           });
         },
-      });
-
-      // 防止 cluster 自動收合：多層封鎖所有可能的收合路徑
-      // Layer 1: 覆寫 clusterGroup 的所有 unspiderfy 變體
-      clusterGroup.unspiderfy = function () {};
-      
-      // Layer 2: 覆寫 L.MarkerClusterGroup.prototype.unspiderfy (防內部透過 prototype 呼叫)
-      const _ProtoUnspiderfy = L.MarkerClusterGroup.prototype.unspiderfy;
-      L.MarkerClusterGroup.prototype.unspiderfy = function () {};
-      
-      // Layer 3: 攔截地圖點擊，防止點擊空白處觸發收合
-      map.on('click', (e) => {
-        // 阻止 cluster group 收到點擊事件
-        e.originalEvent?.stopImmediatePropagation();
-      }, true); // capture phase
-      
-      // Layer 4: 攔截 spiderfied 後個別 cluster 的 unspiderfy
-      clusterGroup.on('spiderfied', (e) => {
-        const cluster = e.cluster;
-        if (cluster && typeof cluster.unspiderfy === 'function') {
-          cluster.unspiderfy = function () {};
-        }
-        // 也封鎖子 cluster
-        if (cluster.getAllChildMarkers) {
-          // 不需要額外操作，marker 本身沒有 unspiderfy
-        }
       });
 
       map.addLayer(clusterGroup);
@@ -353,7 +393,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
           const inBounds = [];
           allMarkersCache.current.forEach((marker, id) => {
             if (bounds.contains(marker.getLatLng())) {
-              const trade = trades.find(t => t.id === id);
+              const trade = tradesRef.current.find(t => t.id === id);
               if (trade) inBounds.push(trade);
             }
           });
@@ -418,7 +458,7 @@ export default function FindMap({ trades, selectedId, onSelect, hoveredId, onMar
       marker.setStyle({ radius: 9, fillOpacity: 1, weight: 3, color: '#5a6b4e' });
     } else {
       // Fallback: 從 trades 找座標
-      const trade = trades.find(t => t.id === selectedId);
+      const trade = tradesRef.current.find(t => t.id === selectedId);
       if (trade && trade.lat != null && trade.lon != null) {
         map.flyTo([trade.lat, trade.lon], 16, { duration: 0.8, noMoveStart: true });
       }
